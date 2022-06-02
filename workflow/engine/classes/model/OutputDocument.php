@@ -3,6 +3,7 @@
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Log;
 use ProcessMaker\Core\System;
+use ProcessMaker\PDF\TCPDFHeaderFooter;
 
 class OutputDocument extends BaseOutputDocument
 {
@@ -880,7 +881,7 @@ class OutputDocument extends BaseOutputDocument
         $content = str_replace("margin-left", "text-indent", $content);
 
         // Instance the TCPDF library
-        $pdf = new TCPDF($orientation, PDF_UNIT, $media, true, 'UTF-8', false);
+        $pdf = new TCPDFHeaderFooter($orientation, PDF_UNIT, $media, true, 'UTF-8', false);
 
         // Set document information
         $pdf->SetCreator(PDF_CREATOR);
@@ -897,8 +898,15 @@ class OutputDocument extends BaseOutputDocument
         $margins["bottom"] = ($margins["bottom"] >= 0) ? $margins["bottom"] : PDF_MARGIN_BOTTOM;
 
         // Set margins configuration
-        $pdf->setPrintHeader(false);
-        $pdf->setPrintFooter(false);
+        $headerOptions = $this->setHeaderOptions($pdf, $fields);
+        $footerOptions = $this->setFooterOptions($pdf, $fields);
+        $pdf->setPrintHeader($headerOptions);
+        $pdf->setPrintFooter($footerOptions);
+        // Important: footer position depends on header enable
+        if ($footerOptions === true) {
+            $pdf->setPrintHeader(true);
+        }
+
         $pdf->SetLeftMargin($margins['left']);
         $pdf->SetTopMargin($margins['top']);
         $pdf->SetRightMargin($margins['right']);
@@ -1368,5 +1376,77 @@ class OutputDocument extends BaseOutputDocument
 
         // Save the CSS file
         file_put_contents(K_PATH_FONTS . 'fonts.css', $css);
+    }
+    
+    /**
+     * Set and build if header options exist.
+     * @param TCPDFHeaderFooter $pdf
+     * @param array $fields
+     * @return bool
+     */
+    private function setHeaderOptions(TCPDFHeaderFooter $pdf, array $fields): bool
+    {
+        if (empty($this->out_doc_header)) {
+            return false;
+        }
+        $header = json_decode($this->out_doc_header);
+        if ($header->enableHeader === false) {
+            return false;
+        }
+
+        $struct = $pdf->getHeaderStruct();
+
+        $struct->setLogo(G::replaceDataField($header->logo ?? '', $fields));
+        $struct->setLogoWidth($header->logoWidth ?? 0);
+        $struct->setLogoPositionX($header->logoPositionX ?? 0);
+        $struct->setLogoPositionY($header->logoPositionY ?? 0);
+
+        $struct->setTitle(G::replaceDataField($header->title ?? '', $fields));
+        $struct->setTitleFontSize($header->titleFontSize ?? 0);
+        $struct->setTitleFontPositionX($header->titleFontPositionX ?? 0);
+        $struct->setTitleFontPositionY($header->titleFontPositionY ?? 0);
+
+        $struct->setPageNumber($header->pageNumber ?? false);
+        $struct->setPageNumberTitle(G::replaceDataField($header->pageNumberTitle ?? '', $fields));
+        $struct->setPageNumberTotal($header->pageNumberTotal ?? false);
+        $struct->setPageNumberPositionX($header->pageNumberPositionX ?? 0);
+        $struct->setPageNumberPositionY($header->pageNumberPositionY ?? 0);
+        return true;
+    }
+
+    /**
+     * Set and build if footer options exist.
+     * @param TCPDFHeaderFooter $pdf
+     * @param array $fields
+     * @return bool
+     */
+    private function setFooterOptions(TCPDFHeaderFooter $pdf, array $fields): bool
+    {
+        if (empty($this->out_doc_footer)) {
+            return false;
+        }
+        $footer = json_decode($this->out_doc_footer);
+        if ($footer->enableFooter === false) {
+            return false;
+        }
+
+        $struct = $pdf->getFooterStruct();
+
+        $struct->setLogo(G::replaceDataField($footer->logo ?? '', $fields));
+        $struct->setLogoWidth($footer->logoWidth ?? 0);
+        $struct->setLogoPositionX($footer->logoPositionX ?? 0);
+        $struct->setLogoPositionY($footer->logoPositionY ?? 0);
+
+        $struct->setTitle(G::replaceDataField($footer->title ?? '', $fields));
+        $struct->setTitleFontSize($footer->titleFontSize ?? 0);
+        $struct->setTitleFontPositionX($footer->titleFontPositionX ?? 0);
+        $struct->setTitleFontPositionY($footer->titleFontPositionY ?? 0);
+
+        $struct->setPageNumber($footer->pageNumber ?? false);
+        $struct->setPageNumberTitle(G::replaceDataField($footer->pageNumberTitle ?? '', $fields));
+        $struct->setPageNumberTotal($footer->pageNumberTotal ?? false);
+        $struct->setPageNumberPositionX($footer->pageNumberPositionX ?? 0);
+        $struct->setPageNumberPositionY($footer->pageNumberPositionY ?? 0);
+        return true;
     }
 }
