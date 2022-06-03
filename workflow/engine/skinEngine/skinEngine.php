@@ -3,9 +3,6 @@
  * Class SkinEngine
  *
  * This class load and dispatch the main systems layouts
- *
- * @author Erik Amaru Ortiz <erik@colosa.com>
- * @author Hugo Loza
  */
 
 use ProcessMaker\Core\System;
@@ -334,16 +331,18 @@ class SkinEngine
 
         echo $template->getOutputContent();
     }
-    
-    private function _viena() 
+
+    /**
+     * Render "viena" view
+     */
+    private function _viena()
     {
-        $oHeadPublisher = headPublisher::getSingleton();
-        $styles = "";
-        $header = $oHeadPublisher->getExtJsVariablesScript();
-        $header = $oHeadPublisher->getExtJsStylesheets($this->cssFileName . "-viena");
         $templateFile = $this->layoutFile['dirname'] . PATH_SEP . $this->layoutFileViena['basename'];
         if (file_exists($templateFile)) {
-            $body = ScriptVariables::render();
+            $oHeadPublisher = headPublisher::getSingleton();
+            $header = $oHeadPublisher->getExtJsStylesheets($this->cssFileName . '-viena');
+            $body = $oHeadPublisher->getExtJsVariablesScript('');
+
             $template = new TemplatePower($templateFile);
             $template->prepare();
             $template->assign('header', $header);
@@ -351,7 +350,7 @@ class SkinEngine
             echo $template->getOutputContent();
         } else {
             $userCanAccess = 1;
-            echo View::make('Views::home.home', compact("userCanAccess"))->render();
+            echo View::make('Views::home.home', compact('userCanAccess'))->render();
         }
     }
 
@@ -472,7 +471,6 @@ class SkinEngine
             if (!defined('NO_DISPLAY_USERNAME')) {
                 define('NO_DISPLAY_USERNAME', 0);
             }
-
             if (NO_DISPLAY_USERNAME == 0) {
                 $smarty->assign('userfullname', isset($_SESSION['USR_FULLNAME']) ? $_SESSION['USR_FULLNAME'] : '');
                 $smarty->assign('user', isset($_SESSION['USR_USERNAME']) ? '(' . $_SESSION['USR_USERNAME'] . ')' : '');

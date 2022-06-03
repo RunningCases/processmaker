@@ -10,7 +10,7 @@
 </head>
 
 <body>
-    {{ ScriptVariables::render() }}
+    {!! $oHeadPublisher->getExtJsVariablesScript('') !!}
     <div id="customCaseList">
     </div>
 </body>
