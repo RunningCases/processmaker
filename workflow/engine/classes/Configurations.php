@@ -465,7 +465,7 @@ class Configurations // extends Configuration
         }
     }
 
-    public function getDateFormats()
+    public static function getDateFormats()
     {
         $arrayFormat = array();
 
@@ -491,7 +491,7 @@ class Configurations // extends Configuration
         return $arrayFormat;
     }
 
-    public function getUserNameFormats()
+    public static function getUserNameFormats()
     {
         $formats[] = array('id' => '@firstName @lastName', //the id , don't translate
             'name' => G::loadTranslation('ID_USERNAME_FORMAT_1')  //label displayed, can be translated

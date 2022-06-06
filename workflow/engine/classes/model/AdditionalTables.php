@@ -1003,7 +1003,7 @@ class AdditionalTables extends BaseAdditionalTables
      * @param array $process
      * @return array
      */
-    public function getAll($start = 0, $limit = 20, $filter = '', $process = null)
+    public static function getAll($start = 0, $limit = 20, $filter = '', $process = null)
     {
         $criteria = new Criteria('workflow');
         $criteria->addSelectColumn(AdditionalTablesPeer::ADD_TAB_UID);

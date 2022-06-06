@@ -134,7 +134,7 @@ class AppDocument extends BaseAppDocument
         try {
             $oCriteria = new Criteria();
             $oCriteria->add( AppDocumentPeer::APP_DOC_UID, $sAppDocUid );
-            if ($appUID != 0) {
+            if (!empty($appUID)) {
                 $oCriteria->add( AppDocumentPeer::APP_UID, $appUID );
             }
             $oCriteria->addDescendingOrderByColumn( AppDocumentPeer::DOC_VERSION );
