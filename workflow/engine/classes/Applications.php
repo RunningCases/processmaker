@@ -1185,7 +1185,7 @@ class Applications
                     $outputDoc = $appDocument->getObject($appUid, $index, $caseStep->getStepUidObj(), 'OUTPUT');
                     $stepItem['title'] = $oDocument->getOutDocTitle();
 
-                    if ($outputDoc['APP_DOC_UID']) {
+                    if (!empty($outputDoc['APP_DOC_UID'])) {
                         $stepItem['url'] = "cases/cases_Step?UID=$stepUid&TYPE=$stepType&POSITION=$stepPosition&ACTION=VIEW&DOC={$outputDoc['APP_DOC_UID']}";
                     } else {
                         $stepItem['url'] = "cases/cases_Step?UID=$stepUid&TYPE=$stepType&POSITION=$stepPosition&ACTION=GENERATE";
