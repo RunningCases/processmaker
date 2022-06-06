@@ -881,7 +881,7 @@ class OutputDocument extends BaseOutputDocument
         $content = str_replace("margin-left", "text-indent", $content);
 
         // Instance the TCPDF library
-        $pdf = new TCPDFHeaderFooter($orientation, PDF_UNIT, $media, true, 'UTF-8', false);
+        $pdf = new TCPDFHeaderFooter($orientation, PDF_UNIT, strtoupper($media), true, 'UTF-8', false);
 
         // Set document information
         $pdf->SetCreator(PDF_CREATOR);
