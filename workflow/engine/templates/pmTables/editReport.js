@@ -401,21 +401,6 @@ Ext.onReady(function () {
             width: 50,
             align: 'right',
             editor: sizeField
-        }, {
-
-            xtype: 'booleancolumn',
-            header: _('ID_AUTO_INCREMENT'),
-            dataIndex: 'field_autoincrement',
-            align: 'center',
-            width: 100,
-            trueText: _('ID_YES'),
-            falseText: _('ID_NO'),
-            editor: {
-                xtype: 'checkbox',
-                id: 'field_incre',
-                disabled: true,
-                inputValue: 'always'
-            }
         }
         /*----------------------------------********---------------------------------*/
         , {
