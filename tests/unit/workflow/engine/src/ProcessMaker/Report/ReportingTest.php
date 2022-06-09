@@ -21,7 +21,7 @@ class ReportingTest extends TestCase
     /**
      * Method setUp.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->reporting = new Reporting();
@@ -30,7 +30,7 @@ class ReportingTest extends TestCase
     /**
      * Method tearDown.
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
     }

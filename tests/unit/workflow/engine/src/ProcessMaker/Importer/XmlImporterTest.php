@@ -19,7 +19,7 @@ class XmlImporterTest extends TestCase
     /**
      * Set up unit tests.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->user = factory(User::class)->create();

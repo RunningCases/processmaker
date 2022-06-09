@@ -14,7 +14,7 @@ class ActionsByEmailDataFormTest extends TestCase
     /**
      * Setup method.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         if (!defined('URL_KEY')) {

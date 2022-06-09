@@ -18,7 +18,7 @@ class SkinsTest extends TestCase
     /**
      * Sets up the unit test.
      */
-    protected function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->object = new Skins();
@@ -27,7 +27,7 @@ class SkinsTest extends TestCase
     /**
      * Tears down the unit test.
      */
-    protected function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         G::rm_dir(PATH_DATA . 'skins');

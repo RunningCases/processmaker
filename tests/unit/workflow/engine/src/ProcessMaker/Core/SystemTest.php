@@ -14,7 +14,7 @@ class SystemTest extends TestCase
     /**
      * Define the required variables
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
     }

@@ -13,7 +13,7 @@ class AuthSourcesNewTest extends TestCase
     /**
      * This set initial parameters for each test.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->settingUserLogged();

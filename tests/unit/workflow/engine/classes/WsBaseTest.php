@@ -36,15 +36,6 @@ class WsBaseTest extends TestCase
     public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
-    }
-
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
-    protected function setUp()
-    {
-        parent::setUp();
         Application::query()->truncate();
         AppThread::query()->truncate();
         Delegation::query()->truncate();
@@ -54,7 +45,7 @@ class WsBaseTest extends TestCase
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
      */
-    protected function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
     }

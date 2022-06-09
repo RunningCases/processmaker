@@ -13,7 +13,7 @@ class LdapAdvancedTest extends TestCase
     /**
      * Method setUp.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->ldapAdvanced = new LdapAdvanced();

@@ -18,7 +18,7 @@ class ImporterTest extends TestCase
     /**
      * Declared to avoid the incompatibility exception
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
