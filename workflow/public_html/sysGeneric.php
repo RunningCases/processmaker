@@ -550,7 +550,7 @@ if (!defined('PATH_DATA') || !file_exists(PATH_DATA)) {
     $controllerAction = ($controllerAction != '' && $controllerAction != 'login') ? $controllerAction : 'index';
 
     // create the installer controller and call its method
-    if (is_callable([InstallerModule::class, $controllerAction])) {
+    if (method_exists(InstallerModule::class, $controllerAction)) {
         $installer = new $controller();
         $installer->setHttpRequestData($_REQUEST);
         //NewRelic Snippet - By JHL
@@ -637,10 +637,10 @@ if (defined('SYS_TEMP') && SYS_TEMP != '') {
                 $controllerClass = 'Main';
                 $controllerAction = SYS_TARGET == 'sysLoginVerify' ? SYS_TARGET : 'sysLogin';
                 //if the method exists
-                if (is_callable(array(
+                if (method_exists(
                     $controllerClass,
                     $controllerAction
-                ))) {
+                )) {
                     $controller = new $controllerClass();
                     $controller->setHttpRequestData($_REQUEST);
                     $controller->call($controllerAction);
@@ -898,7 +898,7 @@ if (substr(SYS_COLLECTION, 0, 8) === 'gulliver') {
         }
 
         //if the method exists
-        if (is_callable(array($controllerClass, $controllerAction))) {
+        if (method_exists($controllerClass, $controllerAction)) {
             $isControllerCall = true;
         }
     }
