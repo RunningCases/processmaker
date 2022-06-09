@@ -5616,23 +5616,28 @@ class G
                     }
                 }
 
+                $pathSep = getConstant('PATH_SEP');
+                $pathSkinEngine = getConstant('PATH_SKIN_ENGINE');
+                $pathSkins = getConstant('PATH_SKINS');
+                $pathCustomSkins = getConstant('PATH_CUSTOM_SKINS');
+
                 $arrayAux = explode("?", $strAux);
                 $fileTemplate = $arrayAux[0];
 
-                if (file_exists(PATH_SKIN_ENGINE . "base" . PATH_SEP . $fileTemplate)) {
-                    $path = PATH_SKIN_ENGINE . "base" . PATH_SEP;
+                if (file_exists($pathSkinEngine . "base" . $pathSep . $fileTemplate)) {
+                    $path = $pathSkinEngine . "base" . $pathSep;
                 }
 
-                if (file_exists(PATH_SKIN_ENGINE . $skin . PATH_SEP . $fileTemplate)) {
-                    $path = PATH_SKIN_ENGINE . $skin . PATH_SEP;
+                if (file_exists($pathSkinEngine . $skin . $pathSep . $fileTemplate)) {
+                    $path = $pathSkinEngine . $skin . $pathSep;
                 }
 
-                if (file_exists(PATH_SKINS . $skin . PATH_SEP . $fileTemplate)) {
-                    $path = PATH_SKINS . $skin . PATH_SEP;
+                if (file_exists($pathSkins . $skin . $pathSep . $fileTemplate)) {
+                    $path = $pathSkins . $skin . $pathSep;
                 }
 
-                if (file_exists(PATH_CUSTOM_SKINS . $skin . PATH_SEP . $fileTemplate)) {
-                    $path = PATH_CUSTOM_SKINS . $skin . PATH_SEP;
+                if (file_exists($pathCustomSkins . $skin . $pathSep . $fileTemplate)) {
+                    $path = $pathCustomSkins . $skin . $pathSep;
                 }
             }
         }
