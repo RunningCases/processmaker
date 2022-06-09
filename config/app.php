@@ -31,7 +31,6 @@ return [
     ],
     'aliases' => [
         'Crypt' => Illuminate\Support\Facades\Crypt::class,
-        'ScriptVariables' => Eusebiu\JavaScript\Facades\ScriptVariables::class,
         'View' => Illuminate\Support\Facades\View::class
     ],
 ];

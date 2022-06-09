@@ -727,3 +727,14 @@ function calculateDate($iniDate, $timeUnit, $time)
 
     return $datetime->format('Y-m-d H:i:s');
 }
+
+/**
+ * Get the constant value.
+ * @param string $name
+ * @param mixed $default
+ * @return mixed
+ */
+function getConstant(string $name, $default = '')
+{
+    return defined($name) === true ? constant($name) : $default;
+}
