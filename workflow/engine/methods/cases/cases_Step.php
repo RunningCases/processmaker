@@ -1073,6 +1073,9 @@ try {
                 }
             }
 
+            if (!isset($aFields['PROCESS']['DISABLED'])) {
+                $aFields['PROCESS']['DISABLED'] = '';
+            }
             $G_PUBLISH->AddContent('smarty', $tplFile, '', '', $aFields);
             break;
         case 'EXTERNAL':
