@@ -23,7 +23,7 @@ class GmailOAuthTest extends TestCase
     /**
      * Init properties
      */
-    public function setUp()
+    public function setUp(): void
     {
         if (version_compare(phpversion(), 7.3, '>') ) {
             $this->markTestSkipped('The changes in third party are not available');

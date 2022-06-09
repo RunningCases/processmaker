@@ -13,10 +13,6 @@ class CliWorkspacesTest extends TestCase
 {
     use DatabaseTransactions;
 
-    protected function setUp()
-    {
-    }
-
     /**
      * Test that the deprecated files are removed successfully
      *

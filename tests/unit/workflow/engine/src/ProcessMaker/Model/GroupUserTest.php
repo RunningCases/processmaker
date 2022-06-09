@@ -21,7 +21,7 @@ class GroupUserTest extends TestCase
     /**
      * Method set up.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         GroupUser::truncate();

@@ -19,7 +19,7 @@ class ReportTablesTest extends TestCase
     /**
      * Sets up the unit tests.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $_SERVER["REQUEST_URI"] = "";
@@ -33,7 +33,7 @@ class ReportTablesTest extends TestCase
     /**
      * Tear down the unit tests.
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
     }

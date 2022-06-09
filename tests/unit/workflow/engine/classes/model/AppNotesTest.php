@@ -26,7 +26,7 @@ class AppNotesTest extends TestCase
     /**
      * Set up method
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->faker = Factory::create();

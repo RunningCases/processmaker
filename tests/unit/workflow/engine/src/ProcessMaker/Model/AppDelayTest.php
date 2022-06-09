@@ -18,7 +18,7 @@ class AppDelayTest extends TestCase
     /**
      * Set up function.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         AppDelay::truncate();

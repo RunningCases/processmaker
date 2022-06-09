@@ -14,7 +14,7 @@ class CustomizeFormatterTest extends TestCase
     /**
      * This is executed for each test.
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         self::$directory = PATH_DATA . 'logs/';
@@ -23,7 +23,7 @@ class CustomizeFormatterTest extends TestCase
     /**
      * This is done before the first test.
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $file = new Filesystem();
         $file->cleanDirectory(self::$directory);
@@ -32,7 +32,7 @@ class CustomizeFormatterTest extends TestCase
     /**
      * This is done after the last test.
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         $file = new Filesystem();
         $file->cleanDirectory(self::$directory);

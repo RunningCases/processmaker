@@ -18,12 +18,20 @@ class CaseMessageHistory_AjaxTest extends TestCase
     /**
      * This method calls the parent setUp
      */
-    public function setUp()
+    public function setUp(): void
     {
         if (version_compare(phpversion(), 7.3, '>') ) {
             $this->markTestSkipped('The changes in third party are not available');
         }
         parent::setUp();
+    }
+
+    /**
+     * This method calls the parent tearDown
+     */
+    public function tearDown(): void
+    {
+        parent::tearDown();
     }
 
     /**
@@ -289,13 +297,5 @@ class CaseMessageHistory_AjaxTest extends TestCase
         //Clean the output buffer and turn off output buffering
         ob_end_clean();
         $this->assertEmpty(json_decode($result)->data);
-    }
-
-    /**
-     * This method calls the parent tearDown
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
     }
 }

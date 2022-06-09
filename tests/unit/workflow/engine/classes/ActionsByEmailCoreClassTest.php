@@ -16,7 +16,7 @@ class ActionsByEmailCoreClassTest extends TestCase
     /**
      * Method set up.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         if (!defined('PATH_IMAGES_ENVIRONMENT_USERS')) {

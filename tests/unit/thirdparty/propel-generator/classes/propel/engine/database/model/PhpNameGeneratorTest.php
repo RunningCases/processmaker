@@ -12,7 +12,7 @@ class PhpNameGeneratorTest extends TestCase
     /**
      * Set up the test class
      */
-    public function setUp()
+    public function setUp(): void
     {
         // Call the setUp parent method
         parent::setUp();

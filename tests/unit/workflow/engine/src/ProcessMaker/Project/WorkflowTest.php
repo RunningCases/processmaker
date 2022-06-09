@@ -21,7 +21,7 @@ class WorkflowTest extends TestCase
     /**
      * This method sets the values before starting any test.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->workflow = new Workflow();
@@ -33,7 +33,7 @@ class WorkflowTest extends TestCase
     /**
      * This method is executed after each test.
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         foreach ($this->files as $value) {

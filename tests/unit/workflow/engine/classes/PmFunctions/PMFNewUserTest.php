@@ -19,7 +19,7 @@ class PMFNewUserTest extends TestCase
     /**
      * Creates the setUp method
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setup();
 
@@ -37,7 +37,7 @@ class PMFNewUserTest extends TestCase
     /**
      * Creates the tearDown method
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
     }

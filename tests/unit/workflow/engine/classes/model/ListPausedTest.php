@@ -15,7 +15,7 @@ class ListPausedTest extends TestCase
     /**
      * Set up method.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->faker = Factory::create();
@@ -25,7 +25,7 @@ class ListPausedTest extends TestCase
     /**
      * Tear down method,
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
     }

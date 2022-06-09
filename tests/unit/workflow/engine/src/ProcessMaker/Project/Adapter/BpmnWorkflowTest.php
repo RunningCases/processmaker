@@ -19,7 +19,7 @@ class BpmnWorkflowTest extends TestCase
     /**
      * Set up testing.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->user = factory(User::class)->create();

@@ -20,7 +20,7 @@ class CasesMenuHighlightTest extends TestCase
     /**
      * This sets the initial parameters for each test.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->settingUserLogged();

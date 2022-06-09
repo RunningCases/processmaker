@@ -35,7 +35,7 @@ class DelegationTest extends TestCase
     /**
      * Set up function.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Delegation::truncate();

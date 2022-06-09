@@ -40,7 +40,7 @@ class GroupTest extends TestCase
     /**
      * Sets up the unit tests.
      */
-    protected function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->setInstanceGroup(new Group());
