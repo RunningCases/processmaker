@@ -133,6 +133,7 @@ workflow/engine/xmlform/users/users_Options.xml
 workflow/public_html/skins/JSForms.js
 workflow/public_html/skins/ajax.js
 thirdparty/geshi
+thirdparty/html2ps_pdf
 thirdparty/libchart
 thirdparty/lime
 thirdparty/pear/Benchmark
