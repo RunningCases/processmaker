@@ -21,7 +21,7 @@ class SearchTest extends TestCase
     /**
      * Set up function.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Application::truncate();

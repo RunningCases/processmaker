@@ -19,7 +19,7 @@ class UserTest extends TestCase
     /**
      * Set up function.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         User::query()->delete();

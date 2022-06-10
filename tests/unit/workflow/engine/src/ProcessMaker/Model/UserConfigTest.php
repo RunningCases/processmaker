@@ -16,7 +16,7 @@ class UserConfigTest extends TestCase
     /**
      * Setup method,
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         UserConfig::truncate();
@@ -25,7 +25,7 @@ class UserConfigTest extends TestCase
     /**
      * Teardown method.
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
     }

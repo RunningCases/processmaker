@@ -13,7 +13,7 @@ class UsersAjaxTest extends TestCase
     /**
      * Set up the deprecated errors
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);

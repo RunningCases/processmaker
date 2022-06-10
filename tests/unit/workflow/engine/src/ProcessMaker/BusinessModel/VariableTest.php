@@ -21,7 +21,7 @@ class VariableTest extends TestCase
     /**
      * This method calls the parent setUp
      */
-    public function setUp()
+    public function setUp(): void
     {
         if (version_compare(phpversion(), 7.3, '>') ) {
             $this->markTestSkipped('Illegal mix of collations');

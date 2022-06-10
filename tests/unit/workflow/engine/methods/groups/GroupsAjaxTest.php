@@ -15,7 +15,7 @@ class GroupsAjaxTest extends TestCase
     /**
      * Set up function
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->settingUserLogged();

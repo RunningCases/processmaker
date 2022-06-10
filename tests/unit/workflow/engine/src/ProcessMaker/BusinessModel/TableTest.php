@@ -11,7 +11,7 @@ class TableTest extends TestCase
     /**
      * Method setUp.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         AdditionalTables::truncate();
@@ -20,7 +20,7 @@ class TableTest extends TestCase
     /**
      * Method tearDown.
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
     }

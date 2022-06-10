@@ -23,7 +23,7 @@ class ProcessTest extends TestCase
     /**
      * Call the setUp parent method
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Process::query()->delete();

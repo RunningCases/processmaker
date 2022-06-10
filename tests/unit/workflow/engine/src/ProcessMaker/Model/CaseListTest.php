@@ -16,7 +16,7 @@ class CaseListTest extends TestCase
     /**
      * setUp method.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
     }
@@ -24,7 +24,7 @@ class CaseListTest extends TestCase
     /**
      * teardown method.
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
     }

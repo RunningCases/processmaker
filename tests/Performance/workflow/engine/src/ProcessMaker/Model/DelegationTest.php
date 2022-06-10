@@ -26,7 +26,7 @@ class DelegationTest extends TestCase
     /**
      * Define values of some parameters of the test
      */
-    protected function setUp()
+    public function setUp(): void
     {
         if (!env('RUN_MYSQL_PERFORMANCE_TESTS')) {
             $this->markTestSkipped('Test related to the performance are disabled for this server configuration');

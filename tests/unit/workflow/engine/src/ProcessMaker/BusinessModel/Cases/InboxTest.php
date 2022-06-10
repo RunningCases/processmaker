@@ -28,7 +28,7 @@ class InboxTest extends TestCase
     /**
      * Method set up.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Delegation::truncate();
@@ -37,7 +37,8 @@ class InboxTest extends TestCase
     /**
      * Method tearDown
      */
-    public function tearDown() {
+    public function tearDown(): void
+    {
         parent::tearDown();
     }
 

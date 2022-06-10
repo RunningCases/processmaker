@@ -37,7 +37,7 @@ class PmTablesProxyTest extends TestCase
     /**
      * It setup the variables for the unit tests
      */
-    protected function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -50,6 +50,27 @@ class PmTablesProxyTest extends TestCase
 
         // The InputFilter class use deprecated code
         error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
+    }
+
+    /**
+     * Delete all the PM Tables created for the test
+     */
+    public function tearDown(): void
+    {
+        parent::tearDown();
+        $obj = new pmTablesProxy();
+        $httpDataBigInt = (object)['rows' => '[{"id":"' . $this->repTableBigIntUid . '","type":""}]'];
+        $httpDataChar = (object)['rows' => '[{"id":"' . $this->repTableCharUid . '","type":""}]'];
+        $httpDataSmallInt = (object)['rows' => '[{"id":"' . $this->repTableSmallIntUid . '","type":""}]'];
+        $httpDataInteger = (object)['rows' => '[{"id":"' . $this->repTableIntegerUid . '","type":""}]'];
+        $httpDataVarChar = (object)['rows' => '[{"id":"' . $this->repTableVarCharUid . '","type":""}]'];
+        $httpDataTinyInt = (object)['rows' => '[{"id":"' . $this->repTableTinyIntUid . '","type":""}]'];
+        $obj->delete($httpDataBigInt);
+        $obj->delete($httpDataChar);
+        $obj->delete($httpDataSmallInt);
+        $obj->delete($httpDataInteger);
+        $obj->delete($httpDataVarChar);
+        $obj->delete($httpDataTinyInt);
     }
 
     /**
@@ -1066,27 +1087,6 @@ class PmTablesProxyTest extends TestCase
 
         //This method deletes a specific row of a PM table
         $obj->dataDestroy($httpDataDestroyTest);
-    }
-
-    /**
-     * Delete all the PM Tables created for the test
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-        $obj = new pmTablesProxy();
-        $httpDataBigInt = (object)['rows' => '[{"id":"' . $this->repTableBigIntUid . '","type":""}]'];
-        $httpDataChar = (object)['rows' => '[{"id":"' . $this->repTableCharUid . '","type":""}]'];
-        $httpDataSmallInt = (object)['rows' => '[{"id":"' . $this->repTableSmallIntUid . '","type":""}]'];
-        $httpDataInteger = (object)['rows' => '[{"id":"' . $this->repTableIntegerUid . '","type":""}]'];
-        $httpDataVarChar = (object)['rows' => '[{"id":"' . $this->repTableVarCharUid . '","type":""}]'];
-        $httpDataTinyInt = (object)['rows' => '[{"id":"' . $this->repTableTinyIntUid . '","type":""}]'];
-        $obj->delete($httpDataBigInt);
-        $obj->delete($httpDataChar);
-        $obj->delete($httpDataSmallInt);
-        $obj->delete($httpDataInteger);
-        $obj->delete($httpDataVarChar);
-        $obj->delete($httpDataTinyInt);
     }
     
     /**

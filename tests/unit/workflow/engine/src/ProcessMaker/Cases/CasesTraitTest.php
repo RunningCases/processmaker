@@ -30,7 +30,7 @@ class CasesTraitTest extends TestCase
     /**
      * Set up method.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
     }

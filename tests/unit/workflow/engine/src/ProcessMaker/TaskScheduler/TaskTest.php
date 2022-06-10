@@ -23,7 +23,7 @@ class TaskTest extends TestCase
     /**
      * Method setUp.
      */
-    protected function setUp()
+    public function setUp(): void
     {
         if (version_compare(phpversion(), 7.3, '>') ) {
             $this->markTestSkipped('The changes in third party are not available');
@@ -38,7 +38,7 @@ class TaskTest extends TestCase
     /**
      * Method tearDown.
      */
-    protected function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
     }

@@ -32,7 +32,7 @@ class LightTest extends TestCase
      * This is using instead of DatabaseTransactions
      * @todo DatabaseTransactions is having conflicts with propel
      */
-    protected function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->workspace = env("DB_DATABASE", "test");

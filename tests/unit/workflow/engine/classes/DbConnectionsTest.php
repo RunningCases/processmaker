@@ -16,7 +16,7 @@ class DbConnectionsTest extends TestCase
     /**
      * Setup method.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->dbConnections = new DbConnections();

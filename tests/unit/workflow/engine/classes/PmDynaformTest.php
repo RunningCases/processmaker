@@ -17,7 +17,7 @@ class PmDynaformTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $_SERVER["REQUEST_URI"] = "";
