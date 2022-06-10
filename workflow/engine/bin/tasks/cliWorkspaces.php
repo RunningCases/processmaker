@@ -465,6 +465,17 @@ CLI::taskArg('caseNumberTo', true);
 CLI::taskRun('migrate_case_title_to_threads');
 
 /**
+ * Convert Output Documents generator from 'HTML2PDF' to 'TCPDF', because thirdparty related is obsolete and doesn't work over PHP 7.x.
+ */
+CLI::taskName('convert-out-docs-from-html2pdf-to-tcpdf');
+CLI::taskDescription(<<<EOT
+    Convert Output Documents generator from 'HTML2PDF' to 'TCPDF', because thirdparty related is obsolete and doesn't work over PHP 7.x.
+EOT
+);
+CLI::taskArg('workspace');
+CLI::taskRun('convert_out_docs_from_html2pdf_to_tcpdf');
+
+/**
  * Function run_info
  * 
  * @param array $args
@@ -1715,4 +1726,16 @@ function migrate_case_title_to_threads($args)
     //The constructor requires an argument, so we send an empty value in order to use the class.
     $workspaceTools = new WorkspaceTools('');
     $workspaceTools->migrateCaseTitleToThreads($args);
+}
+
+/**
+ * Convert Output Documents generator from 'HTML2PDF' to 'TCPDF', because thirdparty related is obsolete and doesn't work over PHP 7.x.
+ *
+ * @param array $args
+ */
+function convert_out_docs_from_html2pdf_to_tcpdf($args)
+{
+    // The constructor requires an argument, so we send an empty value in order to use the class.
+    $workspaceTools = new WorkspaceTools('');
+    $workspaceTools->convertOutDocsHtml2Ps2Pdf($args);
 }
