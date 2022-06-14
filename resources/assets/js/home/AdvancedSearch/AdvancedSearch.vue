@@ -159,6 +159,7 @@ export default {
             tableData: [],
             options: {
                 filterable: false,
+                perPageValues: [],
                 headings: {
                     case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
                     process_category: this.$i18n.t("ID_CATEGORY_PROCESS"),
