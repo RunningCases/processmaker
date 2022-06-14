@@ -310,6 +310,7 @@ export default {
       icon:"fas fa-edit",
       options: {
         filterable: false,
+        perPageValues: [],
         headings: {
           detail: this.$i18n.t("ID_DETAIL_CASE"),
           case_number: this.$i18n.t("ID_MYCASE_NUMBER"),

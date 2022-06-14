@@ -337,6 +337,7 @@ export default {
             icon: "fas fa-check-circle",
             options: {
                 filterable: false,
+                perPageValues: [],
                 texts: {
                     count: this.$i18n.t("ID_SHOWING_FROM_RECORDS_COUNT"),
                     first: this.$i18n.t("ID_FIRST"),
@@ -1278,9 +1279,6 @@ export default {
     padding-bottom: 20px;
     padding-left: 50px;
     padding-right: 50px;
-}
-.VueTables__limit {
-    display: none;
 }
 
 .v-card-text-dark {
