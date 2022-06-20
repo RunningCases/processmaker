@@ -6138,6 +6138,12 @@ msgid "Delete"
 msgstr "Delete"
 
 # TRANSLATION
+# LABEL/ID_DELETE_EMAIL_SETTINGS
+#: LABEL/ID_DELETE_EMAIL_SETTINGS
+msgid "Delete Email Settings"
+msgstr "Delete Email Settings"
+
+# TRANSLATION
 # LABEL/ID_DELETED
 #: LABEL/ID_DELETED
 msgid "Deleted"

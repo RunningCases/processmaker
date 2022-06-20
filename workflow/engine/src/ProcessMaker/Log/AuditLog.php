@@ -104,9 +104,10 @@ class AuditLog
             "ExportLanguage" => G::LoadTranslation("ID_EXPORT_LANGUAGE"),
             "DeleteLanguage" => G::LoadTranslation("ID_DELETE_LAGUAGE"),
             // Settings
-            "UploadSystemSettings" => G::LoadTranslation("ID_UPLOAD_SYSTEM_SETTINGS"),
-            "UpdateEmailSettings" => G::LoadTranslation("ID_UPDATE_EMAIL_SETTINGS"),
             "CreateEmailSettings" => G::LoadTranslation("ID_CREATE_EMAIL_SETTINGS"),
+            "DeleteEmailSettings" => G::LoadTranslation("ID_DELETE_EMAIL_SETTINGS"),
+            "UpdateEmailSettings" => G::LoadTranslation("ID_UPDATE_EMAIL_SETTINGS"),
+            "UploadSystemSettings" => G::LoadTranslation("ID_UPLOAD_SYSTEM_SETTINGS"),
             // Logo
             "UploadLogo" => G::LoadTranslation("ID_UPLOAD_LOGO"),
             "DeleteLogo" => G::LoadTranslation("ID_DELETE_LOGO"),
