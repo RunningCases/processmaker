@@ -353,7 +353,7 @@ class DB
      * @see DB::parseDSN(), DB_common::setOption(), DB::isError()
      * @access public
      */
-    function &connect($dsn, $options = array())
+    public static function &connect($dsn, $options = array())
     {
         $dsninfo = DB::parseDSN($dsn);
         $dsninfo['phptype'] = $dsninfo['phptype'] === 'mysql' ? 'mysqli' : $dsninfo['phptype'];
@@ -427,7 +427,7 @@ class DB
      *
      * @access public
      */
-    function isError($value)
+    public static function isError($value)
     {
         return is_a($value, 'DB_Error');
     }
@@ -569,7 +569,7 @@ class DB
      *
      * @author Tomas V.V.Cox <cox@idecnet.com>
      */
-    function parseDSN($dsn)
+    public static function parseDSN($dsn)
     {
         $parsed = array(
             'phptype'  => false,
@@ -703,7 +703,7 @@ class DB
      * @return boolean true if the extension was already or successfully
      *                 loaded, false if it could not be loaded
      */
-    function assertExtension($name)
+    public static function assertExtension($name)
     {
         if (!extension_loaded($name)) {
             $dlext = OS_WINDOWS ? '.dll' : '.so';

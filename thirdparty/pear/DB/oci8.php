@@ -67,7 +67,7 @@ class DB_oci8 extends DB_common
 
     function __construct()
     {
-        $this->DB_common();
+        parent::__construct();
         $this->phptype = 'oci8';
         $this->dbsyntax = 'oci8';
         $this->features = array(

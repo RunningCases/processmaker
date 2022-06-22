@@ -53,7 +53,7 @@ class DB_pgsql extends DB_common
 
     function __construct()
     {
-        $this->DB_common();
+        parent::__construct();
         $this->phptype = 'pgsql';
         $this->dbsyntax = 'pgsql';
         $this->features = array(
