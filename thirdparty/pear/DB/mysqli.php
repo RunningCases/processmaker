@@ -117,7 +117,7 @@ class DB_mysqli extends DB_common
      */
     function __construct()
     {
-        $this->DB_common();
+        parent::__construct();
         $this->phptype = 'mysqli';
         $this->dbsyntax = 'mysqli';
         $this->features = array(

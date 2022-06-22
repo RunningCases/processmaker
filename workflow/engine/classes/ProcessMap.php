@@ -6804,7 +6804,7 @@ class ProcessMap
         return $aIDocs;
     }
 
-    public function getMaximunTaskX($processUid)
+    public static function getMaximunTaskX($processUid)
     {
         $criteria = new Criteria('workflow');
         $criteria->addSelectColumn('MAX(TAS_POSX) AS MAX_X');

@@ -775,7 +775,7 @@ class ReportTables
      * @access public
      * @return boolean
      */
-    public function tableExist()
+    public static function tableExist()
     {
         $bExists = true;
 
