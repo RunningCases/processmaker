@@ -296,13 +296,11 @@ export default {
                     refresh: false,
                     });
                     this.$emit("cleanDefaultOption");
-
                     api.cases.pendingtask({APP_NUMBER:params.openapplicationuid}).then((response) => {
                         if (response.data && response.data[0] && response.data[0]['USR_ID'] == 0) {
                             this.claimCase(response.data[0]);
                         }
-                    })
-
+                    });
                 }
             }
         },

@@ -2551,7 +2551,7 @@ class Cases
             // Filter specific case
             $query->case($caseNumber);
             // Filter specific index
-            if (is_int($index)) {
+            if ($index > 0) {
                 $query->index($index);
             }
             $results = $query->get();
