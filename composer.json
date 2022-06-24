@@ -92,7 +92,6 @@
             "workflow/engine/includes/",
             "thirdparty/jsmin/jsmin.php",
             "thirdparty/pear",
-            "thirdparty/html2ps_pdf",
             "thirdparty/phing",
             "thirdparty/pake",
             "rbac/engine/classes/"

@@ -378,7 +378,6 @@ $virtualURITable['/(sys*)'] = false;
 $virtualURITable["/errors/(*)"] = ($skinPathErrors != "") ? $skinPathErrors : PATH_GULLIVER_HOME . "methods" . PATH_SEP . "errors" . PATH_SEP;
 $virtualURITable['/gulliver/(*)'] = PATH_GULLIVER_HOME . 'methods/';
 $virtualURITable['/controls/(*)'] = PATH_GULLIVER_HOME . 'methods/controls/';
-$virtualURITable['/html2ps_pdf/(*)'] = PATH_THIRDPARTY . 'html2ps_pdf/';
 //$virtualURITable['/images/'] = 'errorFile';
 //$virtualURITable['/skins/'] = 'errorFile';
 //$virtualURITable['/files/'] = 'errorFile';

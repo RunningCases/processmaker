@@ -65,7 +65,6 @@ $docuroot = explode ( PATH_SEP , $_SERVER['DOCUMENT_ROOT'] );
   $virtualURITable['/(sys*)']                        = FALSE;
   $virtualURITable['/errors/(*)']                    = PATH_GULLIVER_HOME . 'methods/errors/';
   $virtualURITable['/controls/(*)']                  = PATH_GULLIVER_HOME . 'methods/controls/';
-  $virtualURITable['/html2ps_pdf/(*)']               = PATH_THIRDPARTY . 'html2ps_pdf/';
   $virtualURITable['/Krumo/(*)']                     = PATH_THIRDPARTY . 'krumo/';
   $virtualURITable['/codepress/(*)']                 = PATH_THIRDPARTY . 'codepress/';
 
