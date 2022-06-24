@@ -7,6 +7,7 @@ use ProcessMaker\BusinessModel\Process as BmProcess;
 /*----------------------------------********---------------------------------*/
 use ProcessMaker\ChangeLog\ChangeLog;
 /*----------------------------------********---------------------------------*/
+use ProcessMaker\BusinessModel\TaskSchedulerBM;
 use ProcessMaker\BusinessModel\WebEntry;
 use ProcessMaker\Core\Installer;
 use ProcessMaker\Core\ProcessesManager;
@@ -1125,6 +1126,7 @@ class WorkspaceTools
         $this->upgradeSchema($systemSchemaRbac, false, true); // Perform upgrade to RBAC
         $this->upgradeData();
         $this->checkRbacPermissions(); //check or add new permissions
+        $this->checkSchedulerTable();
         $this->checkSequenceNumber();
         $this->migrateIteeToDummytask($this->name);
         /*----------------------------------********---------------------------------*/
@@ -3352,7 +3354,7 @@ class WorkspaceTools
      */
     public function checkRbacPermissions()
     {
-        CLI::logging("-> Remove the permissions depreacated in RBAC \n");
+        CLI::logging("-> Remove the permissions deprecated in RBAC \n");
         $this->removePermission();
         CLI::logging("-> Verifying roles permissions in RBAC \n");
         //Update table RBAC permissions
@@ -3366,6 +3368,17 @@ class WorkspaceTools
         } else {
             CLI::logging("    All roles permissions already updated \n");
         }
+    }
+
+    /**
+     * Check SCHEDULER table integrity.
+     * @return void
+     */
+    public function checkSchedulerTable(): void
+    {
+        CLI::logging("-> Check SCHEDULER table integrity.\n");
+        TaskSchedulerBM::checkDataIntegrity();
+        CLI::logging("    SCHEDULER table integrity was checked.\n");
     }
 
     /**
