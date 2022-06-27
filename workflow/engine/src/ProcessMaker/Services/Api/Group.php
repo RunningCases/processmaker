@@ -26,7 +26,7 @@ class Group extends Api
             $user = new User();
             $usrUid = $this->getUserId();
             // Review the permissions roles to access the API
-            if (!$user->checkPermission($usrUid, "PM_USERS") || !$user->checkPermission($usrUid, "PM_FACTORY")) {
+            if (!$user->checkPermission($usrUid, "PM_USERS") && !$user->checkPermission($usrUid, "PM_FACTORY")) {
                 throw new Exception(G::LoadTranslation("ID_USER_NOT_HAVE_PERMISSION", [$usrUid]));
             }
         } catch (Exception $e) {
