@@ -1,5 +1,6 @@
 <?php
 
+use ProcessMaker\BusinessModel\EmailServer;
 use ProcessMaker\Core\System;
 use ProcessMaker\GmailOAuth\GmailOAuth;
 use ProcessMaker\Office365OAuth\Office365OAuth;
@@ -11,7 +12,6 @@ $RBAC->allows(basename(__FILE__), $option);
 switch ($option) {
     case "INS":
         $arrayData = [];
-
         $server = "";
         $port = "";
         $incomingServer = "";
@@ -19,7 +19,6 @@ switch ($option) {
         $reqAuthentication = 0;
         $password = "";
         $smtpSecure = "";
-
         $cboEmailEngine = $_POST["cboEmailEngine"];
         $accountFrom = (isset($_POST["accountFrom"])) ? $_POST["accountFrom"] : "";
         $fromName = $_POST["fromName"];
@@ -45,7 +44,7 @@ switch ($option) {
         }
 
         try {
-            $arrayData = array(
+            $arrayData = [
                 "MESS_ENGINE" => $cboEmailEngine,
                 "MESS_SERVER" => $server,
                 "MESS_PORT" => $port,
@@ -60,11 +59,22 @@ switch ($option) {
                 "MESS_TRY_SEND_INMEDIATLY" => $sendTestMail,
                 "MAIL_TO" => $mailTo,
                 "MESS_DEFAULT" => $emailServerDefault
-            );
+            ];
 
-            $emailSever = new \ProcessMaker\BusinessModel\EmailServer();
-
+            $emailSever = new EmailServer();
             $arrayEmailServerData = $emailSever->create($arrayData);
+            // Register the log
+            G::auditLog(
+                "CreateEmailSettings",
+                "SetDefaultConfiguration-> " . $emailServerDefault .
+                ", EmailEngine-> " . $cboEmailEngine .
+                ", Server-> " . $server .
+                ", Port-> " . $port .
+                ", RequireAuthentication-> " . $reqAuthentication .
+                ", FromMail-> " . $fromMail .
+                ", FromName-> " . $fromName .
+                ", UseSecureConnection-> " . $smtpSecure
+            );
 
             $response["status"] = "OK";
             $response["data"] = $arrayEmailServerData;
@@ -75,9 +85,7 @@ switch ($option) {
         break;
     case "UPD":
         $arrayData = [];
-
         $emailServerUid = $_POST["emailServerUid"];
-
         $server = "";
         $port = "";
         $incomingServer = "";
@@ -85,7 +93,6 @@ switch ($option) {
         $reqAuthentication = 0;
         $password = "";
         $smtpSecure = "";
-
         $cboEmailEngine = $_POST["cboEmailEngine"];
         $accountFrom = (isset($_POST["accountFrom"])) ? $_POST["accountFrom"] : "";
         $fromName = $_POST["fromName"];
@@ -111,7 +118,7 @@ switch ($option) {
         }
 
         try {
-            $arrayData = array(
+            $arrayData = [
                 "MESS_ENGINE" => $cboEmailEngine,
                 "MESS_SERVER" => $server,
                 "MESS_PORT" => $port,
@@ -126,11 +133,23 @@ switch ($option) {
                 "MESS_TRY_SEND_INMEDIATLY" => $sendTestMail,
                 "MAIL_TO" => $mailTo,
                 "MESS_DEFAULT" => $emailServerDefault
-            );
+            ];
 
-            $emailSever = new \ProcessMaker\BusinessModel\EmailServer();
-
+            $emailSever = new EmailServer();
             $arrayEmailServerData = $emailSever->update($emailServerUid, $arrayData);
+            // Register the log
+            G::auditLog(
+                "UpdateEmailSettings",
+                "EmailServer-> " . $emailServerUid .
+                ", SetDefaultConfiguration-> " . $emailServerDefault .
+                ", EmailEngine-> " . $cboEmailEngine .
+                ", Server-> " . $server .
+                ", Port-> " . $port .
+                ", RequireAuthentication-> " . $reqAuthentication .
+                ", FromMail-> " . $fromMail .
+                ", FromName-> " . $fromName .
+                ", UseSecureConnection-> " . $smtpSecure
+            );
 
             $response["status"] = "OK";
             $response["data"] = $arrayEmailServerData;
@@ -144,9 +163,13 @@ switch ($option) {
         $emailServerUid = $_POST["emailServerUid"];
 
         try {
-            $emailSever = new \ProcessMaker\BusinessModel\EmailServer();
-
+            $emailSever = new EmailServer();
             $result = $emailSever->delete($emailServerUid);
+            // Register the log
+            G::auditLog(
+                "DeleteEmailSettings",
+                "EmailServer-> " . $emailServerUid
+            );
 
             $response["status"] = "OK";
         } catch (Exception $e) {
@@ -157,16 +180,14 @@ switch ($option) {
     case "LST":
         $pageSize = $_POST["pageSize"];
         $search = $_POST["search"];
-
         $sortField = (isset($_POST["sort"])) ? $_POST["sort"] : "";
         $sortDir = (isset($_POST["dir"])) ? $_POST["dir"] : "";
         $start = (isset($_POST["start"])) ? $_POST["start"] : 0;
         $limit = (isset($_POST["limit"])) ? $_POST["limit"] : $pageSize;
 
         try {
-            $emailSever = new \ProcessMaker\BusinessModel\EmailServer();
-
-            $result = $emailSever->getEmailServers(array("filter" => $search), $sortField, $sortDir, $start, $limit);
+            $emailSever = new EmailServer();
+            $result = $emailSever->getEmailServers(["filter" => $search], $sortField, $sortDir, $start, $limit);
 
             $response["status"] = "OK";
             $response["success"] = true;
@@ -205,7 +226,7 @@ switch ($option) {
         }
 
         try {
-            $arrayData = array(
+            $arrayData = [
                 "MESS_ENGINE" => $cboEmailEngine,
                 "MESS_SERVER" => $server,
                 "MESS_PORT" => $port,
@@ -218,10 +239,9 @@ switch ($option) {
                 "MESS_TRY_SEND_INMEDIATLY" => $sendTestMail,
                 "MAIL_TO" => $mailTo,
                 "MESS_DEFAULT" => $emailServerDefault
-            );
+            ];
 
-            $emailSever = new \ProcessMaker\BusinessModel\EmailServer();
-
+            $emailSever = new EmailServer();
             $arrayEmailServerData = $emailSever->testConnection($arrayData);
 
             $response["data"] = $arrayEmailServerData;
