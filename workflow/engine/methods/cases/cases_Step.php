@@ -780,6 +780,7 @@ try {
                 $hiddenName = "form[TASKS][" . $sKey . "][TAS_UID]";
                 $hiddenField = '<input type="hidden" name="' . $hiddenName . '" id="' . $hiddenName . '" value="' . $aValues['NEXT_TASK']['TAS_UID'] . '">';
                 $aFields['TASK'][$sKey]['NEXT_TASK']['TAS_HIDDEN_FIELD'] = $hiddenField;
+                $aFields['TASK'][$sKey]['NEXT_TASK']['USR_HIDDEN_FIELD'] = '';
                 $aFields['TASK'][$sKey]['NEXT_TASK']['ROU_FINISH_FLAG'] = $aFields['TASK'][$sKey]['NEXT_TASK']['ROU_FINISH_FLAG'] ?? false;
                 $aFields['TASK'][$sKey]['NEXT_TASK']['TAS_NEXT'] = $aFields['TASK'][$sKey]['NEXT_TASK']['TAS_NEXT'] ?? '';
 
