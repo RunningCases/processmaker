@@ -57850,6 +57850,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_DELEGATE_USER','en','Delegated User','2014-01-15') ,
 ( 'LABEL','ID_DELEGATION_DATE','en','Delegation Date','2014-01-15') ,
 ( 'LABEL','ID_DELETE','en','Delete','2014-01-15') ,
+( 'LABEL','ID_DELETE_EMAIL_SETTINGS','en','Delete Email Settings','2022-06-29') ,
 ( 'LABEL','ID_DELETED','en','Deleted','2014-01-15') ,
 ( 'LABEL','ID_DELETED_SUCCESSFULLY','en','Deleted Successfully','2014-01-15') ,
 ( 'LABEL','ID_DELETE_ACTION','en','Delete case','2020-01-15') ,
