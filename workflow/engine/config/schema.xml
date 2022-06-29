@@ -1002,6 +1002,8 @@
         <column name="OUT_DOC_PDF_SECURITY_OWNER_PASSWORD" type="VARCHAR" size="32" required="false" default=""/>
         <column name="OUT_DOC_PDF_SECURITY_PERMISSIONS" type="VARCHAR" size="150" required="false" default=""/>
         <column name="OUT_DOC_OPEN_TYPE" type="INTEGER" default="1"/>
+        <column name="OUT_DOC_HEADER" type="LONGVARCHAR" required="false"/>
+        <column name="OUT_DOC_FOOTER" type="LONGVARCHAR" required="false"/>
         <unique name="INDEX_OUT_DOC_ID">
             <unique-column name="OUT_DOC_ID"/>
         </unique>

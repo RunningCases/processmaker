@@ -288,33 +288,35 @@ class EmailServerTest extends TestCase
     public function it_should_test_the_send_test_mail_method()
     {
         $string = ini_get("sendmail_path");
-        if (!is_executable($string)) {
-            $this->markTestIncomplete($string . " not found");
+        //in current versions this value has extra parameters and must be cleaned
+        $result = explode(" ", $string);
+        $path = $result[0];
+        if (is_executable($path)) {
+            // The data that will be sent to the method
+            $data = [
+                "FROM_EMAIL" => "admin@processmaker.com",
+                "FROM_NAME" => "Administrator",
+                "MESS_ENGINE" => "MAIL",
+                "MESS_SERVER" => "localhost",
+                "MESS_PORT" => 25,
+                "MESS_ACCOUNT" => "admin@processmaker.com",
+                "MESS_PASSWORD" => "",
+                "TO" => "admin@processmaker.com",
+                "MESS_RAUTH" => true
+            ];
+
+            // Create the EmailServer object
+            $emailServer = new EmailServer();
+            // Call the sendTestMail method
+            $result = $emailServer->sendTestMail($data);
+
+            // Assert the status is true
+            $this->assertTrue($result['status']);
+            // Assert the success is true
+            $this->assertTrue($result['success']);
+            // Assert the message of the result
+            $this->assertEquals('**ID_MAIL_TEST_SUCCESS**', $result['msg']);
         }
-        // The data that will be sent to the method
-        $data = [
-            "FROM_EMAIL" => "admin@processmaker.com",
-            "FROM_NAME" => "Administrator",
-            "MESS_ENGINE" => "MAIL",
-            "MESS_SERVER" => "localhost",
-            "MESS_PORT" => 25,
-            "MESS_ACCOUNT" => "admin@processmaker.com",
-            "MESS_PASSWORD" => "",
-            "TO" => "admin@processmaker.com",
-            "MESS_RAUTH" => true
-        ];
-
-        // Create the EmailServer object
-        $emailServer = new EmailServer();
-        // Call the sendTestMail method
-        $result = $emailServer->sendTestMail($data);
-
-        // Assert the status is true
-        $this->assertTrue($result['status']);
-        // Assert the success is true
-        $this->assertTrue($result['success']);
-        // Assert the message of the result
-        $this->assertEquals('**ID_MAIL_TEST_SUCCESS**', $result['msg']);
     }
 
     /**

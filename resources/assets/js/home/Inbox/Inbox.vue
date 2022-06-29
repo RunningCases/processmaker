@@ -341,6 +341,7 @@ export default {
       icon:"fas fa-check-circle",
       options: {
         filterable: false,
+        perPageValues: [],
         headings: {
           detail: this.$i18n.t("ID_DETAIL_CASE"),
           case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
@@ -861,10 +862,6 @@ export default {
   padding-left: 50px;
   padding-right: 50px;
 }
-.VueTables__limit {
-  display: none;
-}
-
 .v-card-text-dark {
   color: #343944;
   display: inline-block;
