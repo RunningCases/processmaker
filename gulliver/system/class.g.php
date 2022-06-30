@@ -5981,7 +5981,7 @@ class G
         if ($browser == null || $version == null) {
             $info = G::getBrowser();
             $browser = $info['name'];
-            $version = $info['version'];
+            $version = intval($info['version']);
         }
 
         if (

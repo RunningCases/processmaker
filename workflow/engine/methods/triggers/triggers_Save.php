@@ -32,7 +32,7 @@ if (isset( $sfunction ) && $sfunction == 'lookforNameTrigger') {
     try {
         $oTrigger = new Triggers();
 
-        $oProcessMap = new ProcessMap( new DBConnection() );
+        $oProcessMap = new ProcessMap();
         if (isset( $_POST['form'] )) {
             $value = $_POST['form'];
         } else {
@@ -83,10 +83,6 @@ if (isset( $sfunction ) && $sfunction == 'lookforNameTrigger') {
             }
             G::auditLog("UpdateTrigger", $description);
         }
-
-        //if (! isset( $_POST['mode'] )) {
-        //    $oProcessMap->triggersList( $value['PRO_UID'] );
-        //}
 
         $response["success"] = true;
         $response["msg"] = G::LoadTranslation("ID_TRIGGERS_SAVED");
