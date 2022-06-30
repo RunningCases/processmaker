@@ -8,7 +8,7 @@ if (!class_exists('Triggers')) {
 }
 $triggers = new Triggers();
 
-$processMap = new ProcessMap(new DBConnection());
+$processMap = new ProcessMap();
 
 $post = $_POST;
 

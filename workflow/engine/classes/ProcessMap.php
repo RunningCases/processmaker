@@ -142,22 +142,6 @@ class ProcessMap
                         $aRow2['FINISH'] = '';
                     }
 
-                    /*
-                      if (($aRow2['FINISH'] == null) && ($aRow1['TAS_UID'] == $sTask)) {
-                      $oTask->color = '#FF0000';
-                      } else {
-                      if ($aRow2['CANT'] != 0) {
-                      if ($aRow2['FINISH'] == null) {
-                      //$oTask->color = '#FF9900';
-                      $oTask->color = '#FF0000';
-                      } else {
-                      $oTask->color = '#006633';
-                      }
-                      } else {
-                      $oTask->color = "#939598";
-                      }
-                      }
-                     */
                     if (empty($aRow2["FINISH"]) && $aRow1["TAS_UID"] == $sTask) {
                         $oTask->color = "#FF0000"; //Red
                     } else {

@@ -783,7 +783,7 @@ class FilesManager
                 $sMainDirectory = 'public';
             }
             if (file_exists($path)) {
-                $oProcessMap = new \ProcessMap(new \DBConnection());
+                $oProcessMap = new \ProcessMap();
                 $oProcessMap->downloadFile($sProcessUID,$sMainDirectory,$sSubDirectory,$sFile);
                 die();
             } else {

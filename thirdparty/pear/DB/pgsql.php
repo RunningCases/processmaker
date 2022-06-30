@@ -123,12 +123,8 @@ class DB_pgsql extends DB_common
 
         $connect_function = $persistent ? 'pg_pconnect' : 'pg_connect';
 
-        $ini = ini_get('track_errors');
-        if ($ini) {
-            $conn = @$connect_function($connstr);
-        } else {
-            $conn = @$connect_function($connstr);
-        }
+        $conn = @$connect_function($connstr);
+
         if ($conn == false) {
             $lastError = error_get_last();
             $errorMessage = $lastError['message'] ?? 'Connection error.';

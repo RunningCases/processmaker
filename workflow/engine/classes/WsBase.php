@@ -2424,7 +2424,7 @@ class WsBase
             $oAppDelay = new AppDelay();
             $aRow = $oAppDelay->getCasesCancelOrPaused($caseId);
             if (is_array($aRow)) {
-                if (isset($aRow['APP_DISABLE_ACTION_USER']) && $aRow['APP_DISABLE_ACTION_USER'] != 0 && isset($aRow['APP_DISABLE_ACTION_DATE']) && $aRow['APP_DISABLE_ACTION_DATE'] != '') {
+                if (isset($aRow['APP_DISABLE_ACTION_USER']) && intval($aRow['APP_DISABLE_ACTION_USER']) != 0 && isset($aRow['APP_DISABLE_ACTION_DATE']) && $aRow['APP_DISABLE_ACTION_DATE'] != '') {
                     $result = new WsResponse(19, G::LoadTranslation('ID_CASE_IN_STATUS') . " " . $aRow['APP_TYPE']);
 
                     return $result;
@@ -3486,7 +3486,7 @@ class WsBase
             $respView = $case->getAllObjectsFrom($processUid, $caseUid, $taskUid, $userUid, "VIEW");
             $respBlock = $case->getAllObjectsFrom($processUid, $caseUid, $taskUid, $userUid, "BLOCK");
 
-            if ($respView["CASES_NOTES"] == 0 && $respBlock["CASES_NOTES"] == 0) {
+            if (intval($respView["CASES_NOTES"]) == 0 && intval($respBlock["CASES_NOTES"]) == 0) {
                 $result = new WsResponse(100, G::LoadTranslation("ID_CASES_NOTES_NO_PERMISSIONS"));
 
                 return $result;

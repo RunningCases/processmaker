@@ -2208,7 +2208,7 @@ class Cases
     /**
      * Get all Tasks of Case
      * Based in: processmaker/workflow/engine/classes/class.processMap.php
-     * Method:   processMap::load()
+     * Method: processMap::load()
      *
      * @param string $applicationUid Unique id of Case
      *

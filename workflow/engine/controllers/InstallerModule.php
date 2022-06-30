@@ -992,7 +992,13 @@ class InstallerModule extends Controller
                 $info->wfDatabaseExists = count($response) > 0;
                 break;
             case 'sqlsrv':
-                $arguments = array("UID" => $db_username, "PWD" => $db_password);
+                $arguments = [
+                    'UID' => $db_username,
+                    'PWD' => $db_password,
+                    'CharacterSet' => 'UTF-8',
+                    'Encrypt' => true,
+                    'TrustServerCertificate' => true
+                ];
                 $link = @sqlsrv_connect($db_hostname, $arguments);
                 $wfDatabase = $filter->validateInput($_REQUEST['wfDatabase'], 'nosql');
                 $query = "select * from sys.databases where name = '%s' ";

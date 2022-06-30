@@ -796,7 +796,7 @@ class Roles extends BaseRoles
                 $criteria->add(PermissionsPeer::PER_CODE, '%' . $filter . '%', Criteria::LIKE);
             }
 
-            if (!is_null($status) && ($status == 1 || $status == 0)) {
+            if (!is_null($status) && ($status === 1 || $status === 0)) {
                 $criteria->add(PermissionsPeer::PER_STATUS, $status);
             }
 
