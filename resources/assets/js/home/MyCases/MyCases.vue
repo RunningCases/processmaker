@@ -80,6 +80,7 @@
             ref="modal-comments"
             @postNotes="onPostNotes"
         ></ModalComments>
+        <ModalClaimCase ref="modal-claim-case" @claimCatch="claimCatch"></ModalClaimCase>
     </div>
 </template>
 
@@ -87,6 +88,7 @@
 import HeaderCounter from "../../components/home/HeaderCounter.vue";
 import ButtonFleft from "../../components/home/ButtonFleft.vue";
 import ModalNewRequest from "../ModalNewRequest.vue";
+import ModalClaimCase from "../modal/ModalClaimCase.vue";
 import MyCasesFilter from "../../components/search/MyCasesFilter";
 import ModalComments from "../modal/ModalComments.vue";
 import GroupedCell from "../../components/vuetable/GroupedCell.vue";
@@ -106,6 +108,7 @@ export default {
         ModalNewRequest,
         GroupedCell,
         ModalComments,
+        ModalClaimCase,
         ThreadTitleCell,
     },
     props: ["defaultOption", "settings"],
@@ -293,6 +296,11 @@ export default {
                     refresh: false,
                     });
                     this.$emit("cleanDefaultOption");
+                    api.cases.pendingtask({APP_NUMBER:params.openapplicationuid}).then((response) => {
+                        if (response.data && response.data[0] && response.data[0]['USR_ID'] == 0) {
+                            this.claimCase(response.data[0]);
+                        }
+                    });
                 }
             }
         },
@@ -758,6 +766,26 @@ export default {
                     id: this.id
                 });
             }
+        },
+        /**
+         * Claim case
+         *
+         * @param {object} item
+         */
+        claimCase(item) {
+            let that = this;
+            api.cases.open(_.extend({ ACTION: "unassigned" }, item)).then(() => {
+                api.cases.cases_open(_.extend({ ACTION: "todo" }, item)).then(() => {
+                that.$refs["modal-claim-case"].data = item;
+                that.$refs["modal-claim-case"].show();
+                });
+            });
+        },
+        /**
+         * Claim catch error handler message
+         */
+        claimCatch(message) {
+            this.showAlert(message, "danger");
         }
     },
 };
