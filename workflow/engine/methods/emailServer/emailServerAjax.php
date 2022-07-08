@@ -265,10 +265,27 @@ switch ($option) {
             $gmailOAuth->setSendTestMail((int) $_POST['sendTestMail']);
             $gmailOAuth->setMailTo($_POST['mailTo']);
             $gmailOAuth->setSetDefaultConfiguration((int) $_POST['setDefaultConfiguration']);
+            // Audit log parameters
+            $action = "CreateEmailSettings";
+            $content = "SetDefaultConfiguration-> " . $_POST['setDefaultConfiguration'];
             if (!empty($_POST['emailServerUid'])) {
                 $gmailOAuth->setEmailServerUid($_POST['emailServerUid']);
+                // Audit log parameters
+                $action = "UpdateEmailSettings";
+                $content = "EmailServer-> " . $_POST['emailServerUid'] .
+                           ", SetDefaultConfiguration-> " . $_POST['setDefaultConfiguration'];
             }
             $client = $gmailOAuth->getGoogleClient();
+            // Register the log
+            G::auditLog(
+                $action,
+                $content .
+                ", EmailEngine-> " . $_POST['emailEngine'] .
+                ", Server-> " . $_POST['server'] .
+                ", Port-> " . $_POST['port'] .
+                ", FromMail-> " . $_POST['senderEmail'] .
+                ", FromName-> " . $_POST['senderName']
+            );
             $response = [
                 "status" => 200,
                 "data" => $client->createAuthUrl()
@@ -296,11 +313,27 @@ switch ($option) {
             $office365OAuth->setSendTestMail((int) $_POST['sendTestMail']);
             $office365OAuth->setMailTo($_POST['mailTo']);
             $office365OAuth->setSetDefaultConfiguration((int) $_POST['setDefaultConfiguration']);
-
+            // Audit log parameters
+            $action = "CreateEmailSettings";
+            $content = "SetDefaultConfiguration-> " . $_POST['setDefaultConfiguration'];
             if (!empty($_POST['emailServerUid'])) {
                 $office365OAuth->setEmailServerUid($_POST['emailServerUid']);
+                // Audit log parameters
+                $action = "UpdateEmailSettings";
+                $content = "EmailServer-> " . $_POST['emailServerUid'] .
+                           ", SetDefaultConfiguration-> " . $_POST['setDefaultConfiguration'];
             }
             $client = $office365OAuth->getOffice365Client();
+            // Register the log
+            G::auditLog(
+                $action,
+                $content .
+                ", EmailEngine-> " . $_POST['emailEngine'] .
+                ", Server-> " . $_POST['server'] .
+                ", Port-> " . $_POST['port'] .
+                ", FromMail-> " . $_POST['senderEmail'] .
+                ", FromName-> " . $_POST['senderName']
+            );
             $response = [
                 "status" => 200,
                 "data" => $client->getAuthorizationUrl($office365OAuth->getOptions())
