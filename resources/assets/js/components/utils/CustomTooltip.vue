@@ -12,8 +12,10 @@
             v-if="showTooltip"
         >
             {{ labelTooltip }}
-            <p v-if="labelDescription !== ''">
-                {{ labelDescription }}
+            <p v-if="labelName !== '' || labelDescription !== ''">
+                <span v-if="labelName !== ''">{{ labelName }}</span>
+                <span v-if="labelName !== '' && labelDescription !== ''">:</span>
+                <span v-if="labelDescription !== ''">{{ labelDescription }}</span>
             </p>
         </b-tooltip>
     </span>
@@ -30,6 +32,7 @@ export default {
     data() {
         return {
             labelTooltip: "",
+            labelName: "",
             labelDescription: "",
             hovering: "",
             show: false,
@@ -58,6 +61,7 @@ export default {
          */
         unhoverHandler() {
             this.labelTooltip = "";
+            this.labelName = "";
             this.labelDescription = "";
             this.showTooltip = false;
             this.isLoading = false;
@@ -81,6 +85,7 @@ export default {
                     that.showTooltip = true;
                     that.isLoading = false;
                     that.labelTooltip = response.data.label;
+                    that.labelName = response.data.name;
                     that.labelDescription = response.data.description;
                 });
             }
