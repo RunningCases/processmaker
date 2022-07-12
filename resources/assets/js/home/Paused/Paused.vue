@@ -411,7 +411,7 @@ export default {
   },
   mounted() {
     let that = this;
-    // force to open case
+    // force to open case paused
     this.openDefaultCase();
     Event.$on('vue-tables.paused.sorted', function (data) {
       that.$emit("updateSettings", {
@@ -475,7 +475,7 @@ export default {
         if(this.defaultOption) {
             params = utils.getAllUrlParams(this.defaultOption);
             if (params && params.app_uid && params.del_index) {
-                this.openCase({
+                this.showModalUnpauseCase({
                     APP_UID: params.app_uid,
                     DEL_INDEX: params.del_index
                 });
