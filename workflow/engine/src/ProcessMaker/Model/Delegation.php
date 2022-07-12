@@ -791,18 +791,18 @@ class Delegation extends Model
      * Scope a self service cases
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string $user
+     * @param string $usrUid
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeSelfService($query, $user)
+    public function scopeSelfService($query, string $usrUid)
     {
         // Add Join with task filtering only the type self-service
         $query->taskAssignType('SELF_SERVICE');
         // Filtering the open threads and without users
         $query->threadOpen()->withoutUserId();
         // Filtering the cases unassigned that the user can view
-        $this->casesUnassigned($query, $user);
+        $this->casesUnassigned($query, $usrUid);
 
         return $query;
     }
@@ -1135,7 +1135,7 @@ class Delegation extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function casesUnassigned(&$query, $usrUid)
+    public function casesUnassigned(&$query, string $usrUid)
     {
         // Get the task self services related to the user
         $taskSelfService = TaskUser::getSelfServicePerUser($usrUid);
