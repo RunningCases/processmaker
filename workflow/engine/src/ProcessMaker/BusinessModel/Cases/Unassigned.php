@@ -250,7 +250,7 @@ class Unassigned extends AbstractCases
     {
         $caseList = CaseList::getCaseList($id, $type);
         $query = Delegation::query()->select();
-        $query->selfService($this->getUserId());
+        $query->selfService($this->getUserUid());
 
         $name = '';
         $description = '';

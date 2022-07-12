@@ -62,7 +62,7 @@ class TaskUser extends Model
      *
      * @return array
      */
-    public static function getSelfServicePerUser($usrUid)
+    public static function getSelfServicePerUser(string $usrUid)
     {
         //Get the groups related to the user
         $groups = GroupUser::getGroups($usrUid, 'GRP_UID');
