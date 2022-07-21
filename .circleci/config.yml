@@ -6,7 +6,7 @@ jobs:
       - image: devopsstacks/pm:n285-phpunit
       - image: circleci/mysql:8.0.13-ram
         command: |
-          mysqld --default-authentication-plugin='mysql_native_password' --optimizer-switch='derived_merge=off' --sql-mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'
+          mysqld --default-authentication-plugin='mysql_native_password' --optimizer-switch='derived_merge=off' --sql-mode='NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' --collation-server='utf8mb4_unicode_ci' --character-set-server='utf8mb4'
         environment:
           MYSQL_HOST: 127.0.0.1
           MYSQL_ROOT_PASSWORD: 'password'
@@ -27,7 +27,7 @@ jobs:
       - run:
           name: Run Test Units
           command: |
-            mkdir coverage
+            mkdir -p coverage
             vendor/phpunit/phpunit/phpunit --stop-on-error --testdox-html coverage/result.html --coverage-html coverage  --verbose tests/unit/
       - store_artifacts:
           path: coverage

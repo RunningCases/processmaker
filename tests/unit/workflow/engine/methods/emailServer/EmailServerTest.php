@@ -32,6 +32,6 @@ class EmailServerTest extends TestCase
         require_once PATH_METHODS . 'emailServer/emailServer.php';
         $content = ob_get_clean();
 
-        $this->assertContains("EMAILSERVER_LICENSED", $content);
+        $this->assertStringContainsString("EMAILSERVER_LICENSED", $content);
     }
 }

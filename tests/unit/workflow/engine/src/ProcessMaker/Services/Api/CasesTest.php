@@ -66,7 +66,7 @@ class CasesTest extends TestCase
      */
     public function it_should_test_isAllowed_method_try_exception()
     {
-        $user = factory(\ProcessMaker\Model\User::class)->create();
+        $user = \ProcessMaker\Model\User::factory()->create();
         $rest = $this->initializeRestApi($user->USR_UID);
 
         //assert exception
@@ -84,21 +84,21 @@ class CasesTest extends TestCase
      */
     public function it_should_test_isAllowed_method_doGetCaseVariables_option()
     {
-        $user = factory(\ProcessMaker\Model\User::class)->create();
-        $process = factory(\ProcessMaker\Model\Process::class)->create();
-        $task = factory(\ProcessMaker\Model\Task::class)->create([
+        $user = \ProcessMaker\Model\User::factory()->create();
+        $process = \ProcessMaker\Model\Process::factory()->create();
+        $task = \ProcessMaker\Model\Task::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'PRO_ID' => $process->PRO_ID
         ]);
-        $dynaform = factory(\ProcessMaker\Model\Dynaform::class)->create([
+        $dynaform = \ProcessMaker\Model\Dynaform::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $application = factory(\ProcessMaker\Model\Application::class)->create([
+        $application = \ProcessMaker\Model\Application::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'APP_INIT_USER' => $user->USR_UID,
             'APP_CUR_USER' => $user->USR_UID
         ]);
-        $delegation = factory(\ProcessMaker\Model\Delegation::class)->create([
+        $delegation = \ProcessMaker\Model\Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_INDEX' => 1,
@@ -138,16 +138,16 @@ class CasesTest extends TestCase
      */
     public function it_should_test_isAllowed_method_doGetCaseVariables_option_without_delegation_user()
     {
-        $user = factory(\ProcessMaker\Model\User::class)->create();
-        $process = factory(\ProcessMaker\Model\Process::class)->create();
-        $task = factory(\ProcessMaker\Model\Task::class)->create([
+        $user = \ProcessMaker\Model\User::factory()->create();
+        $process = \ProcessMaker\Model\Process::factory()->create();
+        $task = \ProcessMaker\Model\Task::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'PRO_ID' => $process->PRO_ID
         ]);
-        $dynaform = factory(\ProcessMaker\Model\Dynaform::class)->create([
+        $dynaform = \ProcessMaker\Model\Dynaform::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $application = factory(\ProcessMaker\Model\Application::class)->create([
+        $application = \ProcessMaker\Model\Application::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'APP_INIT_USER' => $user->USR_UID,
             'APP_CUR_USER' => $user->USR_UID
@@ -181,16 +181,16 @@ class CasesTest extends TestCase
      */
     public function it_should_test_isAllowed_method_doGetCaseVariables_option_with_guest_user()
     {
-        $user = factory(\ProcessMaker\Model\User::class)->create();
-        $process = factory(\ProcessMaker\Model\Process::class)->create();
-        $task = factory(\ProcessMaker\Model\Task::class)->create([
+        $user = \ProcessMaker\Model\User::factory()->create();
+        $process = \ProcessMaker\Model\Process::factory()->create();
+        $task = \ProcessMaker\Model\Task::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'PRO_ID' => $process->PRO_ID
         ]);
-        $dynaform = factory(\ProcessMaker\Model\Dynaform::class)->create([
+        $dynaform = \ProcessMaker\Model\Dynaform::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $application = factory(\ProcessMaker\Model\Application::class)->create([
+        $application = \ProcessMaker\Model\Application::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'APP_INIT_USER' => $user->USR_UID,
             'APP_CUR_USER' => $user->USR_UID
@@ -225,11 +225,11 @@ class CasesTest extends TestCase
      */
     public function test_upload_document_to_case_method()
     {
-        $user = factory(User::class)->create();
-        $application = factory(Application::class)->create([
+        $user = User::factory()->create();
+        $application = Application::factory()->create([
             'APP_CUR_USER' => $user->USR_UID
         ]);
-        $delegation = factory(Delegation::class)->create([
+        $delegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID
         ]);
         $varName = "/tmp/test.pdf";
@@ -266,11 +266,11 @@ class CasesTest extends TestCase
      */
     public function test_exception_upload_document_to_case_method()
     {
-        $user = factory(User::class)->create();
-        $application = factory(Application::class)->create([
+        $user = User::factory()->create();
+        $application = Application::factory()->create([
             'APP_CUR_USER' => $user->USR_UID
         ]);
-        $delegation = factory(Delegation::class)->create([
+        $delegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID
         ]);
         $varName = "/tmp/test.pdf";

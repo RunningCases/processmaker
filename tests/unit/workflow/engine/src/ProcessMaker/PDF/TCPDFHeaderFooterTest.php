@@ -20,7 +20,7 @@ class TCPDFHeaderFooterTest extends TestCase
     /**
      * setUp method.
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->object = new TCPDFHeaderFooter('P', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
@@ -36,7 +36,7 @@ class TCPDFHeaderFooterTest extends TestCase
     /**
      * tearDown method.
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
     }

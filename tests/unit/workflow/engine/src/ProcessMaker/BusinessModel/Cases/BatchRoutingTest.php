@@ -2,7 +2,6 @@
 
 namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use ProcessMaker\BusinessModel\Cases\BatchRouting;
 use ProcessMaker\Model\Consolidated;
 use ProcessMaker\Model\Delegation;
@@ -15,14 +14,13 @@ use Tests\TestCase;
  */
 class BatchRoutingTest extends TestCase
 {
-    use DatabaseTransactions;
-
     /**
      * Method set up.
      */
     public function setUp(): void
     {
         parent::setUp();
+        $this->truncateNonInitialModels();
     }
 
     /**
@@ -32,8 +30,8 @@ class BatchRoutingTest extends TestCase
      */
     public function createConsolidated()
     {
-        $consolidated = factory(Consolidated::class)->states('foreign_keys')->create();
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+        $consolidated = Consolidated::factory()->foreign_keys()->create();
+        $delegation = Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'TAS_UID' => $consolidated->TAS_UID,
         ]);

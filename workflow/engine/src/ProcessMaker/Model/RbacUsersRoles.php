@@ -2,10 +2,13 @@
 
 namespace ProcessMaker\Model;
 
+use App\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class RbacUsersRoles extends Model
 {
+    use HasFactory;
+
     protected $table = 'RBAC_USERS_ROLES';
     public $timestamps = false;
 

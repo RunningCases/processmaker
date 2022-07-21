@@ -2,6 +2,7 @@
 
 namespace ProcessMaker\Model;
 
+use App\Factories\HasFactory;
 use Exception;
 use G;
 use Illuminate\Database\Eloquent\Model;
@@ -10,6 +11,8 @@ use ProcessMaker\Model\RbacUsers;
 
 class GroupUser extends Model
 {
+    use HasFactory;
+
     protected $table = 'GROUP_USER';
     // We do not have create/update timestamps for this table
     public $timestamps = false;

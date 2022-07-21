@@ -24,8 +24,8 @@ class AppTimeoutActionTest extends TestCase
      */
     public function it_set_get_case_uid()
     {
-        factory(AppTimeoutAction::class)->create();
-        $timeout = factory(AppTimeoutAction::class)->create();
+        AppTimeoutAction::factory()->create();
+        $timeout = AppTimeoutAction::factory()->create();
         $timeout->setCaseUid($timeout->APP_UID);
         $this->assertEquals($timeout->getCaseUid(), $timeout->APP_UID);
     }
@@ -39,8 +39,8 @@ class AppTimeoutActionTest extends TestCase
      */
     public function it_set_get_index()
     {
-        factory(AppTimeoutAction::class)->create();
-        $timeout = factory(AppTimeoutAction::class)->create();
+        AppTimeoutAction::factory()->create();
+        $timeout = AppTimeoutAction::factory()->create();
         $timeout->setIndex($timeout->DEL_INDEX);
         $this->assertEquals($timeout->getIndex(), $timeout->DEL_INDEX);
     }
@@ -53,8 +53,8 @@ class AppTimeoutActionTest extends TestCase
      */
     public function it_filter_a_specific_case()
     {
-        factory(AppTimeoutAction::class)->create();
-        $timeout = factory(AppTimeoutAction::class)->create();
+        AppTimeoutAction::factory()->create();
+        $timeout = AppTimeoutAction::factory()->create();
         $this->assertCount(1, $timeout->case($timeout->APP_UID)->get());
     }
 
@@ -66,8 +66,8 @@ class AppTimeoutActionTest extends TestCase
      */
     public function it_filter_a_specific_index()
     {
-        factory(AppTimeoutAction::class)->create();
-        $timeout = factory(AppTimeoutAction::class)->create();
+        AppTimeoutAction::factory()->create();
+        $timeout = AppTimeoutAction::factory()->create();
         $this->assertCount(1, $timeout->case($timeout->APP_UID)->index($timeout->DEL_INDEX)->get());
     }
 
@@ -79,7 +79,7 @@ class AppTimeoutActionTest extends TestCase
      */
     public function it_return_the_case_executed_once_one_thread()
     {
-        $records = factory(AppTimeoutAction::class, 5)->create();
+        $records = AppTimeoutAction::factory(5)->create();
         foreach ($records as $row) {
             $appUid = $row->APP_UID;
             $delIndex = $row->DEL_INDEX;
@@ -100,13 +100,13 @@ class AppTimeoutActionTest extends TestCase
      */
     public function it_return_the_case_executed_once_more_than_one_thread()
     {
-        $records = factory(AppTimeoutAction::class, 5)->create();
+        $records = AppTimeoutAction::factory(5)->create();
         foreach ($records as $row) {
             $appUid = $row->APP_UID;
             $delIndex = $row->DEL_INDEX;
         }
         // Create other thread in the same case
-        factory(AppTimeoutAction::class)->create([
+        AppTimeoutAction::factory()->create([
             'APP_UID' => $appUid,
             'DEL_INDEX' => $delIndex + 1,
         ]);

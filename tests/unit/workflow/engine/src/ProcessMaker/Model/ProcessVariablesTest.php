@@ -19,23 +19,23 @@ class ProcessVariablesTest extends TestCase
      */
     public function it_should_test_process_scope_in_process_variables_model()
     {
-        $process = factory(Process::class, 2)->create();
+        $process = Process::factory(2)->create();
 
-        factory(ProcessVariables::class)->create(
+        ProcessVariables::factory()->create(
             [
                 'PRJ_UID' => $process[0]['PRO_UID'],
                 'VAR_SQL' => 'SELECT * FROM USERS WHERE USR_UID="213" UNION SELECT * from PROCESS'
             ]
         );
 
-        factory(ProcessVariables::class)->create(
+        ProcessVariables::factory()->create(
             [
                 'PRJ_UID' => $process[1]['PRO_UID'],
                 'VAR_SQL' => ''
             ]
         );
 
-        factory(ProcessVariables::class)->create(
+        ProcessVariables::factory()->create(
             [
                 'PRJ_UID' => $process[0]['PRO_UID'],
                 'VAR_SQL' => ''
@@ -62,7 +62,7 @@ class ProcessVariablesTest extends TestCase
      */
     public function it_get_variable()
     {
-        $table = factory(ProcessVariables::class)->create();
+        $table = ProcessVariables::factory()->create();
         $result = ProcessVariables::getVariable($table->VAR_UID);
         $this->assertNotEmpty($result);
     }
@@ -75,9 +75,9 @@ class ProcessVariablesTest extends TestCase
      */
     public function it_list_variables_by_process()
     {
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
 
-        factory(ProcessVariables::class)->create([
+        ProcessVariables::factory()->create([
                 'PRJ_UID' => $process->PRO_UID,
                 'PRO_ID' => $process->PRO_ID,
             ]
@@ -96,11 +96,11 @@ class ProcessVariablesTest extends TestCase
      */
     public function it_list_variables_type_by_process()
     {
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         $varType = 'integer';
         $varTypeId = 2;
         for ($x = 1; $x <= 5; $x++) {
-            $processVar = factory(ProcessVariables::class)->states('foreign_keys')->create([
+            $processVar = ProcessVariables::factory()->foreign_keys()->create([
                 'PRO_ID' => $process->PRO_ID,
                 'PRJ_UID' => $process->PRO_UID,
                 'VAR_FIELD_TYPE' => $varType,

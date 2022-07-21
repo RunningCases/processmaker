@@ -38,8 +38,8 @@ class EmailEventTest extends TestCase
     public function it_should_test_the_update_event_method()
     {
         EmailServerModel::query()->delete();
-        $emailServer = factory(EmailServerModel::class)->create();
-        $emailEventFactory = factory(EmailEvent::class)->create([
+        $emailServer = EmailServerModel::factory()->create();
+        $emailEventFactory = EmailEvent::factory()->create([
             'EMAIL_SERVER_UID' => $emailServer['MESS_UID']
         ]);
 
@@ -62,11 +62,11 @@ class EmailEventTest extends TestCase
     public function it_should_test_the_update_event_method_with_a_default_email_server()
     {
         EmailServerModel::query()->delete();
-        $emailServer = factory(EmailServerModel::class)->create();
-        $emailServerDefault = factory(EmailServerModel::class)->create([
+        $emailServer = EmailServerModel::factory()->create();
+        $emailServerDefault = EmailServerModel::factory()->create([
             'MESS_DEFAULT' => 1
         ]);
-        $emailEventFactory = factory(EmailEvent::class)->create([
+        $emailEventFactory = EmailEvent::factory()->create([
             'EMAIL_SERVER_UID' => $emailServer['MESS_UID']
         ]);
 

@@ -22,7 +22,7 @@ class RbacRolesTest extends TestCase
      */
     public function it_should_test_the_get_rol_uid_by_code_method()
     {
-        $rol1 = factory(RbacRoles::class)->create([
+        $rol1 = RbacRoles::factory()->create([
             'ROL_CODE' => 'TEST_ROLE'
         ]);
 

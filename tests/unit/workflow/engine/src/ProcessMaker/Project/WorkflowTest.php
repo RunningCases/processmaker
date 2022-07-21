@@ -51,11 +51,11 @@ class WorkflowTest extends TestCase
      */
     public function it_should_return_the_data_when_the_project_id_is_valid()
     {
-        $process = factory(Process::class)->create();
-        $dynaforms = factory(Dynaform::class, 5)->create([
+        $process = Process::factory()->create();
+        $dynaforms = Dynaform::factory(5)->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        factory(WebEntry::class, 5)->create([
+        WebEntry::factory(5)->create([
             'PRO_UID' => $process->PRO_UID
         ]);
 

@@ -23,13 +23,13 @@ class RolesTest extends TestCase
         $rolesInstance = new Roles();
 
         // Create elements
-        $role = factory(RbacRoles::class)->create();
-        $deletedUser = factory(RbacUsers::class)->states('deleted')->create();
-        $activeUser = factory(RbacUsers::class)->states('active')->create();
-        $inactiveUser = factory(RbacUsers::class)->states('inactive')->create();
+        $role = RbacRoles::factory()->create();
+        $deletedUser = RbacUsers::factory()->deleted()->create();
+        $activeUser = RbacUsers::factory()->active()->create();
+        $inactiveUser = RbacUsers::factory()->inactive()->create();
 
         // Assign the role to a deleted user
-        factory(RbacUsersRoles::class)->create([
+        RbacUsersRoles::factory()->create([
             'ROL_UID' => $role->ROL_UID,
             'USR_UID' => $deletedUser->USR_UID
         ]);
@@ -37,7 +37,7 @@ class RolesTest extends TestCase
         $this->assertEquals(0, $rolesInstance->numUsersWithRole($role->ROL_UID));
 
         // Assign the role to an active user
-        factory(RbacUsersRoles::class)->create([
+        RbacUsersRoles::factory()->create([
             'ROL_UID' => $role->ROL_UID,
             'USR_UID' => $activeUser->USR_UID
         ]);
@@ -45,7 +45,7 @@ class RolesTest extends TestCase
         $this->assertEquals(1, $rolesInstance->numUsersWithRole($role->ROL_UID));
 
         // Assign the role to an inactive user
-        factory(RbacUsersRoles::class)->create([
+        RbacUsersRoles::factory()->create([
             'ROL_UID' => $role->ROL_UID,
             'USR_UID' => $inactiveUser->USR_UID
         ]);

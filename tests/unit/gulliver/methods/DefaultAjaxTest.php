@@ -6,11 +6,16 @@ use Tests\TestCase;
 
 class DefaultAjaxTest extends TestCase
 {
-
+    /**
+     * Set up method.
+     * @return void
+     */
     public function setUp(): void
     {
+        parent::setUp();
         $this->markTestSkipped('Issues with php 8');
     }
+
     /**
      * This gets data from a json file.
      * @param string $pathData

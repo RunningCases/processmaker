@@ -52,7 +52,7 @@ class ImporterTest extends TestCase
     public function it_should_test_the_import_method_when_importing_a_process_with_a_new_uid()
     {
         // Create the existing process
-        $process = factory(Process::class)->create(
+        $process = Process::factory()->create(
             ['PRO_CREATE_DATE' => '2019-07-10 10:00:00']
         );
 
@@ -276,7 +276,7 @@ class ImporterTest extends TestCase
         // Mock the load method
         $importer->method("load")
             ->willReturn($array);
-        $importer->setData("usr_uid", factory(User::class)->create()->USR_UID);
+        $importer->setData("usr_uid", User::factory()->create()->USR_UID);
 
         // Call the import method
         $res = $importer->import(Importer::IMPORT_OPTION_KEEP_WITHOUT_CHANGING_AND_CREATE_NEW,
@@ -301,10 +301,10 @@ class ImporterTest extends TestCase
     public function it_should_test_the_import_method_when_importing_a_process_without_change_the_uid()
     {
         // Create the existing process
-        $process = factory(Process::class)->create(
+        $process = Process::factory()->create(
             ['PRO_CREATE_DATE' => '2019-07-10 10:00:00']
         );
-        factory(BpmnProject::class)->create(
+        BpmnProject::factory()->create(
             ['PRJ_UID' => $process['PRO_UID']]
         );
 
@@ -528,7 +528,7 @@ class ImporterTest extends TestCase
         // Mock the load method
         $importer->method("load")
             ->willReturn($array);
-        $importer->setData("usr_uid", factory(User::class)->create()->USR_UID);
+        $importer->setData("usr_uid", User::factory()->create()->USR_UID);
 
         // Call the setProtectedProperty method
         $this->setProtectedProperty($importer, 'metadata', ['uid' => $process['PRO_UID']]);

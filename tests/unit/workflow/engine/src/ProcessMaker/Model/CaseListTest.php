@@ -19,6 +19,7 @@ class CaseListTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+        $this->truncateNonInitialModels();
     }
 
     /**
@@ -262,8 +263,6 @@ class CaseListTest extends TestCase
      */
     public function it_should_test_getSetting()
     {
-        CaseList::truncate();
-
         $data = [
             'type' => 'inbox',
             'name' => 'test1',
@@ -322,7 +321,7 @@ class CaseListTest extends TestCase
      */
     public function it_should_test_import()
     {
-        $additionalTables = factory(AdditionalTables::class)->create();
+        $additionalTables = AdditionalTables::factory()->create();
         $data = [
             'type' => 'inbox',
             'name' => 'test1',
@@ -370,7 +369,6 @@ class CaseListTest extends TestCase
      */
     public function it_should_test_export()
     {
-        CaseList::truncate();
         $data = [
             'type' => 'inbox',
             'name' => 'test export',
@@ -406,25 +404,25 @@ class CaseListTest extends TestCase
      */
     public function it_should_test_formattingColumns()
     {
-        $additionalTables = factory(\ProcessMaker\Model\AdditionalTables::class)->create();
+        $additionalTables = \ProcessMaker\Model\AdditionalTables::factory()->create();
 
-        $fields = factory(\ProcessMaker\Model\Fields::class, 5)->create([
+        $fields = \ProcessMaker\Model\Fields::factory(5)->create([
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID
         ]);
 
-        factory(CaseList::class)->create([
+        CaseList::factory()->create([
             'CAL_TYPE' => 'inbox',
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID
         ]);
-        factory(CaseList::class)->create([
+        CaseList::factory()->create([
             'CAL_TYPE' => 'draft',
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID
         ]);
-        factory(CaseList::class)->create([
+        CaseList::factory()->create([
             'CAL_TYPE' => 'paused',
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID
         ]);
-        factory(CaseList::class)->create([
+        CaseList::factory()->create([
             'CAL_TYPE' => 'unassigned',
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID
         ]);
@@ -490,8 +488,7 @@ class CaseListTest extends TestCase
      */
     public function it_should_test_getReportTables()
     {
-        AdditionalTables::truncate();
-        $additionalTables = factory(AdditionalTables::class, 10)->create();
+        $additionalTables = AdditionalTables::factory(10)->create();
 
         $search = '';
         $result = CaseList::getReportTables($search);

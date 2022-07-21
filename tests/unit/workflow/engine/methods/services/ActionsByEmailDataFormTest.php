@@ -46,16 +46,16 @@ class ActionsByEmailDataFormTest extends TestCase
      */
     public function it_should_test_view_action_by_email_with_time_zone()
     {
-        $process = factory(\ProcessMaker\Model\Process::class)->create();
+        $process = \ProcessMaker\Model\Process::factory()->create();
 
         $pathData = PATH_TRUNK . "tests/resources/dynaform1.json";
         $content = file_get_contents($pathData);
 
-        $dynaform = factory(\ProcessMaker\Model\Dynaform::class)->create([
+        $dynaform = \ProcessMaker\Model\Dynaform::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'DYN_CONTENT' => $content
         ]);
-        $delegation = factory(\ProcessMaker\Model\Delegation::class)->state('closed')->create([
+        $delegation = \ProcessMaker\Model\Delegation::factory()->closed()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
 
@@ -78,6 +78,6 @@ class ActionsByEmailDataFormTest extends TestCase
         ob_end_clean();
 
         $this->assertNotEmpty($content);
-        $this->assertContains('ID_ABE_FORM_ALREADY_FILLED', $content);
+        $this->assertStringContainsString('ID_ABE_FORM_ALREADY_FILLED', $content);
     }
 }

@@ -19,7 +19,7 @@ class UserConfigTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        UserConfig::truncate();
+        $this->truncateNonInitialModels();
     }
 
     /**

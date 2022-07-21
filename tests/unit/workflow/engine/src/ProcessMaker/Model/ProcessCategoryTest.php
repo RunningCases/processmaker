@@ -32,7 +32,7 @@ class ProcessCategoryTest extends TestCase
      */
     public function it_tests_get_categories()
     {
-        $processCategory = factory(ProcessCategory::class)->create();
+        $processCategory = ProcessCategory::factory()->create();
         $result = ProcessCategory::getCategories();
 
         $this->assertNotEmpty($result);
@@ -47,16 +47,16 @@ class ProcessCategoryTest extends TestCase
      */
     public function it_tests_get_process_categories_method_without_paremeters()
     {
-        factory(ProcessCategory::class)->create([
+        ProcessCategory::factory()->create([
             'CATEGORY_ID' => 1
         ]);
-        factory(ProcessCategory::class)->create([
+        ProcessCategory::factory()->create([
             'CATEGORY_ID' => 2
         ]);
-        factory(ProcessCategory::class)->create([
+        ProcessCategory::factory()->create([
             'CATEGORY_ID' => 3
         ]);
-        factory(ProcessCategory::class)->create([
+        ProcessCategory::factory()->create([
             'CATEGORY_ID' => 4
         ]);
         $result = ProcessCategory::getProcessCategories();
@@ -73,19 +73,19 @@ class ProcessCategoryTest extends TestCase
      */
     public function it_tests_get_process_categories_method_filter_by_name()
     {
-        factory(ProcessCategory::class)->create([
+        ProcessCategory::factory()->create([
             'CATEGORY_ID' => 1,
             'CATEGORY_NAME' => 'Category1'
         ]);
-        factory(ProcessCategory::class)->create([
+        ProcessCategory::factory()->create([
             'CATEGORY_ID' => 2,
             'CATEGORY_NAME' => 'Category2'
         ]);
-        factory(ProcessCategory::class)->create([
+        ProcessCategory::factory()->create([
             'CATEGORY_ID' => 3,
             'CATEGORY_NAME' => 'Category3'
         ]);
-        factory(ProcessCategory::class)->create([
+        ProcessCategory::factory()->create([
             'CATEGORY_ID' => 4,
             'CATEGORY_NAME' => 'Category4'
         ]);
@@ -103,16 +103,16 @@ class ProcessCategoryTest extends TestCase
      */
     public function it_tests_get_process_categories_method_with_start_limit()
     {
-        factory(ProcessCategory::class)->create([
+        ProcessCategory::factory()->create([
             'CATEGORY_ID' => 1,
         ]);
-        factory(ProcessCategory::class)->create([
+        ProcessCategory::factory()->create([
             'CATEGORY_ID' => 2,
         ]);
-        factory(ProcessCategory::class)->create([
+        ProcessCategory::factory()->create([
             'CATEGORY_ID' => 3,
         ]);
-        factory(ProcessCategory::class)->create([
+        ProcessCategory::factory()->create([
             'CATEGORY_ID' => 4,
         ]);
         $result = ProcessCategory::getProcessCategories(null, 1, 3);
@@ -128,7 +128,7 @@ class ProcessCategoryTest extends TestCase
      */
     public function it_tests_get_category_id_method()
     {
-        $processCategory = factory(ProcessCategory::class)->create();
+        $processCategory = ProcessCategory::factory()->create();
         $result = ProcessCategory::getCategoryId($processCategory->CATEGORY_UID);
 
         $this->assertEquals($processCategory->CATEGORY_ID, $result);
@@ -143,7 +143,7 @@ class ProcessCategoryTest extends TestCase
      */
     public function it_tests_get_category()
     {
-        $processCategory = factory(ProcessCategory::class)->create();
+        $processCategory = ProcessCategory::factory()->create();
         $result = ProcessCategory::getCategory($processCategory->CATEGORY_ID);
 
         $this->assertNotEmpty($result);

@@ -24,9 +24,9 @@ class InputDocumentTest extends TestCase
      */
     public function it_has_a_process_defined()
     {
-        $table = factory(InputDocument::class)->create([
+        $table = InputDocument::factory()->create([
             'PRO_UID' => function () {
-                return factory(Process::class)->create()->PRO_UID;
+                return Process::factory()->create()->PRO_UID;
             }
         ]);
         $this->assertInstanceOf(Process::class, $table->process);
@@ -40,7 +40,7 @@ class InputDocumentTest extends TestCase
      */
     public function it_get_by_process()
     {
-        $table = factory(InputDocument::class)->create();
+        $table = InputDocument::factory()->create();
         $result = InputDocument::getByProUid($table->PRO_UID);
         $this->assertNotEmpty($result);
     }
@@ -53,7 +53,7 @@ class InputDocumentTest extends TestCase
      */
     public function it_get_by_uid()
     {
-        $table = factory(InputDocument::class)->create();
+        $table = InputDocument::factory()->create();
         $result = InputDocument::getByInpDocUid($table->INP_DOC_UID);
         $this->assertNotEmpty($result);
     }

@@ -2,10 +2,13 @@
 
 namespace ProcessMaker\Model;
 
+use App\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Configuration extends Model
 {
+    use HasFactory;
+
     // Set our table name
     protected $table = 'CONFIGURATION';
     // Set the PK

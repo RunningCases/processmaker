@@ -25,9 +25,9 @@ class AbeRequestTest extends TestCase
      */
     public function it_has_one_application()
     {
-        $table = factory(AbeRequest::class)->create([
+        $table = AbeRequest::factory()->create([
             'APP_UID' => function () {
-                return factory(Application::class)->create()->APP_UID;
+                return Application::factory()->create()->APP_UID;
             }
         ]);
         $this->assertInstanceOf(Application::class, $table->application);
@@ -41,9 +41,9 @@ class AbeRequestTest extends TestCase
      */
     public function it_has_one_abe_configuration()
     {
-        $table = factory(AbeRequest::class)->create([
+        $table = AbeRequest::factory()->create([
             'ABE_UID' => function () {
-                return factory(AbeConfiguration::class)->create()->ABE_UID;
+                return AbeConfiguration::factory()->create()->ABE_UID;
             }
         ]);
         $this->assertInstanceOf(AbeConfiguration::class, $table->abeConfiguration);

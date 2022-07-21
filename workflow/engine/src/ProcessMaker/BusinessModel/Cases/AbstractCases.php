@@ -1644,7 +1644,7 @@ class AbstractCases implements CasesInterface
      * 
      * @return array
      */
-    public function getCasesRisk($processId, $dateFrom = null, $dateTo = null, $riskStatus = 'ON_TIME', $topCases = null)
+    public function getCasesRisk($processId = '', $dateFrom = null, $dateTo = null, $riskStatus = 'ON_TIME', $topCases = null)
     {
         $date = new DateTime('now');
         $currentDate = $date->format('Y-m-d H:i:s');

@@ -42,13 +42,13 @@ class CasesTest extends TestCase
      */
     public function it_should_test_get_next_step_method()
     {
-        $process = factory(Process::class)->create();
-        $application = factory(Application::class)->create(['PRO_UID' => $process->PRO_UID]);
-        $appDelegation = factory(Delegation::class)->create([
+        $process = Process::factory()->create();
+        $application = Application::factory()->create(['PRO_UID' => $process->PRO_UID]);
+        $appDelegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID,
             'DEL_INDEX' => 2,
@@ -68,19 +68,19 @@ class CasesTest extends TestCase
      */
     public function it_should_test_get_next_step_method_position()
     {
-        $process = factory(Process::class)->create();
-        $application = factory(Application::class)->create(['PRO_UID' => $process->PRO_UID]);
-        $appDelegation = factory(Delegation::class)->create([
+        $process = Process::factory()->create();
+        $application = Application::factory()->create(['PRO_UID' => $process->PRO_UID]);
+        $appDelegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID,
             'DEL_INDEX' => 2,
             'DEL_PREVIOUS' => $appDelegation->DEL_INDEX
         ]);
-        factory(Step::class)->create([
+        Step::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $appDelegation->TAS_UID,
             'STEP_POSITION' => 2,
@@ -99,19 +99,19 @@ class CasesTest extends TestCase
      */
     public function it_should_test_get_next_step_method_output_document()
     {
-        $process = factory(Process::class)->create();
-        $application = factory(Application::class)->create(['PRO_UID' => $process->PRO_UID]);
-        $appDelegation = factory(Delegation::class)->create([
+        $process = Process::factory()->create();
+        $application = Application::factory()->create(['PRO_UID' => $process->PRO_UID]);
+        $appDelegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID,
             'DEL_INDEX' => 2,
             'DEL_PREVIOUS' => $appDelegation->DEL_INDEX
         ]);
-        factory(Step::class)->create([
+        Step::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $appDelegation->TAS_UID,
             'STEP_POSITION' => 2,
@@ -131,19 +131,19 @@ class CasesTest extends TestCase
      */
     public function it_should_test_get_next_step_method_input_document()
     {
-        $process = factory(Process::class)->create();
-        $application = factory(Application::class)->create(['PRO_UID' => $process->PRO_UID]);
-        $appDelegation = factory(Delegation::class)->create([
+        $process = Process::factory()->create();
+        $application = Application::factory()->create(['PRO_UID' => $process->PRO_UID]);
+        $appDelegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID,
             'DEL_INDEX' => 2,
             'DEL_PREVIOUS' => $appDelegation->DEL_INDEX
         ]);
-        factory(Step::class)->create([
+        Step::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $appDelegation->TAS_UID,
             'STEP_POSITION' => 2,
@@ -163,19 +163,19 @@ class CasesTest extends TestCase
      */
     public function it_should_test_get_next_step_method_external()
     {
-        $process = factory(Process::class)->create();
-        $application = factory(Application::class)->create(['PRO_UID' => $process->PRO_UID]);
-        $appDelegation = factory(Delegation::class)->create([
+        $process = Process::factory()->create();
+        $application = Application::factory()->create(['PRO_UID' => $process->PRO_UID]);
+        $appDelegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID,
             'DEL_INDEX' => 2,
             'DEL_PREVIOUS' => $appDelegation->DEL_INDEX
         ]);
-        factory(Step::class)->create([
+        Step::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $appDelegation->TAS_UID,
             'STEP_POSITION' => 2,
@@ -195,19 +195,19 @@ class CasesTest extends TestCase
      */
     public function it_should_test_get_next_step_method_message()
     {
-        $process = factory(Process::class)->create();
-        $application = factory(Application::class)->create(['PRO_UID' => $process->PRO_UID]);
-        $appDelegation = factory(Delegation::class)->create([
+        $process = Process::factory()->create();
+        $application = Application::factory()->create(['PRO_UID' => $process->PRO_UID]);
+        $appDelegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID,
             'DEL_INDEX' => 2,
             'DEL_PREVIOUS' => $appDelegation->DEL_INDEX
         ]);
-        factory(Step::class)->create([
+        Step::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $appDelegation->TAS_UID,
             'STEP_POSITION' => 2,
@@ -227,13 +227,13 @@ class CasesTest extends TestCase
      */
     public function it_should_test_get_next_step_method_step_does_not_exists()
     {
-        $process = factory(Process::class)->create();
-        $application = factory(Application::class)->create(['PRO_UID' => $process->PRO_UID]);
-        $appDelegation = factory(Delegation::class)->create([
+        $process = Process::factory()->create();
+        $application = Application::factory()->create(['PRO_UID' => $process->PRO_UID]);
+        $appDelegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID,
             'DEL_INDEX' => 2,
@@ -265,9 +265,9 @@ class CasesTest extends TestCase
      */
     public function it_should_test_get_next_step_method_step_false()
     {
-        $process = factory(Process::class)->create();
-        $application = factory(Application::class)->create();
-        $appDelegation = factory(Delegation::class)->create();
+        $process = Process::factory()->create();
+        $application = Application::factory()->create();
+        $appDelegation = Delegation::factory()->create();
         $cases = new Cases();
         $res = $cases->getNextStep($process->PRO_UID, $application->APP_UID, $appDelegation->DEL_INDEX);
         $this->assertFalse($res);
@@ -282,19 +282,19 @@ class CasesTest extends TestCase
     public function it_should_test_get_next_step_method_gmail()
     {
         $_SESSION['gmail'] = '';
-        $process = factory(Process::class)->create();
-        $application = factory(Application::class)->create(['PRO_UID' => $process->PRO_UID]);
-        $appDelegation = factory(Delegation::class)->create([
+        $process = Process::factory()->create();
+        $application = Application::factory()->create(['PRO_UID' => $process->PRO_UID]);
+        $appDelegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID,
             'DEL_INDEX' => 2,
             'DEL_PREVIOUS' => $appDelegation->DEL_INDEX
         ]);
-        factory(Step::class)->create([
+        Step::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $appDelegation->TAS_UID,
             'STEP_POSITION' => 2,
@@ -315,19 +315,19 @@ class CasesTest extends TestCase
     public function it_should_test_get_next_step_method_gmail_nextstep()
     {
         $_SESSION['gmail'] = '';
-        $process = factory(Process::class)->create();
-        $application = factory(Application::class)->create(['PRO_UID' => $process->PRO_UID]);
-        $appDelegation = factory(Delegation::class)->create([
+        $process = Process::factory()->create();
+        $application = Application::factory()->create(['PRO_UID' => $process->PRO_UID]);
+        $appDelegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID,
             'DEL_INDEX' => 2,
             'DEL_PREVIOUS' => $appDelegation->DEL_INDEX
         ]);
-        factory(Step::class)->create([
+        Step::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $appDelegation->TAS_UID,
             'STEP_POSITION' => 1,
@@ -348,19 +348,19 @@ class CasesTest extends TestCase
     public function it_should_test_get_next_step_method_condition_empty()
     {
         $_SESSION['gmail'] = '';
-        $process = factory(Process::class)->create();
-        $application = factory(Application::class)->create(['PRO_UID' => $process->PRO_UID]);
-        $appDelegation = factory(Delegation::class)->create([
+        $process = Process::factory()->create();
+        $application = Application::factory()->create(['PRO_UID' => $process->PRO_UID]);
+        $appDelegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID,
             'DEL_INDEX' => 2,
             'DEL_PREVIOUS' => $appDelegation->DEL_INDEX
         ]);
-        factory(Step::class)->create([
+        Step::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $appDelegation->TAS_UID,
             'STEP_POSITION' => 2,
@@ -381,24 +381,24 @@ class CasesTest extends TestCase
     public function it_should_test_get_start_cases()
     {
         // Creating a process with initial tasks
-        $process = factory(Process::class)->create();
-        $user = factory(User::class)->create();
-        $normalTask = factory(Task::class)->create([
+        $process = Process::factory()->create();
+        $user = User::factory()->create();
+        $normalTask = Task::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'PRO_ID' => $process->PRO_ID,
             'TAS_START' => 'TRUE'
         ]);
-        $webEntryTask = factory(Task::class)->create([
+        $webEntryTask = Task::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'PRO_ID' => $process->PRO_ID,
             'TAS_START' => 'TRUE',
             'TAS_TYPE' => 'WEBENTRYEVENT'
         ]);
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $normalTask->TAS_UID,
             'USR_UID' => $user->USR_UID
         ]);
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $webEntryTask->TAS_UID,
             'USR_UID' => $user->USR_UID
         ]);
@@ -423,8 +423,8 @@ class CasesTest extends TestCase
      */
     public function it_shoult_test_the_get_to_method_with_default_tas_assign_type()
     {
-        $task = factory(Task::class)->create();
-        $user = factory(User::class)->create([
+        $task = Task::factory()->create();
+        $user = User::factory()->create([
             'USR_EMAIL' => 'test@test.com'
         ]);
 
@@ -432,7 +432,7 @@ class CasesTest extends TestCase
         $cases = new Cases();
         $result = $cases->getTo($task->TAS_UID, $user->USR_UID, '');
         $this->assertNotEmpty($result);
-        $this->assertRegExp("/{$user->USR_EMAIL}/", $result["to"]);
+        $this->assertMatchesRegularExpression("/{$user->USR_EMAIL}/", $result["to"]);
     }
 
     /**
@@ -443,41 +443,41 @@ class CasesTest extends TestCase
      */
     public function it_shoult_test_the_get_to_method_with_self_service_tas_assign_type()
     {
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
 
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_ASSIGN_TYPE' => 'BALANCED'
         ]);
-        $task2 = factory(Task::class)->create([
+        $task2 = Task::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE'
         ]);
 
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'USR_EMAIL' => 'test@test.com'
         ]);
-        $user2 = factory(User::class)->create([
+        $user2 = User::factory()->create([
             'USR_EMAIL' => 'test2@test2.com'
         ]);
 
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task2->TAS_UID,
             'USR_UID' => $user->USR_UID
         ]);
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task2->TAS_UID,
             'USR_UID' => $user2->USR_UID
         ]);
 
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'APP_STATUS_ID' => 2,
             'PRO_UID' => $process->PRO_UID,
             'APP_INIT_USER' => "00000000000000000000000000000001",
             'APP_CUR_USER' => $user2->USR_UID
         ]);
 
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'DEL_INDEX' => 1,
             'APP_NUMBER' => $application->APP_NUMBER,
@@ -488,7 +488,7 @@ class CasesTest extends TestCase
             'DEL_THREAD' => 1,
             'DEL_THREAD_STATUS' => 'CLOSED'
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'DEL_INDEX' => 2,
             'APP_NUMBER' => $application->APP_NUMBER,
@@ -499,7 +499,7 @@ class CasesTest extends TestCase
             'DEL_THREAD' => 2,
             'DEL_THREAD_STATUS' => 'OPEN'
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'DEL_INDEX' => 3,
             'APP_NUMBER' => $application->APP_NUMBER,
@@ -534,8 +534,8 @@ class CasesTest extends TestCase
         $this->assertNotEmpty($result);
 
         // Asserts the emails of both users are contained in the result
-        $this->assertRegExp("/{$user->USR_EMAIL}/", $result["to"]);
-        $this->assertRegExp("/{$user2->USR_EMAIL}/", $result["to"]);
+        $this->assertMatchesRegularExpression("/{$user->USR_EMAIL}/", $result["to"]);
+        $this->assertMatchesRegularExpression("/{$user2->USR_EMAIL}/", $result["to"]);
     }
 
     /**
@@ -546,41 +546,41 @@ class CasesTest extends TestCase
      */
     public function it_shoult_test_the_get_to_method_with_multiple_instance_tas_assign_type()
     {
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
 
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_ASSIGN_TYPE' => 'BALANCED'
         ]);
-        $task2 = factory(Task::class)->create([
+        $task2 = Task::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_ASSIGN_TYPE' => 'MULTIPLE_INSTANCE'
         ]);
 
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'USR_EMAIL' => 'test@test.com'
         ]);
-        $user2 = factory(User::class)->create([
+        $user2 = User::factory()->create([
             'USR_EMAIL' => 'test2@test2.com'
         ]);
 
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task2->TAS_UID,
             'USR_UID' => $user->USR_UID
         ]);
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task2->TAS_UID,
             'USR_UID' => $user2->USR_UID
         ]);
 
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'APP_STATUS_ID' => 2,
             'PRO_UID' => $process->PRO_UID,
             'APP_INIT_USER' => "00000000000000000000000000000001",
             'APP_CUR_USER' => $user2->USR_UID
         ]);
 
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'DEL_INDEX' => 1,
             'APP_NUMBER' => $application->APP_NUMBER,
@@ -591,7 +591,7 @@ class CasesTest extends TestCase
             'DEL_THREAD' => 1,
             'DEL_THREAD_STATUS' => 'CLOSED'
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'DEL_INDEX' => 2,
             'APP_NUMBER' => $application->APP_NUMBER,
@@ -602,7 +602,7 @@ class CasesTest extends TestCase
             'DEL_THREAD' => 2,
             'DEL_THREAD_STATUS' => 'OPEN'
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'DEL_INDEX' => 3,
             'APP_NUMBER' => $application->APP_NUMBER,
@@ -637,7 +637,7 @@ class CasesTest extends TestCase
         $this->assertNotEmpty($result);
 
         // Asserts the emails of both users are contained in the result
-        $this->assertRegExp("/{$user->USR_EMAIL}/", $result["to"]);
+        $this->assertMatchesRegularExpression("/{$user->USR_EMAIL}/", $result["to"]);
     }
 
     /**
@@ -648,42 +648,42 @@ class CasesTest extends TestCase
      */
     public function it_shoult_test_the_get_to_method_with_multiple_instance_value_based_tas_assign_type()
     {
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
 
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_ASSIGN_TYPE' => 'BALANCED'
         ]);
-        $task2 = factory(Task::class)->create([
+        $task2 = Task::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_ASSIGN_TYPE' => 'MULTIPLE_INSTANCE_VALUE_BASED',
             'TAS_ASSIGN_VARIABLE' => '@@users'
         ]);
 
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'USR_EMAIL' => 'test@test.com'
         ]);
-        $user2 = factory(User::class)->create([
+        $user2 = User::factory()->create([
             'USR_EMAIL' => 'test2@test2.com'
         ]);
 
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task2->TAS_UID,
             'USR_UID' => $user->USR_UID
         ]);
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task2->TAS_UID,
             'USR_UID' => $user2->USR_UID
         ]);
 
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'APP_STATUS_ID' => 2,
             'PRO_UID' => $process->PRO_UID,
             'APP_INIT_USER' => "00000000000000000000000000000001",
             'APP_CUR_USER' => $user2->USR_UID
         ]);
 
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'DEL_INDEX' => 1,
             'APP_NUMBER' => $application->APP_NUMBER,
@@ -694,7 +694,7 @@ class CasesTest extends TestCase
             'DEL_THREAD' => 1,
             'DEL_THREAD_STATUS' => 'CLOSED'
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'DEL_INDEX' => 2,
             'APP_NUMBER' => $application->APP_NUMBER,
@@ -705,7 +705,7 @@ class CasesTest extends TestCase
             'DEL_THREAD' => 2,
             'DEL_THREAD_STATUS' => 'OPEN'
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'DEL_INDEX' => 3,
             'APP_NUMBER' => $application->APP_NUMBER,
@@ -741,6 +741,6 @@ class CasesTest extends TestCase
         $this->assertNotEmpty($result);
 
         // Asserts the emails of both users are contained in the result
-        $this->assertRegExp("/{$user->USR_EMAIL}/", $result["to"]);
+        $this->assertMatchesRegularExpression("/{$user->USR_EMAIL}/", $result["to"]);
     }
 }

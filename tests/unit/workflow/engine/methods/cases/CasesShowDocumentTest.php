@@ -15,10 +15,6 @@ class CasesShowDocumentTest extends TestCase
      */
     public function setUp(): void
     {
-        if (version_compare(phpversion(), 7.3, '>') ) {
-            $this->markTestSkipped('The changes in third party are not available');
-        }
-
         parent::setUp();
         if (!defined('PATH_DOCUMENT')) {
             define('PATH_DOCUMENT', PATH_DB . config('system.workspace') . PATH_SEP . 'files' . PATH_SEP);
@@ -35,7 +31,7 @@ class CasesShowDocumentTest extends TestCase
         $RBAC = RBAC::getSingleton();
         $RBAC->initRBAC();
 
-        $appDocument = factory(Documents::class)->create([
+        $appDocument = Documents::factory()->create([
             'APP_DOC_FILENAME' => 'text.txt'
         ]);
 

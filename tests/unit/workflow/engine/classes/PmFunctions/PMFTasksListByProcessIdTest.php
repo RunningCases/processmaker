@@ -23,7 +23,7 @@ class PMFTasksListByProcessIdTest extends TestCase
     public function it_return_process_tasks()
     {
         // Create task
-        $task = factory(Task::class)->create();
+        $task = Task::factory()->create();
         DB::commit();
         $result = PMFTasksListByProcessId($task->PRO_UID);
         $this->assertNotEmpty($result);

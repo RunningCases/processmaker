@@ -20,7 +20,7 @@ class HeaderStructTest extends TestCase
     /**
      * setUp method.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->faker = Factory::create();
@@ -30,7 +30,7 @@ class HeaderStructTest extends TestCase
     /**
      * tearDown method.
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
     }

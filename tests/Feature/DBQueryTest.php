@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\DB;
 use ProcessMaker\Model\DbSource;
 use ProcessMaker\Model\Process;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class DBQueryTest extends TestCase
@@ -16,7 +16,7 @@ class DBQueryTest extends TestCase
     /**
      * Sets up the unit tests.
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
     }
@@ -35,7 +35,9 @@ class DBQueryTest extends TestCase
             'USR_UID' => '00000000000000000000000000000001',
             'USR_USERNAME' => 'admin'
         ];
-        $this->assertArraySubset($expected, $results[1]);
+        foreach ($expected as $key => $value) {
+            $this->assertEquals($value, $results[1][$key]);
+        }
     }
 
     /**
@@ -56,9 +58,9 @@ class DBQueryTest extends TestCase
     {
         // Our test external database is created in our tests/bootstrap.php file
         // We'll use our factories to create our process and database
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         // Let's create an external DB to ourselves
-        $externalDB = factory(DbSource::class)->create([
+        $externalDB = DbSource::factory()->create([
             'DBS_SERVER' => config('database.connections.testexternal.host'),
             'DBS_PORT' => '3306',
             'DBS_USERNAME' => config('database.connections.testexternal.username'),
@@ -90,9 +92,9 @@ class DBQueryTest extends TestCase
         }
         // Our test external database is created in our tests/bootstrap.php file
         // We'll use our factories to create our process and database
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         // Let's create an external DB to ourselves
-        $externalDB = factory(DbSource::class)->create([
+        $externalDB = DbSource::factory()->create([
             'DBS_SERVER' => env('MSSQL_HOST'),
             'DBS_PORT' => env('MSSQL_PORT'),
             'DBS_TYPE' => 'mssql',

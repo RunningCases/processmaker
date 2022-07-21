@@ -55,9 +55,10 @@ class ValidatorTest extends TestCase
      */
     public function it_test_exception_dep_uid_exist()
     {
-        $table = factory(Department::class)->create();
+        $table = Department::factory()->create();
         DB::commit();
         $result = Validator::depUid($table->DEP_UID);
+        $this->assertNotEmpty($result);
     }
 
     /**
@@ -107,7 +108,7 @@ class ValidatorTest extends TestCase
      */
     public function it_test_exception_usr_uid_exist()
     {
-        $table = factory(User::class)->create();
+        $table = User::factory()->create();
         DB::commit();
         $result = Validator::usrUid($table->USR_UID);
         $this->assertNotEmpty($result);
@@ -158,7 +159,7 @@ class ValidatorTest extends TestCase
      */
     public function it_test_exception_app_uid_exist()
     {
-        $table = factory(Application::class)->create();
+        $table = Application::factory()->create();
         DB::commit();
         $result = Validator::appUid($table->APP_UID);
         $this->assertNotEmpty($result);
@@ -197,7 +198,7 @@ class ValidatorTest extends TestCase
      */
     public function it_test_exception_tri_uid_exist()
     {
-        $table = factory(Triggers::class)->create();
+        $table = Triggers::factory()->create();
         DB::commit();
         $result = Validator::triUid($table->TRI_UID);
         $this->assertNotEmpty($result);
@@ -236,7 +237,7 @@ class ValidatorTest extends TestCase
      */
     public function it_test_exception_pro_uid_exist()
     {
-        $table = factory(Process::class)->create();
+        $table = Process::factory()->create();
         DB::commit();
         $result = Validator::proUid($table->PRO_UID);
         $this->assertNotEmpty($result);
@@ -275,7 +276,7 @@ class ValidatorTest extends TestCase
      */
     public function it_test_exception_cat_uid_exist()
     {
-        $table = factory(ProcessCategory::class)->create();
+        $table = ProcessCategory::factory()->create();
         DB::commit();
         $result = Validator::catUid($table->CATEGORY_UID);
         $this->assertNotEmpty($result);

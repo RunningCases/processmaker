@@ -23,7 +23,7 @@ class PMFGetTaskNameTest extends TestCase
     public function it_return_task_name()
     {
         // Create task
-        $task = factory(Task::class)->create();
+        $task = Task::factory()->create();
         DB::commit();
         $result = PMFGetTaskName($task->TAS_UID);
         $this->assertNotEmpty($result);

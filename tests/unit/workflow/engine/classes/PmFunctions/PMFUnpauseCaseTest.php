@@ -25,7 +25,7 @@ class PMFUnpauseCaseTest extends TestCase
     public function it_should_test_this_pmfunction_default_parameters()
     {
         $this->expectException(Exception::class);
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         // Force commit for propel
         DB::commit();
         $result = PMFUnpauseCase($table->APP_UID, $table->DEL_INDEX, $table->USR_UID);

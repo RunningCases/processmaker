@@ -117,7 +117,7 @@ class EmailServerTest extends TestCase
         $this->loadUserSession();
 
         $faker = $this->faker;
-        $emailServer = factory(EmailServerModel::class)->create($this->getDataForEmailServerRegistry());
+        $emailServer = EmailServerModel::factory()->create($this->getDataForEmailServerRegistry());
         $data = $emailServer->toArray();
 
         $this->emailServer->setContextLog([
@@ -255,7 +255,7 @@ class EmailServerTest extends TestCase
         $this->emailServer->setContextLog([
             'workspace' => 'workflow'
         ]);
-        $emailServer = factory(EmailServerModel::class)->create($this->getDataForEmailServerRegistry());
+        $emailServer = EmailServerModel::factory()->create($this->getDataForEmailServerRegistry());
         $emailServerUid = $emailServer->MESS_UID;
         $actual = $this->emailServer->getEmailServer($emailServerUid);
         $this->assertNotEmpty($actual);
@@ -272,7 +272,7 @@ class EmailServerTest extends TestCase
         $this->emailServer->setContextLog([
             'workspace' => 'workflow'
         ]);
-        $emailServer = factory(EmailServerModel::class)->create($this->getDataForEmailServerRegistry());
+        $emailServer = EmailServerModel::factory()->create($this->getDataForEmailServerRegistry());
         $emailServerUid = $faker->regexify("/[a-zA-Z]{32}/");
 
         $this->expectException(Exception::class);
@@ -368,7 +368,7 @@ class EmailServerTest extends TestCase
         $emailServer = new EmailServer();
 
         // This expects an exception message
-        $this->expectExceptionMessage("Undefined index: MESS_ENGINE");
+        $this->expectExceptionMessage('Undefined array key "MESS_ENGINE"');
 
         // Call the sendTestMail method
         $emailServer->sendTestMail($data);
@@ -382,7 +382,7 @@ class EmailServerTest extends TestCase
      */
     public function it_should_test_the_delete_method()
     {
-        $email = factory(EmailServerModel::class)->create();
+        $email = EmailServerModel::factory()->create();
         
         $emailServer = new EmailServer();
         $res = $emailServer->delete($email['MESS_UID']);
@@ -401,7 +401,7 @@ class EmailServerTest extends TestCase
      */
     public function it_should_test_the_delete_method_with_imap()
     {
-        $email = factory(EmailServerModel::class)->create([
+        $email = EmailServerModel::factory()->create([
             'MESS_ENGINE' => 'IMAP'
         ]);
         

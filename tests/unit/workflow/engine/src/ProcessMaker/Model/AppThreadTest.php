@@ -31,7 +31,7 @@ class AppThreadTest extends TestCase
      */
     public function it_return_scope_app_uid()
     {
-        $table = factory(AppThread::class)->create();
+        $table = AppThread::factory()->create();
         $this->assertCount(1, $table->appUid($table->APP_UID)->get());
     }
 
@@ -43,7 +43,7 @@ class AppThreadTest extends TestCase
      */
     public function it_return_scope_index()
     {
-        $table = factory(AppThread::class)->create();
+        $table = AppThread::factory()->create();
         $this->assertCount(1, $table->index($table->DEL_INDEX)->get());
     }
 
@@ -57,7 +57,7 @@ class AppThreadTest extends TestCase
      */
     public function it_return_thread()
     {
-        $table = factory(AppThread::class)->create();
+        $table = AppThread::factory()->create();
         $result = AppThread::getThread($table->APP_UID, $table->DEL_INDEX);
         $this->assertNotEmpty($result);
     }

@@ -1,26 +1,48 @@
 <?php
 
-use Faker\Generator as Faker;
+namespace Database\Factories;
 
-$factory->define(\ProcessMaker\Model\ProcessUser::class, function(Faker $faker) {
-    return [
-        'PU_UID' => G::generateUniqueID(),
-        'PRO_UID' => G::generateUniqueID(),
-        'USR_UID' => G::generateUniqueID(),
-        'PU_TYPE' => 'SUPERVISOR'
-    ];
-});
+use App\Factories\Factory;
+use G;
+use Illuminate\Support\Str;
 
-// Create a process with the foreign keys
-$factory->state(\ProcessMaker\Model\ProcessUser::class, 'foreign_keys', function (Faker $faker) {
-    // Create user
-    $user = factory(\ProcessMaker\Model\User::class)->create();
-    $process = factory(\ProcessMaker\Model\Process::class)->create();
+class ProcessUserFactory extends Factory
+{
 
-    return [
-        'PU_UID' => G::generateUniqueID(),
-        'PRO_UID' => $process->PRO_UID,
-        'USR_UID' => $user->USR_UID,
-        'PU_TYPE' => 'SUPERVISOR'
-    ];
-});
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            'PU_UID' => G::generateUniqueID(),
+            'PRO_UID' => G::generateUniqueID(),
+            'USR_UID' => G::generateUniqueID(),
+            'PU_TYPE' => 'SUPERVISOR'
+        ];
+    }
+
+    /**
+     * Create a process with the foreign keys
+     * @return type
+     */
+    public function foreign_keys()
+    {
+        $state = function (array $attributes) {
+            // Create user
+            $user = \ProcessMaker\Model\User::factory()->create();
+            $process = \ProcessMaker\Model\Process::factory()->create();
+
+            return [
+            'PU_UID' => G::generateUniqueID(),
+            'PRO_UID' => $process->PRO_UID,
+            'USR_UID' => $user->USR_UID,
+            'PU_TYPE' => 'SUPERVISOR'
+            ];
+        };
+        return $this->state($state);
+    }
+
+}

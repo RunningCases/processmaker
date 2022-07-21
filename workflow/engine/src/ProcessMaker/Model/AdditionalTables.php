@@ -2,11 +2,14 @@
 
 namespace ProcessMaker\Model;
 
+use App\Factories\HasFactory;
 use AdditionalTables as ModelAdditionalTables;
 use Illuminate\Database\Eloquent\Model;
 
 class AdditionalTables extends Model
 {
+    use HasFactory;
+
     protected $table = 'ADDITIONAL_TABLES';
     public $timestamps = false;
 

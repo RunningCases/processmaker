@@ -3,7 +3,6 @@
 namespace Tests\unit\workflow\engine\src\ProcessMaker\Model;
 
 use G;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\ElementTaskRelation;
 use ProcessMaker\Model\Process;
@@ -18,7 +17,15 @@ use Tests\TestCase;
 
 class TaskTest extends TestCase
 {
-    use DatabaseTransactions;
+    /**
+     * Set up method.
+     * @return void
+     */
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->truncateNonInitialModels();
+    }
 
     /**
      * It tests the get taskId
@@ -28,7 +35,7 @@ class TaskTest extends TestCase
      */
     public function it_get_task()
     {
-        $task = factory(Task::class)->create();
+        $task = Task::factory()->create();
         $result = Task::getTask($task->TAS_ID);
         $this->assertNotEmpty($result);
     }
@@ -41,7 +48,7 @@ class TaskTest extends TestCase
      */
     public function it_scope_exclude_tasks()
     {
-        $table = factory(Task::class)->create();
+        $table = Task::factory()->create();
         $this->assertNotEmpty($table->excludedTasks()->get());
     }
 
@@ -54,7 +61,7 @@ class TaskTest extends TestCase
     public function it_should_return_title_of_event_task()
     {
         // Intermediate email event
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_TITLE' => 'INTERMEDIATE-THROW-EMAIL-EVENT',
             'TAS_TYPE' => 'INTERMEDIATE-THROW-EMAIL-EVENT'
         ]);
@@ -62,7 +69,7 @@ class TaskTest extends TestCase
         $title = $taskInstance->title($task->TAS_ID);
         $this->assertEquals($title['title'], G::LoadTranslation('ID_INTERMEDIATE_THROW_EMAIL_EVENT'));
         // Intermediate throw message event
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_TITLE' => 'INTERMEDIATE-THROW-MESSAGE-EVENT',
             'TAS_TYPE' => 'INTERMEDIATE-THROW-MESSAGE-EVENT'
         ]);
@@ -70,7 +77,7 @@ class TaskTest extends TestCase
         $title = $taskInstance->title($task->TAS_ID);
         $this->assertEquals($title['title'], G::LoadTranslation('ID_INTERMEDIATE_THROW_MESSAGE_EVENT'));
         // Intermediate catch message event
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_TITLE' => 'INTERMEDIATE-CATCH-MESSAGE-EVENT',
             'TAS_TYPE' => 'INTERMEDIATE-CATCH-MESSAGE-EVENT'
         ]);
@@ -78,7 +85,7 @@ class TaskTest extends TestCase
         $title = $taskInstance->title($task->TAS_ID);
         $this->assertEquals($title['title'], G::LoadTranslation('ID_INTERMEDIATE_CATCH_MESSAGE_EVENT'));
         // Intermediate timer event
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_TITLE' => 'INTERMEDIATE-CATCH-TIMER-EVENT',
             'TAS_TYPE' => 'INTERMEDIATE-CATCH-TIMER-EVENT'
         ]);
@@ -86,7 +93,7 @@ class TaskTest extends TestCase
         $title = $taskInstance->title($task->TAS_ID);
         $this->assertEquals($title['title'], G::LoadTranslation('ID_INTERMEDIATE_CATCH_TIMER_EVENT'));
         // Script task
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_TITLE' => 'SCRIPT-TASK',
             'TAS_TYPE' => 'SCRIPT-TASK'
         ]);
@@ -94,7 +101,7 @@ class TaskTest extends TestCase
         $title = $taskInstance->title($task->TAS_ID);
         $this->assertEquals($title['title'], G::LoadTranslation('ID_SCRIPT_TASK_UNTITLED'));
         // Service task
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_TITLE' => 'SERVICE-TASK',
             'TAS_TYPE' => 'SERVICE-TASK'
         ]);
@@ -102,7 +109,7 @@ class TaskTest extends TestCase
         $title = $taskInstance->title($task->TAS_ID);
         $this->assertEquals($title['title'], G::LoadTranslation('ID_SERVICE_TASK_UNTITLED'));
         // None
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_TITLE' => 'SUBPROCESS',
             'TAS_TYPE' => 'SUBPROCESS'
         ]);
@@ -119,7 +126,7 @@ class TaskTest extends TestCase
      */
     public function it_should_return_task()
     {
-        $task = factory(Task::class)->create();
+        $task = Task::factory()->create();
 
         $taskInstance = new Task();
         $properties = $taskInstance->load($task->TAS_UID);
@@ -134,10 +141,10 @@ class TaskTest extends TestCase
      */
     public function it_should_return_task_information_from_user_task()
     {
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_TYPE' => 'NORMAL'
         ]);
-        $del = factory(Delegation::class)->states('closed')->create([
+        $del = Delegation::factory()->closed()->create([
             'PRO_UID' => $task->PRO_UID,
             'TAS_ID' => $task->TAS_ID,
             'TAS_UID' => $task->TAS_UID,
@@ -161,10 +168,10 @@ class TaskTest extends TestCase
      */
     public function it_should_return_task_information_from_automatic_task()
     {
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_TYPE' => 'SCRIPT-TASK'
         ]);
-        $del = factory(Delegation::class)->states('closed')->create([
+        $del = Delegation::factory()->closed()->create([
             'PRO_UID' => $task->PRO_UID,
             'TAS_ID' => $task->TAS_ID,
             'TAS_UID' => $task->TAS_UID,
@@ -188,11 +195,11 @@ class TaskTest extends TestCase
      */
     public function it_should_test_set_task_title_method()
     {
-        $project = factory(Process::class)->create();
-        $task = factory(Task::class)->create([
+        $project = Process::factory()->create();
+        $task = Task::factory()->create([
             'TAS_DEF_TITLE' => 'something'
         ]);
-        $elementTask = factory(ElementTaskRelation::class)->create([
+        $elementTask = ElementTaskRelation::factory()->create([
             'PRJ_UID' => $project->PRO_UID,
             'TAS_UID' => $task->TAS_UID,
         ]);
@@ -212,11 +219,11 @@ class TaskTest extends TestCase
      */
     public function it_should_test_get_task_def_title_method()
     {
-        $project = factory(Process::class)->create();
-        $task = factory(Task::class)->create([
+        $project = Process::factory()->create();
+        $task = Task::factory()->create([
             'TAS_DEF_TITLE' => 'something'
         ]);
-        $elementTask = factory(ElementTaskRelation::class)->create([
+        $elementTask = ElementTaskRelation::factory()->create([
             'PRJ_UID' => $project->PRO_UID,
             'TAS_UID' => $task->TAS_UID,
         ]);
@@ -234,7 +241,7 @@ class TaskTest extends TestCase
      */
     public function it_get_case_title()
     {
-        $task = factory(Task::class)->create();
+        $task = Task::factory()->create();
         $tas = new Task();
         $result = $tas->taskCaseTitle($task->TAS_UID);
         $this->assertNotEmpty($result);
@@ -250,30 +257,27 @@ class TaskTest extends TestCase
      */
     public function it_should_test_get_tasks_for_home_method()
     {
-        Task::truncate();
-        Process::truncate();
-        
-        $process1 = factory(Process::class)->create();
-        $process2 = factory(Process::class)->create();
+        $process1 = Process::factory()->create();
+        $process2 = Process::factory()->create();
 
-        factory(Task::class)->create([
+        Task::factory()->create([
             'PRO_UID' => $process1->PRO_UID,
             'TAS_TITLE' => 'Task 1'
         ]);
-        factory(Task::class)->create([
+        Task::factory()->create([
             'PRO_UID' => $process1->PRO_UID,
             'TAS_TITLE' => 'Task 2'
         ]);
-        factory(Task::class)->create([
+        Task::factory()->create([
             'PRO_UID' => $process1->PRO_UID,
             'TAS_TITLE' => 'Task 3'
         ]);
 
-        factory(Task::class)->create([
+        Task::factory()->create([
             'PRO_UID' => $process2->PRO_UID,
             'TAS_TITLE' => 'Task 1'
         ]);
-        factory(Task::class)->create([
+        Task::factory()->create([
             'PRO_UID' => $process2->PRO_UID,
             'TAS_TITLE' => 'Task 2'
         ]);

@@ -1970,7 +1970,7 @@ class Cases
      * @return void
      * @throws Exception
      */
-    public function setCaseVariables($app_uid, $app_data, $dyn_uid = null, $usr_uid, $del_index = 0)
+    public function setCaseVariables($app_uid, $app_data, $dyn_uid = null, $usr_uid = '', $del_index = 0)
     {
         Validator::isString($app_uid, '$app_uid');
         Validator::appUid($app_uid, '$app_uid');

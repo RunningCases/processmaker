@@ -1431,7 +1431,9 @@ function run_check_queries_incompatibilities($args)
 function check_queries_incompatibilities($wsName)
 {
     Bootstrap::setConstantsRelatedWs($wsName);
-    require_once(PATH_DB . $wsName . '/db.php');
+    if (!defined('DB_ADAPTER')) {
+        require_once(PATH_DB . $wsName . '/db.php');
+    }
     System::initLaravel();
 
     $query = Process::query()->select('PRO_UID', 'PRO_TITLE');

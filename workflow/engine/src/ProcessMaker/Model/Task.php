@@ -2,11 +2,14 @@
 
 namespace ProcessMaker\Model;
 
+use App\Factories\HasFactory;
 use G;
 use Illuminate\Database\Eloquent\Model;
 
 class Task extends Model
 {
+    use HasFactory;
+
     protected $table = 'TASK';
     protected $primaryKey = 'TAS_ID';
     // We do not have create/update timestamps for this table

@@ -24,9 +24,9 @@ class OutputDocumentTest extends TestCase
      */
     public function it_has_a_process_defined()
     {
-        $table = factory(OutputDocument::class)->create([
+        $table = OutputDocument::factory()->create([
             'PRO_UID' => function () {
-                return factory(Process::class)->create()->PRO_UID;
+                return Process::factory()->create()->PRO_UID;
             }
         ]);
         $this->assertInstanceOf(Process::class, $table->process);
@@ -40,7 +40,7 @@ class OutputDocumentTest extends TestCase
      */
     public function it_get_by_process()
     {
-        $table = factory(OutputDocument::class)->create();
+        $table = OutputDocument::factory()->create();
         $result = OutputDocument::getByProUid($table->PRO_UID);
         $this->assertNotEmpty($result);
     }
@@ -53,7 +53,7 @@ class OutputDocumentTest extends TestCase
      */
     public function it_get_by_uid()
     {
-        $table = factory(OutputDocument::class)->create();
+        $table = OutputDocument::factory()->create();
         $result = OutputDocument::getByOutDocUid($table->OUT_DOC_UID);
         $this->assertNotEmpty($result);
     }
