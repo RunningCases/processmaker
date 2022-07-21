@@ -21,9 +21,9 @@ class FieldsTest extends TestCase
      */
     public function it_has_a_columns_defined()
     {
-        $tableColumns = factory(Fields::class)->create([
+        $tableColumns = Fields::factory()->create([
             'ADD_TAB_UID' => function () {
-                return factory(AdditionalTables::class)->create()->ADD_TAB_UID;
+                return AdditionalTables::factory()->create()->ADD_TAB_UID;
             }
         ]);
         $this->assertInstanceOf(AdditionalTables::class, $tableColumns->table);
@@ -38,7 +38,7 @@ class FieldsTest extends TestCase
      */
     public function it_get_fields_from_specific_table()
     {
-        $fields = factory(Fields::class)->create();
+        $fields = Fields::factory()->create();
         $result = Fields::getFields($fields->ADD_TAB_UID);
         $this->assertNotEmpty($result);
     }
@@ -53,7 +53,7 @@ class FieldsTest extends TestCase
      */
     public function it_search_field()
     {
-        $fields = factory(Fields::class)->create();
+        $fields = Fields::factory()->create();
         $result = Fields::searchVariable($fields->ADD_TAB_UID, $fields->FLD_NAME);
         $this->assertNotEmpty($result);
     }

@@ -25,14 +25,9 @@ class TaskTest extends TestCase
      */
     public function setUp(): void
     {
-        if (version_compare(phpversion(), 7.3, '>') ) {
-            $this->markTestSkipped('The changes in third party are not available');
-        }
         parent::setUp();
+        $this->truncateNonInitialModels();
         $this->faker = Factory::create();
-        Delegation::truncate();
-        AppThread::truncate();
-        Application::truncate();
     }
 
     /**
@@ -72,7 +67,7 @@ class TaskTest extends TestCase
 
         //assert if message is contained in output buffer
         if ($asynchronous === false) {
-            $this->assertRegExp("/{$message}/", $printing);
+            $this->assertMatchesRegularExpression("/{$message}/", $printing);
         }
         //assert if not showing message
         if ($asynchronous === true) {
@@ -97,7 +92,7 @@ class TaskTest extends TestCase
         $printing = ob_get_clean();
         //assert if message is contained in output buffer
         if ($asynchronous === false) {
-            $this->assertRegExp("/{$message}/", $printing);
+            $this->assertMatchesRegularExpression("/{$message}/", $printing);
         }
         //assert if not showing message
         if ($asynchronous === true) {
@@ -109,7 +104,7 @@ class TaskTest extends TestCase
         $printing = ob_get_clean();
         //assert if message is contained in output buffer
         if ($asynchronous === false) {
-            $this->assertRegExp("/{$message}/", $printing);
+            $this->assertMatchesRegularExpression("/{$message}/", $printing);
         }
         //assert if not showing message
         if ($asynchronous === true) {
@@ -121,7 +116,7 @@ class TaskTest extends TestCase
         $printing = ob_get_clean();
         //assert if message is contained in output buffer
         if ($asynchronous === false) {
-            $this->assertRegExp("/{$message}/", $printing);
+            $this->assertMatchesRegularExpression("/{$message}/", $printing);
         }
         //assert if not showing message
         if ($asynchronous === true) {
@@ -149,7 +144,7 @@ class TaskTest extends TestCase
             $task->saveLog('', '', $description);
             $contentLog = file_get_contents($file);
 
-            $this->assertRegExp("/{$description}/", $contentLog);
+            $this->assertMatchesRegularExpression("/{$description}/", $contentLog);
         }
         if ($asynchronous === true) {
             $description = $this->faker->paragraph;
@@ -157,7 +152,7 @@ class TaskTest extends TestCase
             $task->saveLog('', '', $description);
             $contentLog = file_get_contents($file);
 
-            $this->assertNotRegExp("/{$description}/", $contentLog);
+            $this->assertDoesNotMatchRegularExpression("/{$description}/", $contentLog);
         }
     }
 
@@ -178,7 +173,7 @@ class TaskTest extends TestCase
             ob_start();
             $task->resendEmails('', $dateSystem);
             $printing = ob_get_clean();
-            $this->assertRegExp("/DONE/", $printing);
+            $this->assertMatchesRegularExpression("/DONE/", $printing);
         }
 
         //assert asynchronous for job process
@@ -204,16 +199,16 @@ class TaskTest extends TestCase
         //assert synchronous for cron file
         if ($asynchronous === false) {
             ob_start();
-            $task->unpauseApplications('');
+            $task->unpauseApplications(date('Y-m-d'));
             $printing = ob_get_clean();
-            $this->assertRegExp("/DONE/", $printing);
+            $this->assertMatchesRegularExpression("/DONE/", $printing);
         }
 
         //assert asynchronous for job process
         if ($asynchronous === true) {
             Queue::fake();
             Queue::assertNothingPushed();
-            $task->unpauseApplications('');
+            $task->unpauseApplications(date('Y-m-d'));
             Queue::assertPushed(TaskScheduler::class);
         }
     }
@@ -234,7 +229,7 @@ class TaskTest extends TestCase
             ob_start();
             $task->calculateDuration();
             $printing = ob_get_clean();
-            $this->assertRegExp("/DONE/", $printing);
+            $this->assertMatchesRegularExpression("/DONE/", $printing);
         }
 
         //assert asynchronous for job process
@@ -261,7 +256,7 @@ class TaskTest extends TestCase
             ob_start();
             $task->executeCaseSelfService();
             $printing = ob_get_clean();
-            $this->assertRegExp("/Unassigned case/", $printing);
+            $this->assertMatchesRegularExpression("/Unassigned case/", $printing);
         }
 
         // Assert asynchronous for job process
@@ -289,7 +284,7 @@ class TaskTest extends TestCase
             ob_start();
             $task->calculateAppDuration();
             $printing = ob_get_clean();
-            $this->assertRegExp("/DONE/", $printing);
+            $this->assertMatchesRegularExpression("/DONE/", $printing);
         }
 
         //assert asynchronous for job process
@@ -317,7 +312,7 @@ class TaskTest extends TestCase
             ob_start();
             $task->cleanSelfServiceTables();
             $printing = ob_get_clean();
-            $this->assertRegExp("/DONE/", $printing);
+            $this->assertMatchesRegularExpression("/DONE/", $printing);
         }
 
         //assert asynchronous for job process
@@ -345,7 +340,7 @@ class TaskTest extends TestCase
             ob_start();
             $task->executePlugins();
             $printing = ob_get_clean();
-            $this->assertRegExp("/plugins/", $printing);
+            $this->assertMatchesRegularExpression("/plugins/", $printing);
         }
 
         //assert asynchronous for job process
@@ -375,7 +370,7 @@ class TaskTest extends TestCase
             ob_start();
             $task->fillReportByUser($dateInit, $dateFinish);
             $printing = ob_get_clean();
-            $this->assertRegExp("/User Reporting/", $printing);
+            $this->assertMatchesRegularExpression("/User Reporting/", $printing);
         }
 
         //assert asynchronous for job process
@@ -405,7 +400,7 @@ class TaskTest extends TestCase
             ob_start();
             $task->fillReportByProcess($dateInit, $dateFinish);
             $printing = ob_get_clean();
-            $this->assertRegExp("/Process Reporting/", $printing);
+            $this->assertMatchesRegularExpression("/Process Reporting/", $printing);
         }
 
         //assert asynchronous for job process
@@ -433,7 +428,7 @@ class TaskTest extends TestCase
             ob_start();
             $task->ldapcron(false);
             $printing = ob_get_clean();
-            $this->assertRegExp("/\+---/", $printing);
+            $this->assertMatchesRegularExpression("/\+---/", $printing);
         }
 
         //assert asynchronous for job process
@@ -461,7 +456,7 @@ class TaskTest extends TestCase
             ob_start();
             $task->sendNotifications();
             $printing = ob_get_clean();
-            $this->assertRegExp("/Resending Notifications/", $printing);
+            $this->assertMatchesRegularExpression("/Resending Notifications/", $printing);
         }
 
         //assert asynchronous for job process
@@ -517,7 +512,7 @@ class TaskTest extends TestCase
             ob_start();
             $task->messageeventcron();
             $printing = ob_get_clean();
-            $this->assertRegExp("/Message-Events/", $printing);
+            $this->assertMatchesRegularExpression("/Message-Events/", $printing);
         }
 
         //assert asynchronous for job process
@@ -550,7 +545,7 @@ class TaskTest extends TestCase
             //Gets the result
             $printing = ob_get_clean();
             //Asserts the result is printing that there is no exisiting records to continue a case in the determined date
-            $this->assertRegExp('/There are no records to start new cases, on date "' . $date . '/', $printing);
+            $this->assertMatchesRegularExpression('/There are no records to start new cases, on date "' . $date . '/', $printing);
         }
         //assert asynchronous for job process
         if ($asynchronous === true) {

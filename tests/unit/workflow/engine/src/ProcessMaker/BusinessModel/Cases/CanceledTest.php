@@ -2,7 +2,6 @@
 
 namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use ProcessMaker\BusinessModel\Cases\Canceled;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
@@ -15,14 +14,13 @@ use Tests\TestCase;
  */
 class CanceledTest extends TestCase
 {
-    use DatabaseTransactions;
-
     /**
      * Method set up.
      */
     public function setUp(): void
     {
         parent::setUp();
+        $this->truncateNonInitialModels();
     }
 
     /**
@@ -32,8 +30,8 @@ class CanceledTest extends TestCase
      */
     public function createCanceled()
     {
-        $application = factory(Application::class)->states('canceled')->create();
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->canceled()->create();
+        $delegation = Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'CLOSED',
             'DEL_INDEX' => 1,
             'USR_UID' => $application->APP_INIT_USER,

@@ -164,7 +164,7 @@ class Metrics extends Api
      * 
      * @class AccessControl {@permission TASK_METRICS_VIEW}
      */
-    public function getCasesRiskByProcess($caseList = 'inbox', $process, $dateFrom = null, $dateTo = null, $riskStatus = 'ON_TIME', $topCases = null)
+    public function getCasesRiskByProcess($caseList = 'inbox', $process = '', $dateFrom = null, $dateTo = null, $riskStatus = 'ON_TIME', $topCases = null)
     {
         try {
             switch ($caseList) {

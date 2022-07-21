@@ -1,7 +1,6 @@
 <?php
 
 use Faker\Factory;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use ProcessMaker\Model\Dynaform;
 use ProcessMaker\Model\Process;
 use Tests\TestCase;
@@ -36,7 +35,7 @@ class PmDynaformTest extends TestCase
         if (!defined("DB_PASS")) {
             define("DB_PASS", env('DB_PASSWORD'));
         }
-        Dynaform::truncate();
+        $this->truncateNonInitialModels();
     }
 
     /**
@@ -48,9 +47,9 @@ class PmDynaformTest extends TestCase
     {
         $arrayForm = $this->createArrayDynaform();
 
-        $process = factory(Process::class, 1)->create();
+        $process = Process::factory(1)->create();
 
-        $dynaform = factory(Dynaform::class, 1)->create([
+        $dynaform = Dynaform::factory(1)->create([
             'DYN_ID' => 6,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
@@ -72,9 +71,9 @@ class PmDynaformTest extends TestCase
     {
         $arrayForm = $this->createArrayDynaform();
 
-        $process = factory(Process::class, 1)->create();
+        $process = Process::factory(1)->create();
 
-        $dynaform = factory(Dynaform::class, 1)->create([
+        $dynaform = Dynaform::factory(1)->create([
             'DYN_ID' => 5,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
@@ -96,9 +95,9 @@ class PmDynaformTest extends TestCase
     {
         $arrayForm = $this->createArrayDynaform();
 
-        $process = factory(Process::class, 1)->create();
+        $process = Process::factory(1)->create();
 
-        $dynaform = factory(Dynaform::class, 1)->create([
+        $dynaform = Dynaform::factory(1)->create([
             'DYN_ID' => 5,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
@@ -120,9 +119,9 @@ class PmDynaformTest extends TestCase
     {
         $arrayForm = $this->createArrayDynaform();
 
-        $process = factory(Process::class, 1)->create();
+        $process = Process::factory(1)->create();
 
-        $dynaform = factory(Dynaform::class, 1)->create([
+        $dynaform = Dynaform::factory(1)->create([
             'DYN_ID' => 5,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
@@ -144,9 +143,9 @@ class PmDynaformTest extends TestCase
     {
         $arrayForm = $this->createArrayDynaform();
 
-        $process = factory(Process::class, 1)->create();
+        $process = Process::factory(1)->create();
 
-        $dynaform = factory(Dynaform::class, 1)->create([
+        $dynaform = Dynaform::factory(1)->create([
             'DYN_ID' => 5,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
@@ -169,9 +168,9 @@ class PmDynaformTest extends TestCase
     {
         $arrayForm = $this->createArrayDynaform();
 
-        $process = factory(Process::class, 1)->create();
+        $process = Process::factory(1)->create();
 
-        $dynaform = factory(Dynaform::class, 1)->create([
+        $dynaform = Dynaform::factory(1)->create([
             'DYN_ID' => 5,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
@@ -194,9 +193,9 @@ class PmDynaformTest extends TestCase
     {
         $arrayForm = $this->createArrayDynaform();
 
-        $process = factory(Process::class, 1)->create();
+        $process = Process::factory(1)->create();
 
-        $dynaform = factory(Dynaform::class, 1)->create([
+        $dynaform = Dynaform::factory(1)->create([
             'DYN_ID' => 4,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
@@ -223,9 +222,9 @@ class PmDynaformTest extends TestCase
     {
         $arrayForm = $this->createArrayDynaform();
 
-        $process = factory(Process::class, 1)->create();
+        $process = Process::factory(1)->create();
 
-        $dynaform = factory(Dynaform::class, 1)->create([
+        $dynaform = Dynaform::factory(1)->create([
             'DYN_ID' => 6,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
@@ -247,9 +246,9 @@ class PmDynaformTest extends TestCase
     {
         $arrayForm = $this->createArrayDynaform();
 
-        $process = factory(Process::class, 1)->create();
+        $process = Process::factory(1)->create();
 
-        $dynaform = factory(Dynaform::class, 1)->create([
+        $dynaform = Dynaform::factory(1)->create([
             'DYN_ID' => 5,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
@@ -271,9 +270,9 @@ class PmDynaformTest extends TestCase
     {
         $arrayForm = $this->createArrayDynaform();
 
-        $process = factory(Process::class, 1)->create();
+        $process = Process::factory(1)->create();
 
-        $dynaform = factory(Dynaform::class, 1)->create([
+        $dynaform = Dynaform::factory(1)->create([
             'DYN_ID' => 3,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
@@ -294,10 +293,10 @@ class PmDynaformTest extends TestCase
      */
     public function it_should_return_null_when_not_exist_dynaform()
     {
-        $process = factory(Process::class, 1)->create();
+        $process = Process::factory(1)->create();
 
         $arrayForm = $this->createArrayDynaform();
-        $dynaform = factory(Dynaform::class, 1)->create([
+        $dynaform = Dynaform::factory(1)->create([
             'DYN_ID' => 7,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
@@ -330,10 +329,10 @@ class PmDynaformTest extends TestCase
      */
     public function it_should_return_array_dynaforms_except_current_dynaform_in_second_execution()
     {
-        $process = factory(Process::class, 1)->create();
+        $process = Process::factory(1)->create();
 
         $arrayForm = $this->createArrayDynaform();
-        $dynaform = factory(Dynaform::class, 1)->create([
+        $dynaform = Dynaform::factory(1)->create([
             'DYN_ID' => 7,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
@@ -341,7 +340,7 @@ class PmDynaformTest extends TestCase
         ]);
 
         $arrayForm2 = $this->createArrayDynaform();
-        $dynaform2 = factory(Dynaform::class, 1)->create([
+        $dynaform2 = Dynaform::factory(1)->create([
             'DYN_ID' => 9,
             'DYN_UID' => $arrayForm2['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
@@ -364,10 +363,10 @@ class PmDynaformTest extends TestCase
      */
     public function it_should_return_array_dynaforms_except_current_dynaform()
     {
-        $process = factory(Process::class, 1)->create();
+        $process = Process::factory(1)->create();
 
         $arrayForm = $this->createArrayDynaform();
-        $dynaform = factory(Dynaform::class, 1)->create([
+        $dynaform = Dynaform::factory(1)->create([
             'DYN_ID' => 7,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
@@ -375,7 +374,7 @@ class PmDynaformTest extends TestCase
         ]);
 
         $arrayForm2 = $this->createArrayDynaform();
-        $dynaform2 = factory(Dynaform::class, 1)->create([
+        $dynaform2 = Dynaform::factory(1)->create([
             'DYN_ID' => 9,
             'DYN_UID' => $arrayForm2['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
@@ -416,9 +415,9 @@ class PmDynaformTest extends TestCase
     {
         $arrayForm = $this->createArrayDynaform();
 
-        $process = factory(Process::class, 1)->create();
+        $process = Process::factory(1)->create();
 
-        $dynaform = factory(Dynaform::class, 1)->create([
+        $dynaform = Dynaform::factory(1)->create([
             'DYN_ID' => 1,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
@@ -443,9 +442,9 @@ class PmDynaformTest extends TestCase
 
         $arrayForm = $this->createArrayDynaform();
 
-        $process = factory(Process::class, 1)->create();
+        $process = Process::factory(1)->create();
 
-        $dynaform = factory(Dynaform::class, 1)->create([
+        $dynaform = Dynaform::factory(1)->create([
             'DYN_ID' => 2,
             'PRO_UID' => $process[0]->PRO_UID,
             'DYN_CONTENT' => G::json_encode($arrayForm)
@@ -831,7 +830,7 @@ class PmDynaformTest extends TestCase
     {
         // Create a form without translations defined
         $arrayForm = $this->createArrayDynaform();
-        $form = factory(Dynaform::class)->create([
+        $form = Dynaform::factory()->create([
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'DYN_CONTENT' => G::json_encode($arrayForm)
         ]);
@@ -841,7 +840,7 @@ class PmDynaformTest extends TestCase
 
         // Create a form with  translations defined
         $arrayForm = $this->createArrayDynaform();
-        $form = factory(Dynaform::class)->states('translations')->create([
+        $form = Dynaform::factory()->translations()->create([
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'DYN_CONTENT' => G::json_encode($arrayForm)
         ]);
@@ -861,7 +860,7 @@ class PmDynaformTest extends TestCase
     {
         $arrayForm = $this->createArrayDynaform();
         // Create a translations related to ["es", "es-Es"]
-        $form = factory(Dynaform::class)->states('translations')->create([
+        $form = Dynaform::factory()->translations()->create([
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'DYN_CONTENT' => G::json_encode($arrayForm)
         ]);
@@ -963,7 +962,7 @@ class PmDynaformTest extends TestCase
     public function it_should_get_dynaform_title()
     {
         // Create a Dynaform
-        $dynaform = factory(Dynaform::class)->create([]);
+        $dynaform = Dynaform::factory()->create([]);
 
         // Instance the class to test
         $pmDynaform = new PmDynaform();
@@ -1082,10 +1081,10 @@ class PmDynaformTest extends TestCase
         $data2 = file_get_contents($pathData2);
         $json2 = json_decode($data2);
 
-        $dynaform = factory(Dynaform::class)->create([
+        $dynaform = Dynaform::factory()->create([
             'DYN_CONTENT' => $data
         ]);
-        factory(Dynaform::class)->create([
+        Dynaform::factory()->create([
             'DYN_CONTENT' => $data,
             'PRO_UID' => $dynaform->PRO_UID
         ]);
@@ -1160,10 +1159,10 @@ class PmDynaformTest extends TestCase
         $data2 = file_get_contents($pathData2);
         $json2 = json_decode($data2);
 
-        $dynaform = factory(Dynaform::class)->create([
+        $dynaform = Dynaform::factory()->create([
             'DYN_CONTENT' => $data
         ]);
-        factory(Dynaform::class)->create([
+        Dynaform::factory()->create([
             'DYN_CONTENT' => $data,
             'PRO_UID' => $dynaform->PRO_UID
         ]);

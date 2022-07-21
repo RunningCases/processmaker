@@ -68,6 +68,6 @@ class CustomizeFormatterTest extends TestCase
         $this->assertCount(1, $files);
 
         $string = File::get($files[0]);
-        $this->assertRegExp("/{$message}/", $string);
+        $this->assertMatchesRegularExpression("/{$message}/", $string);
     }
 }

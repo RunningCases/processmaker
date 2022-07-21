@@ -4,7 +4,6 @@ namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 
 use DateInterval;
 use Datetime;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Cases\Draft;
 use ProcessMaker\Model\AdditionalTables;
@@ -22,16 +21,13 @@ use Tests\TestCase;
  */
 class DraftTest extends TestCase
 {
-    use DatabaseTransactions;
-
     /**
      * Method set up.
      */
     public function setUp(): void
     {
         parent::setUp();
-        Delegation::truncate();
-        Application::truncate();
+        $this->truncateNonInitialModels();
     }
 
     /**
@@ -43,8 +39,8 @@ class DraftTest extends TestCase
      */
     public function createDraft()
     {
-        $application = factory(Application::class)->states('draft')->create();
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->draft()->create();
+        $delegation = Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application->APP_INIT_USER,
@@ -64,15 +60,15 @@ class DraftTest extends TestCase
      */
     public function createManyDraft($cases)
     {
-        $user = factory(\ProcessMaker\Model\User::class)->create();
+        $user = \ProcessMaker\Model\User::factory()->create();
 
         for ($i = 0; $i < $cases; $i = $i + 1) {
-            $application = factory(Application::class)->states('draft')->create([
+            $application = Application::factory()->draft()->create([
                 'APP_INIT_USER' => $user->USR_UID,
                 'APP_INIT_USER_ID' => $user->USR_ID,
                 'APP_CUR_USER' => $user->USR_UID,
             ]);
-            $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+            $delegation = Delegation::factory()->foreign_keys()->create([
                 'DEL_THREAD_STATUS' => 'OPEN',
                 'DEL_INDEX' => 1,
                 'APP_UID' => $application->APP_UID,
@@ -341,18 +337,18 @@ class DraftTest extends TestCase
      */
     public function it_should_test_get_counters_by_processes_method_no_filter()
     {
-        $process = factory(Process::class)->create();
-        $process2 = factory(Process::class)->create();
-        $user = factory(User::class)->create();
-        $application1 = factory(Application::class)->states('draft')->create([
+        $process = Process::factory()->create();
+        $process2 = Process::factory()->create();
+        $user = User::factory()->create();
+        $application1 = Application::factory()->draft()->create([
             'APP_INIT_USER' => $user->USR_UID,
             'APP_CUR_USER' => $user->USR_UID,
         ]);
-        $application2 = factory(Application::class)->states('draft')->create([
+        $application2 = Application::factory()->draft()->create([
             'APP_INIT_USER' => $user->USR_UID,
             'APP_CUR_USER' => $user->USR_UID,
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application1->APP_INIT_USER,
@@ -362,7 +358,7 @@ class DraftTest extends TestCase
             'PRO_ID' => $process->PRO_ID,
             'PRO_UID' => $process->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application2->APP_INIT_USER,
@@ -388,18 +384,18 @@ class DraftTest extends TestCase
      */
     public function it_should_test_get_counters_by_processes_method_category()
     {
-        $process = factory(Process::class)->create([
+        $process = Process::factory()->create([
             'CATEGORY_ID' => 1
         ]);
-        $process2 = factory(Process::class)->create([
+        $process2 = Process::factory()->create([
             'CATEGORY_ID' => 2
         ]);
-        $user = factory(User::class)->create();
-        $application = factory(Application::class, 5)->states('draft')->create([
+        $user = User::factory()->create();
+        $application = Application::factory(5)->draft()->create([
             'APP_INIT_USER' => $user->USR_UID,
             'APP_CUR_USER' => $user->USR_UID,
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[0]->APP_INIT_USER,
@@ -409,7 +405,7 @@ class DraftTest extends TestCase
             'PRO_ID' => $process->PRO_ID,
             'PRO_UID' => $process->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[1]->APP_INIT_USER,
@@ -419,7 +415,7 @@ class DraftTest extends TestCase
             'PRO_ID' => $process->PRO_ID,
             'PRO_UID' => $process->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[2]->APP_INIT_USER,
@@ -429,7 +425,7 @@ class DraftTest extends TestCase
             'PRO_ID' => $process->PRO_ID,
             'PRO_UID' => $process->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[3]->APP_INIT_USER,
@@ -439,7 +435,7 @@ class DraftTest extends TestCase
             'PRO_ID' => $process2->PRO_ID,
             'PRO_UID' => $process2->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[4]->APP_INIT_USER,
@@ -465,23 +461,23 @@ class DraftTest extends TestCase
      */
     public function it_should_test_get_counters_by_processes_method_top_ten()
     {
-        $process1 = factory(Process::class)->create();
-        $process2 = factory(Process::class)->create();
-        $process3 = factory(Process::class)->create();
-        $process4 = factory(Process::class)->create();
-        $process5 = factory(Process::class)->create();
-        $process6 = factory(Process::class)->create();
-        $process7 = factory(Process::class)->create();
-        $process8 = factory(Process::class)->create();
-        $process9 = factory(Process::class)->create();
-        $process10 = factory(Process::class)->create();
-        $process11 = factory(Process::class)->create();
-        $user = factory(User::class)->create();
-        $application = factory(Application::class, 14)->states('draft')->create([
+        $process1 = Process::factory()->create();
+        $process2 = Process::factory()->create();
+        $process3 = Process::factory()->create();
+        $process4 = Process::factory()->create();
+        $process5 = Process::factory()->create();
+        $process6 = Process::factory()->create();
+        $process7 = Process::factory()->create();
+        $process8 = Process::factory()->create();
+        $process9 = Process::factory()->create();
+        $process10 = Process::factory()->create();
+        $process11 = Process::factory()->create();
+        $user = User::factory()->create();
+        $application = Application::factory(14)->draft()->create([
             'APP_INIT_USER' => $user->USR_UID,
             'APP_CUR_USER' => $user->USR_UID,
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[0]->APP_INIT_USER,
@@ -491,7 +487,7 @@ class DraftTest extends TestCase
             'PRO_ID' => $process1->PRO_ID,
             'PRO_UID' => $process1->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[1]->APP_INIT_USER,
@@ -501,7 +497,7 @@ class DraftTest extends TestCase
             'PRO_ID' => $process1->PRO_ID,
             'PRO_UID' => $process1->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[2]->APP_INIT_USER,
@@ -511,7 +507,7 @@ class DraftTest extends TestCase
             'PRO_ID' => $process1->PRO_ID,
             'PRO_UID' => $process1->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[3]->APP_INIT_USER,
@@ -521,7 +517,7 @@ class DraftTest extends TestCase
             'PRO_ID' => $process2->PRO_ID,
             'PRO_UID' => $process2->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[4]->APP_INIT_USER,
@@ -531,7 +527,7 @@ class DraftTest extends TestCase
             'PRO_ID' => $process2->PRO_ID,
             'PRO_UID' => $process2->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[5]->APP_INIT_USER,
@@ -541,7 +537,7 @@ class DraftTest extends TestCase
             'PRO_ID' => $process3->PRO_ID,
             'PRO_UID' => $process3->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[6]->APP_INIT_USER,
@@ -551,7 +547,7 @@ class DraftTest extends TestCase
             'PRO_ID' => $process4->PRO_ID,
             'PRO_UID' => $process4->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[7]->APP_INIT_USER,
@@ -561,7 +557,7 @@ class DraftTest extends TestCase
             'PRO_ID' => $process5->PRO_ID,
             'PRO_UID' => $process5->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[8]->APP_INIT_USER,
@@ -571,7 +567,7 @@ class DraftTest extends TestCase
             'PRO_ID' => $process6->PRO_ID,
             'PRO_UID' => $process6->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[9]->APP_INIT_USER,
@@ -581,7 +577,7 @@ class DraftTest extends TestCase
             'PRO_ID' => $process7->PRO_ID,
             'PRO_UID' => $process7->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[10]->APP_INIT_USER,
@@ -591,7 +587,7 @@ class DraftTest extends TestCase
             'PRO_ID' => $process8->PRO_ID,
             'PRO_UID' => $process8->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[11]->APP_INIT_USER,
@@ -601,7 +597,7 @@ class DraftTest extends TestCase
             'PRO_ID' => $process9->PRO_ID,
             'PRO_UID' => $process9->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[12]->APP_INIT_USER,
@@ -611,7 +607,7 @@ class DraftTest extends TestCase
             'PRO_ID' => $process10->PRO_ID,
             'PRO_UID' => $process10->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[13]->APP_INIT_USER,
@@ -636,14 +632,14 @@ class DraftTest extends TestCase
      */
     public function it_should_test_get_counters_by_processes_method_processes()
     {
-        $process = factory(Process::class)->create();
-        $process2 = factory(Process::class)->create();
-        $user = factory(User::class)->create();
-        $application = factory(Application::class, 14)->states('draft')->create([
+        $process = Process::factory()->create();
+        $process2 = Process::factory()->create();
+        $user = User::factory()->create();
+        $application = Application::factory(14)->draft()->create([
             'APP_INIT_USER' => $user->USR_UID,
             'APP_CUR_USER' => $user->USR_UID,
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[0]->APP_INIT_USER,
@@ -653,7 +649,7 @@ class DraftTest extends TestCase
             'PRO_ID' => $process->PRO_ID,
             'PRO_UID' => $process->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[1]->APP_INIT_USER,
@@ -679,14 +675,14 @@ class DraftTest extends TestCase
      */
     public function it_should_test_get_counters_by_range_method()
     {
-        $process1 = factory(Process::class)->create();
-        $process2 = factory(Process::class)->create();
-        $user = factory(User::class)->create();
-        $application = factory(Application::class, 4)->states('draft')->create([
+        $process1 = Process::factory()->create();
+        $process2 = Process::factory()->create();
+        $user = User::factory()->create();
+        $application = Application::factory(4)->draft()->create([
             'APP_INIT_USER' => $user->USR_UID,
             'APP_CUR_USER' => $user->USR_UID,
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[0]->APP_INIT_USER,
@@ -697,7 +693,7 @@ class DraftTest extends TestCase
             'PRO_UID' => $process1->PRO_UID,
             'DEL_DELEGATE_DATE' => '2021-05-20 09:52:32'
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[1]->APP_INIT_USER,
@@ -708,7 +704,7 @@ class DraftTest extends TestCase
             'PRO_UID' => $process1->PRO_UID,
             'DEL_DELEGATE_DATE' => '2021-05-21 09:52:32'
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[2]->APP_INIT_USER,
@@ -719,7 +715,7 @@ class DraftTest extends TestCase
             'PRO_UID' => $process1->PRO_UID,
             'DEL_DELEGATE_DATE' => '2021-05-22 00:00:00'
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[3]->APP_INIT_USER,
@@ -757,9 +753,8 @@ class DraftTest extends TestCase
      */
     public function it_should_test_getCustomListCount_method()
     {
-        $this->markTestIncomplete('Illegal mix of collations');
         $cases = $this->createManyDraft(3);
-        $additionalTables = factory(AdditionalTables::class)->create([
+        $additionalTables = AdditionalTables::factory()->create([
             'PRO_UID' => $cases->PRO_UID
         ]);
         $query = ""
@@ -771,10 +766,11 @@ class DraftTest extends TestCase
             . "`VAR2` varchar(255) DEFAULT NULL,"
             . "`VAR3` varchar(255) DEFAULT NULL,"
             . "PRIMARY KEY (`APP_UID`),"
-            . "KEY `indexTable` (`APP_UID`))";
+            . "KEY `indexTable` (`APP_UID`)"
+            . ")ENGINE=InnoDB  DEFAULT CHARSET='utf8'";
         DB::statement($query);
 
-        $caseList = factory(CaseList::class)->create([
+        $caseList = CaseList::factory()->create([
             'CAL_TYPE' => 'draft',
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID,
             'USR_ID' => $cases->USR_ID
@@ -809,13 +805,13 @@ class DraftTest extends TestCase
         $currentDate = $date->format('Y-m-d H:i:s');
         $diff1Day = new DateInterval('P1D');
         $diff2Days = new DateInterval('P2D');
-        $process = factory(Process::class)->create();
-        $user = factory(User::class)->create();
-        $application = factory(Application::class, 14)->states('draft')->create([
+        $process = Process::factory()->create();
+        $user = User::factory()->create();
+        $application = Application::factory(14)->draft()->create([
             'APP_INIT_USER' => $user->USR_UID,
             'APP_CUR_USER' => $user->USR_UID,
         ]);
-        $del = factory(Delegation::class)->states('foreign_keys')->create([
+        $del = Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[0]->APP_INIT_USER,
@@ -846,13 +842,13 @@ class DraftTest extends TestCase
         $date = new DateTime('now');
         $currentDate = $date->format('Y-m-d H:i:s');
         $diff2Days = new DateInterval('P2D');
-        $process = factory(Process::class)->create();
-        $user = factory(User::class)->create();
-        $application = factory(Application::class, 14)->states('draft')->create([
+        $process = Process::factory()->create();
+        $user = User::factory()->create();
+        $application = Application::factory(14)->draft()->create([
             'APP_INIT_USER' => $user->USR_UID,
             'APP_CUR_USER' => $user->USR_UID,
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[0]->APP_INIT_USER,
@@ -883,13 +879,13 @@ class DraftTest extends TestCase
         $date = new DateTime('now');
         $currentDate = $date->format('Y-m-d H:i:s');
         $diff2Days = new DateInterval('P2D');
-        $process = factory(Process::class)->create();
-        $user = factory(User::class)->create();
-        $application = factory(Application::class, 14)->states('draft')->create([
+        $process = Process::factory()->create();
+        $user = User::factory()->create();
+        $application = Application::factory(14)->draft()->create([
             'APP_INIT_USER' => $user->USR_UID,
             'APP_CUR_USER' => $user->USR_UID,
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[0]->APP_INIT_USER,

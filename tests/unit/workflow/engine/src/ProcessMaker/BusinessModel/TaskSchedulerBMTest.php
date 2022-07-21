@@ -9,6 +9,16 @@ use Tests\TestCase;
 class TaskSchedulerBMTest extends TestCase
 {
     /**
+     * Set up method.
+     * @return void
+     */
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->truncateNonInitialModels();
+    }
+
+    /**
      * Test getSchedule method
      * 
      * @covers \ProcessMaker\BusinessModel\TaskSchedulerBM::getSchedule
@@ -16,13 +26,12 @@ class TaskSchedulerBMTest extends TestCase
      */
     public function it_should_test_get_schedule_method()
     {
-        TaskScheduler::truncate();
         $obj = new TaskSchedulerBM();
         
         $res = $obj->getSchedule('emails_notifications');
         $this->assertNotEmpty($res);
 
-        factory(TaskScheduler::class)->create();
+        TaskScheduler::factory()->create();
 
         $res = $obj->getSchedule('emails_notifications');
         $this->assertNotEmpty(1, $res);
@@ -50,7 +59,7 @@ class TaskSchedulerBMTest extends TestCase
     {
         $obj = new TaskSchedulerBM();
         
-        $scheduler = factory(TaskScheduler::class)->create();
+        $scheduler = TaskScheduler::factory()->create();
 
         $request_data = [
             "id" => $scheduler->id,
@@ -85,7 +94,6 @@ class TaskSchedulerBMTest extends TestCase
      */
     public function it_should_test_generate_initial_data_method()
     {
-        TaskScheduler::truncate();
         $r = TaskScheduler::all()->toArray();
         $this->assertEmpty($r);
 

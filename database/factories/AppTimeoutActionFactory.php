@@ -1,12 +1,27 @@
 <?php
 
-use Faker\Generator as Faker;
+namespace Database\Factories;
 
-$factory->define(\ProcessMaker\Model\AppTimeoutAction::class, function (Faker $faker) {
-    $index = $faker->unique()->numberBetween(20);
-    return [
-        'APP_UID' => G::generateUniqueID(),
-        'DEL_INDEX' => $index,
-        'EXECUTION_DATE' => $faker->dateTime()
-    ];
-});
+use App\Factories\Factory;
+use G;
+use Illuminate\Support\Str;
+
+class AppTimeoutActionFactory extends Factory
+{
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        $index = $this->faker->unique()->numberBetween(20);
+        return [
+            'APP_UID' => G::generateUniqueID(),
+            'DEL_INDEX' => $index,
+            'EXECUTION_DATE' => $this->faker->dateTime()
+        ];
+    }
+
+}

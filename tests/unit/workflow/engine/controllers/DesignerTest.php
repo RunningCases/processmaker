@@ -18,9 +18,9 @@ class DesignerTest extends TestCase
     public function it_should_test_that_the_index_method_is_not_throwing_an_exception()
     {
         //Create the process factory
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create the application factory
-        $application = factory(Application::class)->create(
+        $application = Application::factory()->create(
             [
                 'APP_PIN' => G::encryptOld('LJ5W'),
             ]
@@ -69,8 +69,8 @@ class DesignerTest extends TestCase
         $res = ob_get_clean();
 
         //Assert the result does not have errors
-        $this->assertNotContains('Call to a member function getUsrUid() on null', $res);
-        $this->assertNotContains('Uncaught TypeError: Argument 2 passed to Illumincate\Routing\UrlGenerator::_construct() must be an instance of Illuminate\Http\Request, null given',
+        $this->assertStringNotContainsString('Call to a member function getUsrUid() on null', $res);
+        $this->assertStringNotContainsString('Uncaught TypeError: Argument 2 passed to Illumincate\Routing\UrlGenerator::_construct() must be an instance of Illuminate\Http\Request, null given',
             $res);
     }
 
@@ -82,9 +82,9 @@ class DesignerTest extends TestCase
     public function it_should_test_the_index_method_when_the_user_logged_is_empty()
     {
         //Create the process factory
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create the application factory
-        $application = factory(Application::class)->create(
+        $application = Application::factory()->create(
             [
                 'APP_PIN' => G::encryptOld('LJ5W'),
             ]

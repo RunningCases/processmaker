@@ -1779,7 +1779,7 @@ class WorkspaceTools
      * @param int $versionBackupEngine
      * @param string $connection
      */
-    public function executeSQLScript($database, $filename, $parameters, $versionBackupEngine = 1, $connection)
+    public function executeSQLScript($database, $filename, $parameters, $versionBackupEngine = 1, $connection = '')
     {
         DB::connection($connection)
             ->statement('CREATE DATABASE IF NOT EXISTS ' . $database);

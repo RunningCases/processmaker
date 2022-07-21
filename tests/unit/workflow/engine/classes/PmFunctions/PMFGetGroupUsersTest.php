@@ -23,7 +23,7 @@ class PMFGetGroupUsersTest extends TestCase
     public function it_return_list_of_groups()
     {
         // Create group
-        $group = factory(Groupwf::class)->create();
+        $group = Groupwf::factory()->create();
         DB::commit();
         $result = PMFGetGroupUsers($group->GRP_UID);
         $this->assertEmpty($result);

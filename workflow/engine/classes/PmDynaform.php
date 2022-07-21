@@ -1596,7 +1596,7 @@ class PmDynaform
         $this->record["DYN_CONTENT"] = G::json_encode($json);
     }
 
-    private function jsonReplace(&$json, $id, $for = "id", $update)
+    private function jsonReplace(&$json, $id, $for = "id", $update = null)
     {
         foreach ($json as $key => &$value) {
             $sw1 = is_array($value);

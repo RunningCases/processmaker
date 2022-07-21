@@ -29,15 +29,15 @@ class TaskUserTest extends TestCase
     {
         if ($type === 'NORMAL'){
             if ($relation === 'USER'){
-                $assigment = factory(TaskUser::class)->states('normal_assigment_user')->create();
+                $assigment = TaskUser::factory()->normal_assigment_user()->create();
             } else {
-                $assigment = factory(TaskUser::class)->states('normal_assigment_group')->create();
+                $assigment = TaskUser::factory()->normal_assigment_group()->create();
             }
         } else {
             if ($relation === 'USER'){
-                $assigment = factory(TaskUser::class)->states('adhoc_assigment_user')->create();
+                $assigment = TaskUser::factory()->adhoc_assigment_user()->create();
             } else {
-                $assigment = factory(TaskUser::class)->states('adhoc_assigment_group')->create();
+                $assigment = TaskUser::factory()->adhoc_assigment_group()->create();
             }
         }
 
@@ -51,9 +51,9 @@ class TaskUserTest extends TestCase
      */
     public function it_has_a_task()
     {
-        $assigment = factory(TaskUser::class)->create([
+        $assigment = TaskUser::factory()->create([
             'TAS_UID' => function () {
-                return factory(Task::class)->create()->TAS_UID;
+                return Task::factory()->create()->TAS_UID;
             }
         ]);
         $this->assertInstanceOf(Task::class, $assigment->task);
@@ -67,9 +67,9 @@ class TaskUserTest extends TestCase
      */
     public function it_has_a_user()
     {
-        $assigment = factory(TaskUser::class)->create([
+        $assigment = TaskUser::factory()->create([
             'USR_UID' => function () {
-                return factory(User::class)->create()->USR_UID;
+                return User::factory()->create()->USR_UID;
             }
         ]);
         $this->assertInstanceOf(User::class, $assigment->user);

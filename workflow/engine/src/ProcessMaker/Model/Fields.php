@@ -2,10 +2,13 @@
 
 namespace ProcessMaker\Model;
 
+use App\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Fields extends Model
 {
+    use HasFactory;
+
     protected $table = 'FIELDS';
     public $timestamps = false;
 

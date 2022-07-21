@@ -4,7 +4,6 @@ namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 
 use Exception;
 use G;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use ProcessMaker\BusinessModel\Cases\AbstractCases;
 use ProcessMaker\BusinessModel\Cases\Draft;
 use ProcessMaker\BusinessModel\Cases\Paused;
@@ -24,7 +23,14 @@ use Tests\TestCase;
  */
 class AbstractCasesTest extends TestCase
 {
-    use DatabaseTransactions;
+    /**
+     * Method set up.
+     */
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->truncateNonInitialModels();
+    }
 
     /**
      * This check the getter and setter related to the category
@@ -35,7 +41,7 @@ class AbstractCasesTest extends TestCase
      */
     public function it_return_set_get_category()
     {
-        $category = factory(ProcessCategory::class)->create();
+        $category = ProcessCategory::factory()->create();
         $absCases = new AbstractCases();
         $absCases->setCategoryId($category->CATEGORY_ID);
         $actual = $absCases->getCategoryId();
@@ -51,7 +57,7 @@ class AbstractCasesTest extends TestCase
      */
     public function it_return_set_get_category_uid()
     {
-        $category = factory(ProcessCategory::class)->create();
+        $category = ProcessCategory::factory()->create();
         $absCases = new AbstractCases();
         $absCases->setCategoryUid($category->CATEGORY_UID);
         $actual = $absCases->getCategoryUid();
@@ -69,7 +75,7 @@ class AbstractCasesTest extends TestCase
      */
     public function it_return_set_get_process()
     {
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         $absCases = new AbstractCases();
         $absCases->setProcessUid($process->PRO_UID);
         $actual = $absCases->getProcessUid();
@@ -88,7 +94,7 @@ class AbstractCasesTest extends TestCase
      */
     public function it_return_set_get_task()
     {
-        $task = factory(Task::class)->create();
+        $task = Task::factory()->create();
         $absCases = new AbstractCases();
         $absCases->setTaskId($task->TAS_ID);
         $actual = $absCases->getTaskId();
@@ -106,7 +112,7 @@ class AbstractCasesTest extends TestCase
      */
     public function it_return_set_get_user()
     {
-        $users = factory(User::class)->create();
+        $users = User::factory()->create();
         $absCases = new AbstractCases();
         $absCases->setUserUid($users->USR_UID);
         $actual = $absCases->getUserUid();
@@ -125,7 +131,7 @@ class AbstractCasesTest extends TestCase
      */
     public function it_return_set_get_user_completed()
     {
-        $users = factory(User::class)->create();
+        $users = User::factory()->create();
         $absCases = new AbstractCases();
         $absCases->setUserCompletedId($users->USR_ID);
         $actual = $absCases->getUserCompletedId();
@@ -141,7 +147,7 @@ class AbstractCasesTest extends TestCase
      */
     public function it_return_set_get_user_started()
     {
-        $users = factory(User::class)->create();
+        $users = User::factory()->create();
         $absCases = new AbstractCases();
         $absCases->setUserStartedId($users->USR_ID);
         $actual = $absCases->getUserStartedId();
@@ -157,7 +163,7 @@ class AbstractCasesTest extends TestCase
      */
     public function it_return_set_get_user_send()
     {
-        $users = factory(User::class)->create();
+        $users = User::factory()->create();
         $absCases = new AbstractCases();
         $absCases->setSendBy($users->USR_UID);
         $actual = $absCases->getSendBy();
@@ -224,7 +230,7 @@ class AbstractCasesTest extends TestCase
      */
     public function it_return_set_get_case_number()
     {
-        $case = factory(Application::class)->create();
+        $case = Application::factory()->create();
         $absCases = new AbstractCases();
         $absCases->setCaseNumber($case->APP_NUMBER);
         $actual = $absCases->getCaseNumber();
@@ -242,8 +248,8 @@ class AbstractCasesTest extends TestCase
      */
     public function it_return_set_get_range_case_number()
     {
-        $case1 = factory(Application::class)->create();
-        $case2 = factory(Application::class)->create([
+        $case1 = Application::factory()->create();
+        $case2 = Application::factory()->create([
             'APP_NUMBER' => $case1->APP_NUMBER + 1
         ]);
         $absCases = new AbstractCases();
@@ -448,7 +454,7 @@ class AbstractCasesTest extends TestCase
      */
     public function it_return_set_get_case()
     {
-        $application = factory(Application::class)->create();
+        $application = Application::factory()->create();
         $absCases = new AbstractCases();
         $absCases->setCaseUid($application->APP_UID);
         $actual = $absCases->getCaseUid();
@@ -934,7 +940,7 @@ class AbstractCasesTest extends TestCase
      */
     public function it_return_task_pending_result()
     {
-        $task = factory(Task::class, 2)->create();
+        $task = Task::factory(2)->create();
         $absCases = new AbstractCases();
         $pending = '[
             {"tas_id":'.$task[0]->TAS_ID.', "user_id":1, "due_date":"2020-12-04 19:11:14"},
@@ -956,7 +962,7 @@ class AbstractCasesTest extends TestCase
      */
     public function it_return_thread_information()
     {
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create();
+        $delegation = Delegation::factory()->foreign_keys()->create();
         $taskPending = Delegation::getLastThread($delegation->APP_NUMBER);
         $absCases = new AbstractCases();
         foreach ($taskPending as $thread) {

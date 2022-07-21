@@ -4305,6 +4305,10 @@
     </table>
 
     <table name="PROCESS_VARIABLES" idMethod="native">
+        <vendor type="mysql">
+            <parameter name="Engine" value="InnoDB"/>
+            <parameter name="Collation" value="utf8_general_ci"/>
+        </vendor>
         <column name="VAR_ID" type="INTEGER" required="true" autoIncrement="true" unique="true"/>
         <column name="VAR_UID" type="VARCHAR" size="32" required="true" primaryKey="true"/>
         <column name="PRJ_UID" type="VARCHAR" size="32" required="true"/>

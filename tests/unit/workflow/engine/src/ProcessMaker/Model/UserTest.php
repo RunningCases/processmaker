@@ -32,7 +32,7 @@ class UserTest extends TestCase
      */
     public function it_should_test_the_users_filters_scope_with_usr_uid()
     {
-        $user = factory(User::class, 4)->create();
+        $user = User::factory(4)->create();
         $filters = ['USR_UID' => $user[0]['USR_UID']];
 
         $userQuery = User::query()->select();
@@ -54,7 +54,7 @@ class UserTest extends TestCase
      */
     public function it_should_test_the_users_filters_scope_with_usr_id()
     {
-        $user = factory(User::class, 4)->create();
+        $user = User::factory(4)->create();
         $filters = ['USR_ID' => $user[0]['USR_ID']];
         $userQuery = User::query()->select();
         $userQuery->userFilters($filters);
@@ -76,7 +76,7 @@ class UserTest extends TestCase
      */
     public function it_should_test_the_exception_in_users_filters_scope()
     {
-        factory(User::class, 4)->create();
+        User::factory(4)->create();
         $filters = [];
         $userQuery = User::query()->select();
 
@@ -98,28 +98,28 @@ class UserTest extends TestCase
     public function it_should_test_get_users_for_home()
     {
         // Create five users (3 active, 1 on vacation, 1 inactive)
-        factory(User::class)->create([
+        User::factory()->create([
             'USR_USERNAME' => 'jsmith',
             'USR_FIRSTNAME' => 'John',
             'USR_LASTNAME' => 'Smith',
         ]);
-        factory(User::class)->create([
+        User::factory()->create([
             'USR_USERNAME' => 'asmith',
             'USR_FIRSTNAME' => 'Adam',
             'USR_LASTNAME' => 'Smith',
         ]);
-        factory(User::class)->create([
+        User::factory()->create([
             'USR_USERNAME' => 'wsmith',
             'USR_FIRSTNAME' => 'Will',
             'USR_LASTNAME' => 'Smith',
         ]);
-        factory(User::class)->create([
+        User::factory()->create([
             'USR_USERNAME' => 'wwallace',
             'USR_FIRSTNAME' => 'Williams',
             'USR_LASTNAME' => 'Wallace',
             'USR_STATUS' => 'VACATION',
         ]);
-        factory(User::class)->create([
+        User::factory()->create([
             'USR_USERNAME' => 'msmith',
             'USR_FIRSTNAME' => 'Marcus',
             'USR_LASTNAME' => 'Smith',
@@ -146,7 +146,7 @@ class UserTest extends TestCase
      */
     public function it_get_usr_id()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         // When the user exist
         $results = User::getId($user->USR_UID);
         $this->assertGreaterThan(0, $results);
@@ -164,7 +164,7 @@ class UserTest extends TestCase
      */
     public function it_get_information()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         // When the user exist
         $results = User::getInformation($user->USR_ID);
         $this->assertNotEmpty($results);
@@ -184,7 +184,7 @@ class UserTest extends TestCase
      */
     public function it_get_all_information()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         // When the user exist
         $results = User::getAllInformation($user->USR_ID);
         $this->assertNotEmpty($results);
@@ -223,6 +223,6 @@ class UserTest extends TestCase
             'ROL_CODE' => 0
         ];
         $res = User::createUser($usrData);
-        $this->assertInternalType('integer', $res);
+        $this->assertIsInt($res);
     }
 }

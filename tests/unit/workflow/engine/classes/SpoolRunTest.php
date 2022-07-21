@@ -83,11 +83,11 @@ class SpoolRunTest extends TestCase
     public function it_should_handle_gmail_oauth_option()
     {
         $appMsgUid = G::generateUniqueID();
-        factory(AppMessage::class)->create([
+        AppMessage::factory()->create([
             'APP_MSG_UID' => $appMsgUid
         ]);
 
-        $emailServer = factory(EmailServerModel::class)->states('GMAILAPI')->make();
+        $emailServer = EmailServerModel::factory()->GMAILAPI()->make();
 
         $config = $emailServer->toArray();
         $config['SMTPSecure'] = 'ssl';
@@ -124,14 +124,14 @@ class SpoolRunTest extends TestCase
     {
         $string = ini_get("sendmail_path");
         if (!is_executable($string)) {
-            $this->markTestIncomplete($string . " not found");
+            $this->markTestSkipped($string . " not found");
         }
         $appMsgUid = G::generateUniqueID();
-        factory(AppMessage::class)->create([
+        AppMessage::factory()->create([
             'APP_MSG_UID' => $appMsgUid
         ]);
 
-        $emailServer = factory(EmailServerModel::class)->create();
+        $emailServer = EmailServerModel::factory()->create();
 
         $config = $emailServer->toArray();
 
@@ -166,11 +166,11 @@ class SpoolRunTest extends TestCase
     public function it_should_handle_php_mailer_option()
     {
         $appMsgUid = G::generateUniqueID();
-        factory(AppMessage::class)->create([
+        AppMessage::factory()->create([
             'APP_MSG_UID' => $appMsgUid
         ]);
 
-        $emailServer = factory(EmailServerModel::class)->states('PHPMAILER')->make();
+        $emailServer = EmailServerModel::factory()->PHPMAILER()->make();
 
         $config = $emailServer->toArray();
         $config['SMTPSecure'] = 'ssl';
@@ -207,11 +207,11 @@ class SpoolRunTest extends TestCase
     public function it_should_handle_utf8_characters()
     {
         $appMsgUid = G::generateUniqueID();
-        factory(AppMessage::class)->create([
+        AppMessage::factory()->create([
             'APP_MSG_UID' => $appMsgUid
         ]);
 
-        $emailServer = factory(EmailServerModel::class)->states('PHPMAILER')->make();
+        $emailServer = EmailServerModel::factory()->PHPMAILER()->make();
 
         $config = $emailServer->toArray();
         $config['SMTPSecure'] = 'ssl';
@@ -250,11 +250,11 @@ class SpoolRunTest extends TestCase
     public function it_should_handle_attachment_files()
     {
         $appMsgUid = G::generateUniqueID();
-        factory(AppMessage::class)->create([
+        AppMessage::factory()->create([
             'APP_MSG_UID' => $appMsgUid
         ]);
 
-        $emailServer = factory(EmailServerModel::class)->states('PHPMAILER')->make();
+        $emailServer = EmailServerModel::factory()->PHPMAILER()->make();
 
         $config = $emailServer->toArray();
         $config['SMTPSecure'] = 'ssl';
@@ -303,11 +303,11 @@ class SpoolRunTest extends TestCase
     public function it_should_handle_envelope_to()
     {
         $appMsgUid = G::generateUniqueID();
-        factory(AppMessage::class)->create([
+        AppMessage::factory()->create([
             'APP_MSG_UID' => $appMsgUid
         ]);
 
-        $emailServer = factory(EmailServerModel::class)->states('PHPMAILER')->make();
+        $emailServer = EmailServerModel::factory()->PHPMAILER()->make();
 
         $config = $emailServer->toArray();
         $config['SMTPSecure'] = 'ssl';
@@ -345,11 +345,11 @@ class SpoolRunTest extends TestCase
     public function it_should_test_updateSpoolStatus_method()
     {
         $appMsgUid = G::generateUniqueID();
-        factory(AppMessage::class)->create([
+        AppMessage::factory()->create([
             'APP_MSG_UID' => $appMsgUid
         ]);
 
-        $emailServer = factory(EmailServerModel::class)->states('PHPMAILER')->make();
+        $emailServer = EmailServerModel::factory()->PHPMAILER()->make();
 
         $config = $emailServer->toArray();
         $config['SMTPSecure'] = 'ssl';

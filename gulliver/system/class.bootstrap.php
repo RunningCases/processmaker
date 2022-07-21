@@ -510,7 +510,7 @@ class Bootstrap
      * @param  array list plugins active
      * @return void
      */
-    public static function LoadTranslationPlugins($lang = SYS_LANG, $listPluginsActive)
+    public static function LoadTranslationPlugins($lang = SYS_LANG, $listPluginsActive = [])
     {
         if (! (is_array($listPluginsActive))) {
             return null;

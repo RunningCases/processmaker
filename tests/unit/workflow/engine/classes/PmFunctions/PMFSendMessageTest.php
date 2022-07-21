@@ -39,7 +39,7 @@ class PMFSendMessageTest extends TestCase
             mkdir(PATH_DATA_SITE . 'mailTemplates' . PATH_SEP . $proUid);
         }
         file_put_contents(PATH_DATA_SITE . 'mailTemplates' . PATH_SEP . $proUid . PATH_SEP . 'template.html', $data);
-        $template = factory(\ProcessMaker\Model\ProcessFiles::class)->create([
+        $template = \ProcessMaker\Model\ProcessFiles::factory()->create([
             'PRO_UID' => $proUid,
             'USR_UID' => $usrUid,
             'PRF_PATH' => 'template.html'
@@ -56,7 +56,7 @@ class PMFSendMessageTest extends TestCase
     {
         $passwordEnv = env('emailAccountPassword');
         $password = G::encrypt("hash:" . $passwordEnv, 'EMAILENCRYPT');
-        $emailServer = factory(EmailServerModel::class)->create([
+        $emailServer = EmailServerModel::factory()->create([
             'MESS_ENGINE' => env('emailEngine'),
             'MESS_SERVER' => env('emailServer'),
             'MESS_PORT' => env('emailPort'),
@@ -82,11 +82,11 @@ class PMFSendMessageTest extends TestCase
      */
     public function it_send_message_related_to_same_case()
     {
-        $user = factory(User::class)->create();
-        $process = factory(Process::class)->create([
+        $user = User::factory()->create();
+        $process = Process::factory()->create([
             'PRO_CREATE_USER' => $user->USR_UID
         ]);
-        $app = factory(Application::class)->create([
+        $app = Application::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'APP_INIT_USER' => $user->USR_UID,
             'APP_CUR_USER' => $user->USR_UID
@@ -111,10 +111,10 @@ class PMFSendMessageTest extends TestCase
      */
     public function it_send_message_related_to_different_case()
     {
-        $user = factory(User::class)->create();
-        $process = factory(Process::class)->create();
-        $app = factory(Application::class)->create(['PRO_UID' => $process->PRO_UID]);
-        $app2 = factory(Application::class)->create(['PRO_UID' => $process->PRO_UID]);
+        $user = User::factory()->create();
+        $process = Process::factory()->create();
+        $app = Application::factory()->create(['PRO_UID' => $process->PRO_UID]);
+        $app2 = Application::factory()->create(['PRO_UID' => $process->PRO_UID]);
         $template = $this->createTemplate($process->PRO_UID, $user->USR_UID);
         $emailServer = $this->createEmailServer();
         // Set different case in session

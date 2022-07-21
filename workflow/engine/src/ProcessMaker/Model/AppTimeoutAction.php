@@ -2,10 +2,13 @@
 
 namespace ProcessMaker\Model;
 
+use App\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class AppTimeoutAction extends Model
 {
+    use HasFactory;
+
     protected $table = 'APP_TIMEOUT_ACTION_EXECUTED';
     // We do not have create/update timestamps for this table
     public $timestamps = false;

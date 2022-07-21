@@ -1579,7 +1579,7 @@ class User
      * @return User
      * @throws Exception
      */
-    public function checkPermissionForEdit($userUid, $arrayPermission = array(), $form)
+    public function checkPermissionForEdit($userUid, $arrayPermission = [], $form = [])
     {
         try {
             foreach ($arrayPermission as $key => $value) {

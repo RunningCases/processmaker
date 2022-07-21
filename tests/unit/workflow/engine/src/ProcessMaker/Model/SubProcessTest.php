@@ -32,17 +32,17 @@ class SubProcessTest extends TestCase
      */
     public function it_should_test_the_get_pro_parents_method()
     {
-        $process = factory(Process::class)->create();
-        $processParent = factory(Process::class, 3)->create();
-        factory(SubProcess::class)->create([
+        $process = Process::factory()->create();
+        $processParent = Process::factory(3)->create();
+        SubProcess::factory()->create([
             'PRO_UID' => $process['PRO_UID'],
             'PRO_PARENT' => $processParent[0]['PRO_UID']
         ]);
-        factory(SubProcess::class)->create([
+        SubProcess::factory()->create([
             'PRO_UID' => $process['PRO_UID'],
             'PRO_PARENT' => $processParent[1]['PRO_UID']
         ]);
-        factory(SubProcess::class)->create([
+        SubProcess::factory()->create([
             'PRO_UID' => $process['PRO_UID'],
             'PRO_PARENT' => $processParent[2]['PRO_UID']
         ]);

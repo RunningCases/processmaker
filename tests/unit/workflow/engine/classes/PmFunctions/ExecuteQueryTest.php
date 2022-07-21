@@ -4,7 +4,6 @@ namespace Tests\unit\workflow\engine\classes\PmFunctions;
 
 use Faker\Factory;
 use G;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use ProcessMaker\Model\DbSource;
 use ProcessMaker\Model\ProcessCategory;
 use ProcessMaker\Model\User;
@@ -25,7 +24,7 @@ class ExecuteQueryTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        ProcessCategory::truncate();
+        $this->truncateNonInitialModels();
         $this->oldContentSystemTables = "";
         $path = PATH_CONFIG . $this->nameSystemTables;
         if (file_exists($path)) {
@@ -47,7 +46,7 @@ class ExecuteQueryTest extends TestCase
      */
     public function it_must_return_the_result_of_execute_query_method()
     {
-        $user = factory(User::class, 5)->create();
+        $user = User::factory(5)->create();
 
         $user = $user->sortByDesc('USR_UID')->values()->map(function($item) {
             $result = [
@@ -139,7 +138,7 @@ class ExecuteQueryTest extends TestCase
         $id = $faker->unique()->numberBetween(1, 10000000);
         $newName = str_replace("'", " ", $faker->name);
 
-        $category = factory(ProcessCategory::class)->create([
+        $category = ProcessCategory::factory()->create([
             'CATEGORY_ID' => $id
         ]);
         $expected = $category->toArray();
@@ -176,7 +175,7 @@ class ExecuteQueryTest extends TestCase
         $id = $faker->unique()->numberBetween(1, 10000000);
         $newName = str_replace("'", " ", $faker->name);
 
-        $category = factory(ProcessCategory::class)->create([
+        $category = ProcessCategory::factory()->create([
             'CATEGORY_ID' => $id
         ]);
         $expected = $category->toArray();
@@ -205,7 +204,7 @@ class ExecuteQueryTest extends TestCase
     {
         $this->expectException(SQLException::class);
         $database = env('DB_DATABASE');
-        $category = factory(ProcessCategory::class)->create();
+        $category = ProcessCategory::factory()->create();
 
         $sql = ""
                 . "DELETE FROM {$database}.PROCESS_CATEGORY "
@@ -228,7 +227,7 @@ class ExecuteQueryTest extends TestCase
     public function this_connects_to_an_external_database_using_the_execute_query_method()
     {
         $dbName = env('DB_DATABASE');
-        $dbSource = factory(DbSource::class)->create([
+        $dbSource = DbSource::factory()->create([
             'DBS_TYPE' => 'mysql',
             'DBS_SERVER' => env('DB_HOST'),
             'DBS_DATABASE_NAME' => $dbName,
@@ -253,10 +252,10 @@ class ExecuteQueryTest extends TestCase
      */
     public function this_connects_to_an_external_oracle_database_using_the_execute_query_method()
     {
-        $this->markTestIncomplete('This test has not been implemented yet.');
+        $this->markTestSkipped('This test has not been implemented yet.');
 
         $dbName = "XE";
-        $dbSource = factory(DbSource::class)->create([
+        $dbSource = DbSource::factory()->create([
             'DBS_TYPE' => 'oracle',
             'DBS_CONNECTION_TYPE' => 'NORMAL',
             'DBS_SERVER' => 'localhost',
@@ -322,7 +321,7 @@ class ExecuteQueryTest extends TestCase
         $id = $faker->unique()->numberBetween(1, 10000000);
         $newName = str_replace("'", " ", $faker->name);
 
-        $category = factory(ProcessCategory::class)->create([
+        $category = ProcessCategory::factory()->create([
             'CATEGORY_ID' => $id
         ]);
         $expected = $category->toArray();

@@ -31,16 +31,16 @@ class Users_AjaxTest extends TestCase
         global $RBAC;
 
         //Creates the user factory
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $usrUid = $user['USR_UID'];
-        factory(Process::class)->create([
+        Process::factory()->create([
             'PRO_CREATE_USER' => $usrUid,
             'PRO_STATUS' => 'ACTIVE',
             'PRO_TYPE_PROCESS' => 'PRIVATE',
         ]);
 
         //Creates the configuration factory
-        factory(Configuration::class)->create([
+        Configuration::factory()->create([
             'CFG_UID' => 'USER_PREFERENCES',
             'OBJ_UID' => '',
             'CFG_VALUE' => 'a:3:{s:12:"DEFAULT_LANG";s:0:"";s:12:"DEFAULT_MENU";s:8:"PM_SETUP";s:18:"DEFAULT_CASES_MENU";s:0:"";}',
@@ -94,8 +94,8 @@ class Users_AjaxTest extends TestCase
         global $RBAC;
 
         //Creates the user factory
-        $user = factory(User::class)->create();
-        factory(RbacUsers::class)->create([
+        $user = User::factory()->create();
+        RbacUsers::factory()->create([
             'USR_UID' => $user['USR_UID'],
             'USR_USERNAME' => $user->USR_USERNAME,
             'USR_FIRSTNAME' => $user->USR_FIRSTNAME,
@@ -103,7 +103,7 @@ class Users_AjaxTest extends TestCase
         ]);
         $usrUid = $user['USR_UID'];
 
-        $process = factory(Process::class)->create([
+        $process = Process::factory()->create([
             'PRO_CREATE_USER' => $usrUid,
             'PRO_STATUS' => 'ACTIVE',
             'PRO_TYPE_PROCESS' => 'PRIVATE',

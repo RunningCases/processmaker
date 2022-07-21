@@ -23,9 +23,6 @@ class VariableTest extends TestCase
      */
     public function setUp(): void
     {
-        if (version_compare(phpversion(), 7.3, '>') ) {
-            $this->markTestSkipped('Illegal mix of collations');
-        }
         parent::setUp();
     }
 
@@ -37,9 +34,9 @@ class VariableTest extends TestCase
      */
     public function it_create_variable_by_process()
     {
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
 
-        factory(ProcessVariables::class)->create([
+        ProcessVariables::factory()->create([
             'PRJ_UID' => $process->PRO_UID,
             'PRO_ID' => $process->PRO_ID,
         ]);
@@ -83,8 +80,8 @@ class VariableTest extends TestCase
      */
     public function it_return_an_exception_when_var_name_is_empty()
     {
-        $process = factory(Process::class)->create();
-        factory(ProcessVariables::class)->create([
+        $process = Process::factory()->create();
+        ProcessVariables::factory()->create([
             'PRJ_UID' => $process->PRO_UID,
             'PRO_ID' => $process->PRO_ID,
         ]);
@@ -114,8 +111,8 @@ class VariableTest extends TestCase
      */
     public function it_return_an_exception_when_var_field_type_is_empty()
     {
-        $process = factory(Process::class)->create();
-        factory(ProcessVariables::class)->create([
+        $process = Process::factory()->create();
+        ProcessVariables::factory()->create([
             'PRJ_UID' => $process->PRO_UID,
             'PRO_ID' => $process->PRO_ID,
         ]);
@@ -145,8 +142,8 @@ class VariableTest extends TestCase
      */
     public function it_return_an_exception_when_var_label_is_empty()
     {
-        $process = factory(Process::class)->create();
-        factory(ProcessVariables::class)->create([
+        $process = Process::factory()->create();
+        ProcessVariables::factory()->create([
             'PRJ_UID' => $process->PRO_UID,
             'PRO_ID' => $process->PRO_ID,
         ]);
@@ -176,9 +173,9 @@ class VariableTest extends TestCase
      */
     public function it_list_variables_by_process()
     {
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
 
-        factory(ProcessVariables::class)->create([
+        ProcessVariables::factory()->create([
             'PRJ_UID' => $process->PRO_UID,
             'PRO_ID' => $process->PRO_ID,
         ]);
@@ -209,11 +206,11 @@ class VariableTest extends TestCase
      */
     public function it_list_variables_by_type_related_a_process()
     {
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         $varType = 'integer';
         $varTypeId = 2;
         for ($x = 1; $x <= 5; $x++) {
-            $processVar = factory(ProcessVariables::class)->states('foreign_keys')->create([
+            $processVar = ProcessVariables::factory()->foreign_keys()->create([
                 'PRO_ID' => $process->PRO_ID,
                 'PRJ_UID' => $process->PRO_UID,
                 'VAR_FIELD_TYPE' => $varType,
@@ -251,10 +248,10 @@ class VariableTest extends TestCase
         $data = file_get_contents($pathData);
         $json = json_decode($data);
 
-        $dynaform = factory(Dynaform::class)->create([
+        $dynaform = Dynaform::factory()->create([
             'DYN_CONTENT' => $data
         ]);
-        $application = factory(Application::class)->create();
+        $application = Application::factory()->create();
 
         $proUid = '';
         $params = [
@@ -295,15 +292,15 @@ class VariableTest extends TestCase
         //assert
         $this->expectException(Exception::class);
         // Create process variable
-        $variable = factory(ProcessVariables::class)->create();
+        $variable = ProcessVariables::factory()->create();
         $result = ProcessVariables::getVariable($variable->VAR_UID);
         $this->assertNotEmpty($result);
         // Create tables
-        $table = factory(AdditionalTables::class)->create([
+        $table = AdditionalTables::factory()->create([
             'PRO_UID' => $variable->PRO_UID,
         ]);
         // Create fields
-        $fields = factory(Fields::class)->create([
+        $fields = Fields::factory()->create([
             'ADD_TAB_UID' => $table->ADD_TAB_UID,
             'FLD_NAME' => $variable->VAR_NAME,
         ]);

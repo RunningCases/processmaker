@@ -2,7 +2,6 @@
 
 namespace Tests\unit\workflow\engine\src\ProcessMaker\Model;
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use ProcessMaker\Model\AppDelay;
 use Tests\TestCase;
 
@@ -13,15 +12,13 @@ use Tests\TestCase;
  */
 class AppDelayTest extends TestCase
 {
-    use DatabaseTransactions;
-
     /**
      * Set up function.
      */
     public function setUp(): void
     {
         parent::setUp();
-        AppDelay::truncate();
+        $this->truncateNonInitialModels();
     }
 
     /**
@@ -32,7 +29,7 @@ class AppDelayTest extends TestCase
      */
     public function it_return_scope_type()
     {
-        $table = factory(AppDelay::class)->states('paused_foreign_keys')->create();
+        $table = AppDelay::factory()->paused_foreign_keys()->create();
         $this->assertCount(1, $table->type('PAUSE')->get());
     }
 
@@ -44,7 +41,7 @@ class AppDelayTest extends TestCase
      */
     public function it_return_scope_not_action_disable()
     {
-        $table = factory(AppDelay::class)->states('paused_foreign_keys')->create();
+        $table = AppDelay::factory()->paused_foreign_keys()->create();
         $this->assertCount(1, $table->notDisabled()->get());
     }
 
@@ -56,7 +53,7 @@ class AppDelayTest extends TestCase
      */
     public function it_return_scope_case()
     {
-        $table = factory(AppDelay::class)->states('paused_foreign_keys')->create();
+        $table = AppDelay::factory()->paused_foreign_keys()->create();
         $this->assertCount(1, $table->case($table->APP_NUMBER)->get());
     }
 
@@ -68,7 +65,7 @@ class AppDelayTest extends TestCase
      */
     public function it_return_scope_index()
     {
-        $table = factory(AppDelay::class)->states('paused_foreign_keys')->create();
+        $table = AppDelay::factory()->paused_foreign_keys()->create();
         $this->assertCount(1, $table->index($table->APP_DEL_INDEX)->get());
     }
 
@@ -80,7 +77,7 @@ class AppDelayTest extends TestCase
      */
     public function it_return_scope_delegate_user()
     {
-        $table = factory(AppDelay::class)->states('paused_foreign_keys')->create();
+        $table = AppDelay::factory()->paused_foreign_keys()->create();
         $this->assertCount(1, $table->delegateUser($table->APP_DELEGATION_USER)->get());
     }
 
@@ -95,7 +92,7 @@ class AppDelayTest extends TestCase
      */
     public function it_return_paused_threads()
     {
-        $table = factory(AppDelay::class)->states('paused_foreign_keys')->create();
+        $table = AppDelay::factory()->paused_foreign_keys()->create();
         $result = AppDelay::getPaused($table->APP_NUMBER, $table->APP_DEL_INDEX, $table->APP_DELEGATION_USER);
         $this->assertNotEmpty($result);
     }

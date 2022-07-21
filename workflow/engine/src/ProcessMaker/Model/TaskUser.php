@@ -2,10 +2,13 @@
 
 namespace ProcessMaker\Model;
 
+use App\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class TaskUser extends Model
 {
+    use HasFactory;
+
     protected $table = 'TASK_USER';
 
     public $timestamps = false;

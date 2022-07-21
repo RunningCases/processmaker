@@ -203,7 +203,7 @@ class CodeScannerTest extends TestCase
             $result = $codeScanner->checkDisabledCode('PATH', $this->pathPlugin);
             $this->assertNotEmpty($result);
         } else {
-            $this->markTestIncomplete(
+            $this->markTestSkipped(
                 'Please check the configurations to the Code Security Scanner'
             );
         }

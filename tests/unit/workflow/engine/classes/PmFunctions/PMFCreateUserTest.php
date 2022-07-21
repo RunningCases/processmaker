@@ -25,8 +25,8 @@ class PMFCreateUserTest extends TestCase
     public function it_create_user()
     {
         // Create User
-        $user = factory(User::class)->create();
-        factory(RbacUsers::class)->create([
+        $user = User::factory()->create();
+        RbacUsers::factory()->create([
             'USR_UID' => $user->USR_UID,
             'USR_USERNAME' => $user->USR_USERNAME,
             'USR_FIRSTNAME' => $user->USR_FIRSTNAME,

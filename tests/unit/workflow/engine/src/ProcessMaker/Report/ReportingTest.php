@@ -45,7 +45,7 @@ class ReportingTest extends TestCase
         $dateInit = date("YYYY-MM-DD");
         $dateFinish = date("YYYY-MM-DD");
 
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'DEL_DELEGATE_DATE' => $dateInit
         ]);
 
@@ -81,7 +81,7 @@ class ReportingTest extends TestCase
         $dateInit = date("YYYY-MM-DD");
         $dateFinish = date("YYYY-MM-DD");
 
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'DEL_DELEGATE_DATE' => $dateInit
         ]);
 

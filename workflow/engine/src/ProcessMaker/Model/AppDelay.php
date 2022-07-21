@@ -2,10 +2,13 @@
 
 namespace ProcessMaker\Model;
 
+use App\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class AppDelay extends Model
 {
+    use HasFactory;
+
     protected $table = 'APP_DELAY';
     public $timestamps = false;
 

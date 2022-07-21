@@ -2,6 +2,7 @@
 
 namespace ProcessMaker\Model;
 
+use App\Factories\HasFactory;
 use Configurations;
 use Illuminate\Database\Eloquent\Model;
 use Exception;
@@ -9,6 +10,8 @@ use RBAC;
 
 class User extends Model
 {
+    use HasFactory;
+
     protected $table = "USERS";
     protected $primaryKey = 'USR_ID';
     // Our custom timestamp columns

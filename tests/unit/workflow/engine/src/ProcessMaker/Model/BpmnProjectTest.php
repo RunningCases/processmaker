@@ -23,7 +23,7 @@ class BpmnProjectTest extends TestCase
      */
     public function it_is_bpmn_process()
     {
-        $table = factory(BpmnProject::class)->create();
+        $table = BpmnProject::factory()->create();
         $result = BpmnProject::isBpmnProcess($table->PRJ_UID);
         $this->assertEquals($result, 1);
     }

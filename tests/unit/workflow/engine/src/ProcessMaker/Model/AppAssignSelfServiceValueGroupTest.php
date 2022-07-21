@@ -24,9 +24,9 @@ class AppAssignSelfServiceValueGroupTest extends TestCase
      */
     public function it_has_a_id_defined()
     {
-        $table = factory(AppAssignSelfServiceValueGroup::class)->create([
+        $table = AppAssignSelfServiceValueGroup::factory()->create([
             'ID' => function () {
-                return factory(AppAssignSelfServiceValue::class)->create()->ID;
+                return AppAssignSelfServiceValue::factory()->create()->ID;
             }
         ]);
         $this->assertInstanceOf(AppAssignSelfServiceValue::class, $table->appSelfService);

@@ -20,9 +20,6 @@ class CaseMessageHistory_AjaxTest extends TestCase
      */
     public function setUp(): void
     {
-        if (version_compare(phpversion(), 7.3, '>') ) {
-            $this->markTestSkipped('The changes in third party are not available');
-        }
         parent::setUp();
     }
 
@@ -41,27 +38,27 @@ class CaseMessageHistory_AjaxTest extends TestCase
      */
     public function it_shoud_test_the_message_history_grid_list_jxp_action_with_no_permissions()
     {
-        $user = factory(USER::class)->create();
-        $process = factory(PROCESS::class)->create();
+        $user = USER::factory()->create();
+        $process = PROCESS::factory()->create();
 
-        $application = factory(APPLICATION::class)->create([
+        $application = APPLICATION::factory()->create([
             'PRO_UID' => $process['PRO_UID'],
             'APP_INIT_USER' => $user['USR_UID'],
             'APP_CUR_USER' => $user['USR_UID']
         ]);
 
-        $task = factory(TASK::class)->create([
+        $task = TASK::factory()->create([
             'PRO_UID' => $process['PRO_UID'],
             'TAS_USER' => $user['USR_UID']
         ]);
 
-        $appmessage1 = factory(APPMESSAGE::class)->create([
+        $appmessage1 = APPMESSAGE::factory()->create([
             'PRO_ID' => $process['PRO_ID'],
             'TAS_ID' => $task['TAS_ID'],
             'APP_NUMBER' => $application['APP_NUMBER']
         ]);
 
-        $appmessage2 = factory(APPMESSAGE::class)->create([
+        $appmessage2 = APPMESSAGE::factory()->create([
             'APP_MSG_TYPE' => 'PM_FUNCTION',
             'PRO_ID' => $process['PRO_ID'],
             'TAS_ID' => $task['TAS_ID'],
@@ -94,24 +91,24 @@ class CaseMessageHistory_AjaxTest extends TestCase
      */
     public function it_shoud_test_the_message_history_grid_list_jxp_action_with_view_permission()
     {
-        $user = factory(USER::class)->create();
+        $user = USER::factory()->create();
 
-        $processView = factory(PROCESS::class)->create([
+        $processView = PROCESS::factory()->create([
             'PRO_CREATE_USER' => $user['USR_UID']
         ]);
 
-        $application = factory(APPLICATION::class)->create([
+        $application = APPLICATION::factory()->create([
             'PRO_UID' => $processView['PRO_UID'],
             'APP_INIT_USER' => $user['USR_UID'],
             'APP_CUR_USER' => $user['USR_UID']
         ]);
 
-        $task = factory(TASK::class)->create([
+        $task = TASK::factory()->create([
             'PRO_UID' => $processView['PRO_UID'],
             'TAS_USER' => $user['USR_UID']
         ]);
 
-        $delegation = factory(DELEGATION::class)->create([
+        $delegation = DELEGATION::factory()->create([
             'APP_UID' => $application['APP_UID'],
             'DEL_INDEX' => 0,
             'DEL_PREVIOUS' => 0,
@@ -124,14 +121,14 @@ class CaseMessageHistory_AjaxTest extends TestCase
             'DEL_PRIORITY' => 3,
         ]);
 
-        $appmessage1 = factory(APPMESSAGE::class)->create([
+        $appmessage1 = APPMESSAGE::factory()->create([
             'PRO_ID' => $processView['PRO_ID'],
             'TAS_ID' => $task['TAS_ID'],
             'APP_NUMBER' => $application['APP_NUMBER'],
             'DEL_INDEX' => 0
         ]);
 
-        $appmessage2 = factory(APPMESSAGE::class)->create([
+        $appmessage2 = APPMESSAGE::factory()->create([
             'APP_MSG_TYPE' => 'PM_FUNCTION',
             'PRO_ID' => $processView['PRO_ID'],
             'TAS_ID' => $task['TAS_ID'],
@@ -139,7 +136,7 @@ class CaseMessageHistory_AjaxTest extends TestCase
             'DEL_INDEX' => 0
         ]);
 
-        $objectPermission = factory(OBJECTPERMISSION::class)->create([
+        $objectPermission = OBJECTPERMISSION::factory()->create([
             'PRO_UID' => $processView['PRO_UID'],
             'TAS_UID' => $task['TAS_UID'],
             'USR_UID' => $user['USR_UID'],
@@ -170,24 +167,24 @@ class CaseMessageHistory_AjaxTest extends TestCase
      */
     public function it_shoud_test_the_message_history_grid_list_jxp_action_with_resend_permission()
     {
-        $user = factory(USER::class)->create();
+        $user = USER::factory()->create();
 
-        $processView = factory(PROCESS::class)->create([
+        $processView = PROCESS::factory()->create([
             'PRO_CREATE_USER' => $user['USR_UID']
         ]);
 
-        $application = factory(APPLICATION::class)->create([
+        $application = APPLICATION::factory()->create([
             'PRO_UID' => $processView['PRO_UID'],
             'APP_INIT_USER' => $user['USR_UID'],
             'APP_CUR_USER' => $user['USR_UID']
         ]);
 
-        $task = factory(TASK::class)->create([
+        $task = TASK::factory()->create([
             'PRO_UID' => $processView['PRO_UID'],
             'TAS_USER' => $user['USR_UID']
         ]);
 
-        $delegation = factory(DELEGATION::class)->create([
+        $delegation = DELEGATION::factory()->create([
             'APP_UID' => $application['APP_UID'],
             'DEL_INDEX' => 0,
             'DEL_PREVIOUS' => 0,
@@ -200,14 +197,14 @@ class CaseMessageHistory_AjaxTest extends TestCase
             'DEL_PRIORITY' => 3,
         ]);
 
-        $appmessage1 = factory(APPMESSAGE::class)->create([
+        $appmessage1 = APPMESSAGE::factory()->create([
             'PRO_ID' => $processView['PRO_ID'],
             'TAS_ID' => $task['TAS_ID'],
             'APP_NUMBER' => $application['APP_NUMBER'],
             'DEL_INDEX' => 0
         ]);
 
-        $appmessage2 = factory(APPMESSAGE::class)->create([
+        $appmessage2 = APPMESSAGE::factory()->create([
             'APP_MSG_TYPE' => 'PM_FUNCTION',
             'PRO_ID' => $processView['PRO_ID'],
             'TAS_ID' => $task['TAS_ID'],
@@ -215,7 +212,7 @@ class CaseMessageHistory_AjaxTest extends TestCase
             'DEL_INDEX' => 0
         ]);
 
-        $objectPermission = factory(OBJECTPERMISSION::class)->create([
+        $objectPermission = OBJECTPERMISSION::factory()->create([
             'PRO_UID' => $processView['PRO_UID'],
             'TAS_UID' => $task['TAS_UID'],
             'USR_UID' => $user['USR_UID'],
@@ -246,35 +243,35 @@ class CaseMessageHistory_AjaxTest extends TestCase
      */
     public function it_shoud_test_the_message_history_grid_list_jxp_action_with_block_permission()
     {
-        $user = factory(USER::class)->create();
+        $user = USER::factory()->create();
 
-        $process = factory(PROCESS::class)->create();
+        $process = PROCESS::factory()->create();
 
-        $application = factory(APPLICATION::class)->create([
+        $application = APPLICATION::factory()->create([
             'PRO_UID' => $process['PRO_UID'],
             'APP_INIT_USER' => $user['USR_UID'],
             'APP_CUR_USER' => $user['USR_UID']
         ]);
 
-        $task = factory(TASK::class)->create([
+        $task = TASK::factory()->create([
             'PRO_UID' => $process['PRO_UID'],
             'TAS_USER' => $user['USR_UID']
         ]);
 
-        $appmessage1 = factory(APPMESSAGE::class)->create([
+        $appmessage1 = APPMESSAGE::factory()->create([
             'PRO_ID' => $process['PRO_ID'],
             'TAS_ID' => $task['TAS_ID'],
             'APP_NUMBER' => $application['APP_NUMBER']
         ]);
 
-        $appmessage2 = factory(APPMESSAGE::class)->create([
+        $appmessage2 = APPMESSAGE::factory()->create([
             'APP_MSG_TYPE' => 'PM_FUNCTION',
             'PRO_ID' => $process['PRO_ID'],
             'TAS_ID' => $task['TAS_ID'],
             'APP_NUMBER' => $application['APP_NUMBER']
         ]);
 
-        $objectPermission = factory(OBJECTPERMISSION::class)->create([
+        $objectPermission = OBJECTPERMISSION::factory()->create([
             'PRO_UID' => $process['PRO_UID'],
             'TAS_UID' => $task['TAS_UID'],
             'USR_UID' => $user['USR_UID'],

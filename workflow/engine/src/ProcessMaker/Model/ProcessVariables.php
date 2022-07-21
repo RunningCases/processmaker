@@ -2,11 +2,14 @@
 
 namespace ProcessMaker\Model;
 
+use App\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class ProcessVariables extends Model
 {
+    use HasFactory;
+
     // Set our table name
     protected $table = 'PROCESS_VARIABLES';
     // No timestamps

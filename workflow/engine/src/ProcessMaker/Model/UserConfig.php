@@ -2,11 +2,14 @@
 
 namespace ProcessMaker\Model;
 
+use App\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use stdClass;
 
 class UserConfig extends Model
 {
+    use HasFactory;
+
     /**
      * Bind table.
      * @var string

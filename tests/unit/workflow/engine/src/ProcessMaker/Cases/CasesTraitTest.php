@@ -43,26 +43,26 @@ class CasesTraitTest extends TestCase
     {
         $user = User::where('USR_ID', '=', 1)->get()->first();
 
-        $process = factory(Process::class)->create([
+        $process = Process::factory()->create([
             'PRO_CREATE_USER' => $user->USR_UID
         ]);
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'BALANCED',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1,
             'TU_TYPE' => 1
         ]);
-        $task2 = factory(Task::class)->create([
+        $task2 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'BALANCED',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task2->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1,
@@ -70,17 +70,17 @@ class CasesTraitTest extends TestCase
         ]);
 
 
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $appDelegation = factory(Delegation::class)->create([
+        $appDelegation = Delegation::factory()->create([
             'USR_UID' => $user->USR_UID,
             'PRO_UID' => $process->PRO_UID,
             'APP_UID' => $application->APP_UID,
             'TAS_UID' => $task->TAS_UID,
             'DEL_INDEX' => 1,
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'USR_UID' => $user->USR_UID,
             'PRO_UID' => $process->PRO_UID,
             'APP_UID' => $application->APP_UID,
@@ -88,13 +88,13 @@ class CasesTraitTest extends TestCase
             'DEL_INDEX' => 2,
             'DEL_PREVIOUS' => $appDelegation->DEL_INDEX
         ]);
-        factory(Route::class)->create([
+        Route::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'ROU_NEXT_TASK' => $task2->TAS_UID,
             'PRO_UID' => $process->PRO_UID
         ]);
 
-        $step = factory(Step::class)->create([
+        $step = Step::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $appDelegation->TAS_UID,
             'STEP_POSITION' => 2,
@@ -102,11 +102,11 @@ class CasesTraitTest extends TestCase
         ]);
 
 
-        $triggers = factory(Triggers::class)->create([
+        $triggers = Triggers::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TRI_WEBBOT' => '$a = 0;'
         ]);
-        factory(StepTrigger::class)->create([
+        StepTrigger::factory()->create([
             'STEP_UID' => -2,
             'TAS_UID' => $task->TAS_UID,
             'TRI_UID' => $triggers->TRI_UID,
@@ -115,11 +115,11 @@ class CasesTraitTest extends TestCase
         ]);
 
 
-        $triggers = factory(Triggers::class)->create([
+        $triggers = Triggers::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TRI_WEBBOT' => '$b = 0;'
         ]);
-        factory(StepTrigger::class)->create([
+        StepTrigger::factory()->create([
             'STEP_UID' => -2,
             'TAS_UID' => $task->TAS_UID,
             'TRI_UID' => $triggers->TRI_UID,
@@ -304,49 +304,49 @@ class CasesTraitTest extends TestCase
     {
         $user = User::where('USR_ID', '=', 1)->get()->first();
 
-        $process = factory(Process::class)->create([
+        $process = Process::factory()->create([
             'PRO_CREATE_USER' => $user->USR_UID
         ]);
-        $dynaform = factory(Dynaform::class)->create([
+        $dynaform = Dynaform::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $inpuDocument = factory(InputDocument::class)->create([
+        $inpuDocument = InputDocument::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'BALANCED',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1,
             'TU_TYPE' => 1
         ]);
-        $task2 = factory(Task::class)->create([
+        $task2 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'BALANCED',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task2->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1,
             'TU_TYPE' => 1
         ]);
 
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $delegation1 = factory(Delegation::class)->create([
+        $delegation1 = Delegation::factory()->create([
             'USR_UID' => $user->USR_UID,
             'PRO_UID' => $process->PRO_UID,
             'APP_UID' => $application->APP_UID,
             'TAS_UID' => $task->TAS_UID,
             'DEL_INDEX' => 1,
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'USR_UID' => $user->USR_UID,
             'PRO_UID' => $process->PRO_UID,
             'APP_UID' => $application->APP_UID,
@@ -354,14 +354,14 @@ class CasesTraitTest extends TestCase
             'DEL_INDEX' => 2,
             'DEL_PREVIOUS' => $delegation1->DEL_INDEX
         ]);
-        factory(Route::class)->create([
+        Route::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'ROU_NEXT_TASK' => $task2->TAS_UID,
             'PRO_UID' => $process->PRO_UID
         ]);
 
-        $emailServer = factory(EmailServerModel::class)->create();
-        $abeConfiguration = factory(AbeConfiguration::class)->create([
+        $emailServer = EmailServerModel::factory()->create();
+        $abeConfiguration = AbeConfiguration::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'DYN_UID' => $dynaform->DYN_UID,
             'TAS_UID' => $task2->TAS_UID,
@@ -369,7 +369,7 @@ class CasesTraitTest extends TestCase
             'ABE_TYPE' => 'LINK',
             'ABE_CASE_NOTE_IN_RESPONSE' => 1,
         ]);
-        $abeRequest = factory(AbeRequest::class)->create([
+        $abeRequest = AbeRequest::factory()->create([
             'ABE_UID' => $abeConfiguration->ABE_UID,
             'APP_UID' => $application->APP_UID,
             'DEL_INDEX' => $delegation1->DEL_INDEX,
@@ -410,9 +410,9 @@ class CasesTraitTest extends TestCase
      */
     public function it_should_verify_if_abe_has_not_completed()
     {
-        $delegation1 = factory(Delegation::class)->state('closed')->create();
-        $abeRequest = factory(AbeRequest::class)->create();
-        $dynaform = factory(Dynaform::class)->create([
+        $delegation1 = Delegation::factory()->closed()->create();
+        $abeRequest = AbeRequest::factory()->create();
+        $dynaform = Dynaform::factory()->create([
             'PRO_UID' => $delegation1->PRO_UID
         ]);
 
@@ -437,9 +437,9 @@ class CasesTraitTest extends TestCase
      */
     public function it_should_test_an_exception_if_the_case_throws_an_incorrect_state()
     {
-        $delegation1 = factory(Delegation::class)->create();
-        $abeRequest = factory(AbeRequest::class)->create();
-        $dynaform = factory(Dynaform::class)->create([
+        $delegation1 = Delegation::factory()->create();
+        $abeRequest = AbeRequest::factory()->create();
+        $dynaform = Dynaform::factory()->create([
             'PRO_UID' => $delegation1->PRO_UID
         ]);
 

@@ -26,8 +26,8 @@ class TriggersTest extends TestCase
      */
     public function it_set_get_trigger()
     {
-        factory(Triggers::class)->create();
-        $trigger = factory(Triggers::class)->create();
+        Triggers::factory()->create();
+        $trigger = Triggers::factory()->create();
         $trigger->setTrigger($trigger->TRI_UID);
         $this->assertEquals($trigger->getTrigger(), $trigger->TRI_UID);
     }
@@ -40,8 +40,8 @@ class TriggersTest extends TestCase
      */
     public function it_should_test_process_scope_in_trigger_model()
     {
-        $process = factory(Process::class, 3)->create();
-        factory(Triggers::class)->create(
+        $process = Process::factory(3)->create();
+        Triggers::factory()->create(
             [
                 'PRO_UID' => $process[0]['PRO_UID'],
                 'TRI_WEBBOT' => '$text=222;
@@ -68,21 +68,21 @@ class TriggersTest extends TestCase
             ]
         );
 
-        factory(Triggers::class)->create(
+        Triggers::factory()->create(
             [
                 'PRO_UID' => $process[1]['PRO_UID'],
                 'TRI_WEBBOT' => 'die();'
             ]
         );
 
-        factory(Triggers::class)->create(
+        Triggers::factory()->create(
             [
                 'PRO_UID' => $process[2]['PRO_UID'],
                 'TRI_WEBBOT' => 'executeQuery("select * from USERS");'
             ]
         );
 
-        factory(Triggers::class)->create(
+        Triggers::factory()->create(
             [
                 'PRO_UID' => $process[2]['PRO_UID'],
                 'TRI_WEBBOT' => 'executeQuery();'
@@ -109,8 +109,8 @@ class TriggersTest extends TestCase
      */
     public function it_filter_specific_tasks()
     {
-        factory(Triggers::class)->create();
-        $trigger = factory(Triggers::class)->create();
+        Triggers::factory()->create();
+        $trigger = Triggers::factory()->create();
         $this->assertCount(1, $trigger->trigger($trigger->TRI_UID)->get());
     }
 
@@ -122,7 +122,7 @@ class TriggersTest extends TestCase
      */
     public function it_return_specific_trigger_information()
     {
-        $triggers = factory(Triggers::class, 5)->create();
+        $triggers = Triggers::factory(5)->create();
         $trigger = new Triggers();
         $trigger->setTrigger($triggers[0]->TRI_UID);
         $triggersList = $trigger->triggers();
@@ -138,7 +138,7 @@ class TriggersTest extends TestCase
      */
     public function it_return_empty_when_the_trigger_not_exist()
     {
-        factory(Triggers::class)->create();
+        Triggers::factory()->create();
         $trigger = new Triggers();
         $trigger->setTrigger(G::generateUniqueID());
         $triggersList = $trigger->triggers();

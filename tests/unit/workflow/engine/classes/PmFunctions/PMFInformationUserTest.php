@@ -24,7 +24,7 @@ class PMFInformationUserTest extends TestCase
     {
         // Create User
         global $RBAC;
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         DB::commit();
         $result = PMFInformationUser($user->USR_UID);
         $this->assertNotEmpty($result);

@@ -23,7 +23,7 @@ class PMFGetTaskUIDTest extends TestCase
     public function it_return_task_uid()
     {
         // Create task
-        $table = factory(Task::class)->states('foreign_keys')->create();
+        $table = Task::factory()->foreign_keys()->create();
         DB::commit();
         $result = PMFGetTaskUID($table->TAS_TITLE);
         $this->assertFalse($result);

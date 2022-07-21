@@ -18,7 +18,7 @@ class ProjectTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
     }
 
     /**
@@ -51,10 +51,9 @@ class ProjectTest extends TestCase
      */
     public function it_should_test_the_do_get_process_method()
     {
-        $this->expectException(RestException::class);
         //Create user
-        $user = factory(User::class)->create();
-        factory(RbacUsers::class)->create([
+        $user = User::factory()->create();
+        RbacUsers::factory()->create([
             'USR_UID' => $user->USR_UID,
             'USR_USERNAME' => $user->USR_USERNAME,
             'USR_FIRSTNAME' => $user->USR_FIRSTNAME,
@@ -62,7 +61,7 @@ class ProjectTest extends TestCase
         ]);
 
         //Create process
-        $process = factory(Process::class)->create([
+        $process = Process::factory()->create([
             'PRO_CREATE_USER' => $user->USR_UID,
             'PRO_STATUS' => 'ACTIVE',
             'PRO_TYPE_PROCESS' => 'PRIVATE',

@@ -3,6 +3,8 @@
 namespace Tests\unit\workflow\engine\controllers;
 
 use AdditionalTables;
+use Exception;
+use Faker\Factory;
 use G;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use pmTablesProxy;
@@ -83,7 +85,6 @@ class PmTablesProxyTest extends TestCase
      */
     public function it_should_test_big_int_id()
     {
-        $this->markTestIncomplete();
         $reportTable = new ReportTable();
 
         //PM table with a bigint id
@@ -194,7 +195,6 @@ class PmTablesProxyTest extends TestCase
      */
     public function it_should_test_var_char_id()
     {
-        $this->markTestIncomplete();
         $reportTable = new ReportTable();
 
         //PM table with a char id
@@ -305,7 +305,6 @@ class PmTablesProxyTest extends TestCase
      */
     public function it_should_test_integer_id()
     {
-        $this->markTestIncomplete();
         $reportTable = new ReportTable();
 
         //PM table with an integer id
@@ -416,7 +415,6 @@ class PmTablesProxyTest extends TestCase
      */
     public function it_should_test_smallint_id()
     {
-        $this->markTestIncomplete();
         $reportTable = new ReportTable();
 
         //PM table with a smallint id
@@ -526,7 +524,6 @@ class PmTablesProxyTest extends TestCase
      */
     public function it_should_test_tinyint_id()
     {
-        $this->markTestIncomplete();
         $reportTable = new ReportTable();
 
         //PM table with a tinyint id
@@ -636,7 +633,6 @@ class PmTablesProxyTest extends TestCase
      */
     public function it_should_test_varchar_id()
     {
-        $this->markTestIncomplete();
         $reportTable = new ReportTable();
 
         //PM table with a varchar id
@@ -745,7 +741,6 @@ class PmTablesProxyTest extends TestCase
      */
     public function it_should_test_varchar_id_filter()
     {
-        $this->markTestIncomplete();
         $reportTable = new ReportTable();
 
         //PM table with a varchar id
@@ -820,7 +815,6 @@ class PmTablesProxyTest extends TestCase
      */
     public function it_should_test_varchar_id_exception()
     {
-        $this->markTestSkipped("Is not compatible with php74.");
         $reportTable = new ReportTable();
 
         //PM table with a varchar id
@@ -900,7 +894,6 @@ class PmTablesProxyTest extends TestCase
      */
     public function it_should_test_varchar_id_rows()
     {
-        $this->markTestIncomplete();
         $reportTable = new ReportTable();
 
         //PM table with a varchar id
@@ -985,7 +978,7 @@ class PmTablesProxyTest extends TestCase
             ]),
         ];
 
-        $this->expectExceptionMessage("**ID_PMTABLE_CLASS_DOESNT_EXIST**");
+        $this->expectException(Exception::class);
         //This method update the PM tables rows
         $obj->dataUpdate($httpDataUpdateVarChar);
     }
@@ -998,17 +991,18 @@ class PmTablesProxyTest extends TestCase
      */
     public function it_should_test_destroy_method()
     {
-        $this->markTestSkipped("Is not compatible with php74.");
+        $faker = Factory::create();
         $obj = new pmTablesProxy();
 
         //Variable that is sent to the destroy method
         $httpDataDestroyTest = (object)[
-            'id' => "fakeUID",
-            'rows' => G::encrypt("076", PMTABLE_KEY),
+            'id' => $faker->unique()->numberBetween(1, 100),
+            'rows' => G::encrypt("076", PMTABLE_KEY)
         ];
 
         //Assert the exception message when the PM table does not exists
-        $this->expectExceptionMessage('ID_PMTABLE_CLASS_DOESNT_EXIST');
+        $this->expectException(Exception::class);
+
         //This method deletes a specific row of a PM table
         $obj->dataDestroy($httpDataDestroyTest);
     }
@@ -1021,7 +1015,6 @@ class PmTablesProxyTest extends TestCase
      */
     public function it_should_test_destroy_method_success()
     {
-        $this->markTestSkipped("Is not compatible with php74.");
         $reportTable = new ReportTable();
 
         //PM table with a varchar id
@@ -1087,6 +1080,7 @@ class PmTablesProxyTest extends TestCase
 
         //This method deletes a specific row of a PM table
         $obj->dataDestroy($httpDataDestroyTest);
+        $this->assertTrue(property_exists($obj, 'jsonResponse'));
     }
     
     /**
@@ -1119,6 +1113,7 @@ class PmTablesProxyTest extends TestCase
 
         $pmTablesProxy = new pmTablesProxy();
         $result = $pmTablesProxy->import($httpData);
+        ob_end_clean();
 
         //asserts
         $this->assertObjectHasAttribute('fromAdmin', $result);

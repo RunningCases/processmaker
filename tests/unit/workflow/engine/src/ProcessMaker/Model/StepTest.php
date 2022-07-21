@@ -23,7 +23,7 @@ class StepTest extends TestCase
      */
     public function it_get_specific_step()
     {
-        $table = factory(Step::class)->create();
+        $table = Step::factory()->create();
         $result = Step::getByProcessTaskAndStepType(
             $table->PRO_UID,
             $table->TAS_UID,

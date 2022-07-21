@@ -24,8 +24,8 @@ class PMFCaseListTest extends TestCase
     public function it_return_list_of_cases()
     {
         // Create delegation
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
-        factory(AppThread::class)->create([
+        $table = Delegation::factory()->foreign_keys()->create();
+        AppThread::factory()->create([
             'APP_THREAD_STATUS' => 'OPEN',
             'APP_UID' => $table->APP_UID
         ]);

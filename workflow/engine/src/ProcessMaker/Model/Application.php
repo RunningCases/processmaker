@@ -2,11 +2,14 @@
 
 namespace ProcessMaker\Model;
 
+use App\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class Application extends Model
 {
+    use HasFactory;
+
     protected $table = "APPLICATION";
     protected $primaryKey = 'APP_NUMBER';
     public $incrementing = false;

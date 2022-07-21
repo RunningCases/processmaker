@@ -1,17 +1,28 @@
 <?php
 
-/**
- * Model factory for a process category
- */
+namespace Database\Factories;
 
-use Faker\Generator as Faker;
+use App\Factories\Factory;
+use G;
+use Illuminate\Support\Str;
 
-$factory->define(\ProcessMaker\Model\ProcessCategory::class, function (Faker $faker) {
-    return [
-        'CATEGORY_UID' => G::generateUniqueID(),
-        'CATEGORY_ID' => $faker->unique()->numberBetween(1000),
-        'CATEGORY_PARENT' => '',
-        'CATEGORY_NAME' => $faker->sentence(5),
-        'CATEGORY_ICON' => '',
-    ];
-});
+class ProcessCategoryFactory extends Factory
+{
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            'CATEGORY_UID' => G::generateUniqueID(),
+            'CATEGORY_ID' => $this->faker->unique()->numberBetween(1000),
+            'CATEGORY_PARENT' => '',
+            'CATEGORY_NAME' => $this->faker->sentence(5),
+            'CATEGORY_ICON' => '',
+        ];
+    }
+
+}

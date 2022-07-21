@@ -36,7 +36,7 @@ class ListCompletedTest extends TestCase
      */
     public function it_should_test_loadFilters_method()
     {
-        $delegation = factory(Delegation::class)->create([
+        $delegation = Delegation::factory()->create([
             'DEL_THREAD_STATUS' => 'CLOSED',
         ]);
 
@@ -48,7 +48,7 @@ class ListCompletedTest extends TestCase
             'filter' => '', //read,unread
             'search' => $delegation->application->APP_UID,
             'process' => $delegation->process->PRO_UID,
-            'category' => $delegation->process->PRO_CATEGORY,
+            'category' => $this->faker->word,
             'dateFrom' => '',
             'dateTo' => ''
         ];

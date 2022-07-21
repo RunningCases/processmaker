@@ -2309,7 +2309,7 @@ CREATE TABLE `PROCESS_VARIABLES`
 	`VAR_LABEL` VARCHAR(255) default '',
 	`VAR_DBCONNECTION` VARCHAR(32),
 	`VAR_SQL` MEDIUMTEXT,
-	`VAR_NULL` TINYINT(32) default 0,
+	`VAR_NULL` TINYINT default 0,
 	`VAR_DEFAULT` VARCHAR(32) default '',
 	`VAR_ACCEPTED_VALUES` MEDIUMTEXT,
 	`INP_DOC_UID` VARCHAR(32) default '',
@@ -2317,7 +2317,7 @@ CREATE TABLE `PROCESS_VARIABLES`
 	UNIQUE KEY `VAR_ID` (`VAR_ID`),
 	KEY `indexPrjUidVarName`(`PRJ_UID`, `VAR_NAME`),
 	KEY `INDEX_PRO_ID`(`PRO_ID`)
-)ENGINE=InnoDB ;
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- APP_TIMEOUT_ACTION_EXECUTED
 #-----------------------------------------------------------------------------
@@ -3321,10 +3321,10 @@ CREATE TABLE `JOBS_PENDING`
 	`id` BIGINT(20)  NOT NULL AUTO_INCREMENT,
 	`queue` VARCHAR(255)  NOT NULL,
 	`payload` MEDIUMTEXT  NOT NULL,
-	`attempts` TINYINT(3)  NOT NULL,
-	`reserved_at` BIGINT(10),
-	`available_at` BIGINT(10)  NOT NULL,
-	`created_at` BIGINT(10)  NOT NULL,
+	`attempts` TINYINT  NOT NULL,
+	`reserved_at` BIGINT(20),
+	`available_at` BIGINT(20)  NOT NULL,
+	`created_at` BIGINT(20)  NOT NULL,
 	PRIMARY KEY (`id`),
 	KEY `jobs_queue_index`(`queue`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
@@ -3366,9 +3366,9 @@ CREATE TABLE `SCHEDULER`
 	`body` VARCHAR(255),
 	`type` VARCHAR(255),
 	`category` VARCHAR(255),
-	`system` TINYINT(3),
+	`system` TINYINT,
 	`timezone` VARCHAR(255),
-	`enable` TINYINT(3),
+	`enable` TINYINT,
 	`creation_date` DATETIME,
 	`last_update` DATETIME,
 	PRIMARY KEY (`id`)

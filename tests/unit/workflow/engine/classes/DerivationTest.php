@@ -119,23 +119,23 @@ class DerivationTest extends TestCase
     public function it_should_test_the_do_derivation_method_sending_variables_synchronously()
     {
         // Create the models
-        $user = factory(User::class)->create();
-        $process = factory(Process::class)->create([
+        $user = User::factory()->create();
+        $process = Process::factory()->create([
             'PRO_CREATE_USER' => $user->USR_UID
         ]);
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'PRO_UID' => $process->PRO_UID,
         ]);
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'APP_INIT_USER' => $user->USR_UID,
             'APP_CUR_USER' => $user->USR_UID
         ]);
-        $appDelegation = factory(Delegation::class)->create([
+        $appDelegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'APP_NUMBER' => $application->APP_NUMBER
         ]);
-        factory(SubApplication::class)->create([
+        SubApplication::factory()->create([
             'APP_UID' => $application->APP_UID,
             'APP_PARENT' => $application->APP_UID,
             'DEL_INDEX_PARENT' => $appDelegation->DEL_INDEX
@@ -203,35 +203,35 @@ class DerivationTest extends TestCase
     public function it_should_test_the_do_derivation_method_sending_variables_asynchronously()
     {
         // Create the models
-        $user = factory(User::class)->create();
-        $process = factory(Process::class)->create([
+        $user = User::factory()->create();
+        $process = Process::factory()->create([
             'PRO_CREATE_USER' => $user->USR_UID
         ]);
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_USER' => $user->USR_UID
         ]);
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'USR_UID' => $user->USR_UID
         ]);
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'APP_INIT_USER' => $user->USR_UID,
             'APP_CUR_USER' => $user->USR_UID
         ]);
-        $appDelegation = factory(Delegation::class)->create([
+        $appDelegation = Delegation::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'APP_UID' => $application->APP_UID,
             'APP_NUMBER' => $application->APP_NUMBER
         ]);
-        factory(SubApplication::class)->create([
+        SubApplication::factory()->create([
             'APP_UID' => $application->APP_UID,
             'APP_PARENT' => $application->APP_UID,
             'DEL_INDEX_PARENT' => $appDelegation->DEL_INDEX,
             'SA_STATUS' => 'FINISHED'
         ]);
-        factory(Route::class)->create([
+        Route::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'ROU_NEXT_TASK' => $task->TAS_UID,
             'PRO_UID' => $process->PRO_UID

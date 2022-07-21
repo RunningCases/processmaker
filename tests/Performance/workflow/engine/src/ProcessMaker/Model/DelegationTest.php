@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Perfomance\workflow\src\ProcessMaker\Model;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -48,24 +49,24 @@ class DelegationTest extends TestCase
         //Define the maximum time of execution
         $maximumTime = $this->maximumExecutionTime;
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Create a task self service
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1, //Related to the user
             'TU_TYPE' => 1
         ]);
         //Create the register in delegation relate to self-service
-        factory(Delegation::class, $total)->create([
+        Delegation::factory($total)->create([
             'TAS_ID' => $task->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
@@ -93,31 +94,31 @@ class DelegationTest extends TestCase
         //Define the maximum time of execution
         $maximumTime = $this->maximumExecutionTime;
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create a case
-        $application = factory(Application::class)->create();
+        $application = Application::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Create a task self service value based
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '@@ARRAY_OF_USERS',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
-        $appSelfValue = factory(AppAssignSelfServiceValue::class)->create([
+        $appSelfValue = AppAssignSelfServiceValue::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_INDEX' => 2,
             'TAS_ID' => $task->TAS_ID
         ]);
-        factory(AppAssignSelfServiceValueGroup::class)->create([
+        AppAssignSelfServiceValueGroup::factory()->create([
             'ID' => $appSelfValue->ID,
             'GRP_UID' => $user->USR_UID,
             'ASSIGNEE_ID' => $user->USR_ID, //The usrId or grpId
             'ASSIGNEE_TYPE' => 1 //Related to the user=1 related to the group=2
         ]);
         //Create the register in self-service
-        factory(Delegation::class, $total)->create([
+        Delegation::factory($total)->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_INDEX' => $appSelfValue->DEL_INDEX,
             'TAS_ID' => $task->TAS_ID,
@@ -146,50 +147,50 @@ class DelegationTest extends TestCase
         //Define the maximum time of execution
         $maximumTime = $this->maximumExecutionTime;
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create a case
-        $application = factory(Application::class)->create();
+        $application = Application::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Create a task self service
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1, //Related to the user
             'TU_TYPE' => 1
         ]);
         //Create the register in self service
-        factory(Delegation::class, $total / 2)->create([
+        Delegation::factory($total / 2)->create([
             'TAS_ID' => $task->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
         ]);
         //Create a task self service value based
-        $task1 = factory(Task::class)->create([
+        $task1 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '@@ARRAY_OF_USERS',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
-        $appSelfValue = factory(AppAssignSelfServiceValue::class)->create([
+        $appSelfValue = AppAssignSelfServiceValue::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_INDEX' => 2,
             'TAS_ID' => $task1->TAS_ID
         ]);
-        factory(AppAssignSelfServiceValueGroup::class)->create([
+        AppAssignSelfServiceValueGroup::factory()->create([
             'ID' => $appSelfValue->ID,
             'GRP_UID' => $user->USR_UID,
             'ASSIGNEE_ID' => $user->USR_ID, //The usrId or grpId
             'ASSIGNEE_TYPE' => 1 //Related to the user=1 related to the group=2
         ]);
         //Create the register in self service value based
-        factory(Delegation::class, $total / 2)->create([
+        Delegation::factory($total / 2)->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_INDEX' => $appSelfValue->DEL_INDEX,
             'TAS_ID' => $task->TAS_ID,
@@ -218,32 +219,32 @@ class DelegationTest extends TestCase
         //Define the maximum time of execution
         $maximumTime = $this->maximumExecutionTime;
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create group
-        $group = factory(Groupwf::class)->create();
+        $group = Groupwf::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Assign a user in the group
-        factory(GroupUser::class)->create([
+        GroupUser::factory()->create([
             'GRP_UID' => $group->GRP_UID,
             'GRP_ID' => $group->GRP_ID,
             'USR_UID' => $user->USR_UID
         ]);
         //Create a task self service
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 2, //Related to the group
             'TU_TYPE' => 1
         ]);
         //Create the register in self-service
-        factory(Delegation::class, $total)->create([
+        Delegation::factory($total)->create([
             'TAS_ID' => $task->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
@@ -271,44 +272,44 @@ class DelegationTest extends TestCase
         //Define the maximum time of execution
         $maximumTime = $this->maximumExecutionTime;
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create a task self service value based
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '@@ARRAY_OF_USERS',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Create a case
-        $application = factory(Application::class)->create();
+        $application = Application::factory()->create();
         //Create group
-        $group = factory(Groupwf::class)->create();
+        $group = Groupwf::factory()->create();
         //Create user
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'USR_USERNAME' => 'gary',
             'USR_LASTNAME' => 'Gary',
             'USR_FIRSTNAME' => 'Bailey',
         ]);
         //Assign a user in the group
-        factory(GroupUser::class)->create([
+        GroupUser::factory()->create([
             'GRP_UID' => $group->GRP_UID,
             'GRP_ID' => $group->GRP_ID,
             'USR_UID' => $user->USR_UID,
         ]);
         //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
-        $appSelfValue = factory(AppAssignSelfServiceValue::class)->create([
+        $appSelfValue = AppAssignSelfServiceValue::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
             'DEL_INDEX' => 2,
             'TAS_ID' => $task->TAS_ID
         ]);
-        factory(AppAssignSelfServiceValueGroup::class)->create([
+        AppAssignSelfServiceValueGroup::factory()->create([
             'ID' => $appSelfValue->ID,
             'GRP_UID' => $group->GRP_UID,
             'ASSIGNEE_ID' => $group->GRP_ID, //The usrId or grpId
             'ASSIGNEE_TYPE' => 2 //Related to the user=1 related to the group=2
         ]);
         //Create the register in self-service
-        factory(Delegation::class, $total)->create([
+        Delegation::factory($total)->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_INDEX' => 2,
             'TAS_ID' => $task->TAS_ID,
@@ -337,89 +338,89 @@ class DelegationTest extends TestCase
         //Define the maximum time of execution
         $maximumTime = $this->maximumExecutionTime;
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create group
-        $group = factory(Groupwf::class)->create();
+        $group = Groupwf::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Assign a user in the group
-        factory(GroupUser::class)->create([
+        GroupUser::factory()->create([
             'GRP_UID' => $group->GRP_UID,
             'GRP_ID' => $group->GRP_ID,
             'USR_UID' => $user->USR_UID
         ]);
         //Create a task self service
-        $task1 = factory(Task::class)->create([
+        $task1 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task1
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task1->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1, //Related to the user
             'TU_TYPE' => 1
         ]);
         //Create a task self service
-        $task2 = factory(Task::class)->create([
+        $task2 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task2
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task2->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1, //Related to the user
             'TU_TYPE' => 1
         ]);
         //Create a task self service
-        $task3 = factory(Task::class)->create([
+        $task3 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task3->TAS_UID,
             'USR_UID' => $group->GRP_UID,
             'TU_RELATION' => 2, //Related to the group
             'TU_TYPE' => 1
         ]);
         //Create a task self service
-        $task4 = factory(Task::class)->create([
+        $task4 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task4->TAS_UID,
             'USR_UID' => $group->GRP_UID,
             'TU_RELATION' => 2, //Related to the group
             'TU_TYPE' => 1
         ]);
         //Create the register in self-service related to the task1
-        factory(Delegation::class, $total / 4)->create([
+        Delegation::factory($total / 4)->create([
             'TAS_ID' => $task1->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
         ]);
         //Create the register in self-service related to the task2
-        factory(Delegation::class, $total / 4)->create([
+        Delegation::factory($total / 4)->create([
             'TAS_ID' => $task2->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
         ]);
         //Create the register in self-service related to the task3
-        factory(Delegation::class, $total / 4)->create([
+        Delegation::factory($total / 4)->create([
             'TAS_ID' => $task3->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
         ]);
         //Create the register in self-service related to the task4
-        factory(Delegation::class, $total / 4)->create([
+        Delegation::factory($total / 4)->create([
             'TAS_ID' => $task4->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
@@ -447,30 +448,30 @@ class DelegationTest extends TestCase
         //Define the maximum time of execution
         $maximumTime = $this->maximumExecutionTime;
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create a case
-        $application = factory(Application::class)->create();
+        $application = Application::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Create a task1 self service value based
-        $task1 = factory(Task::class)->create([
+        $task1 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '@@ARRAY_OF_USERS',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
-        $appSelfValue = factory(AppAssignSelfServiceValue::class)->create([
+        $appSelfValue = AppAssignSelfServiceValue::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_ID' => $task1->TAS_ID
         ]);
-        factory(AppAssignSelfServiceValueGroup::class)->create([
+        AppAssignSelfServiceValueGroup::factory()->create([
             'ID' => $appSelfValue->ID,
             'GRP_UID' => $user->USR_UID,
             'ASSIGNEE_ID' => $user->USR_ID, //The usrId or grpId
             'ASSIGNEE_TYPE' => 1 //Related to the user=1 related to the group=2
         ]);
         //Create the register in self-service
-        factory(Delegation::class, $total / 2)->create([
+        Delegation::factory($total / 2)->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_INDEX' => $appSelfValue->DEL_INDEX,
             'TAS_ID' => $task1->TAS_ID,
@@ -478,24 +479,24 @@ class DelegationTest extends TestCase
             'USR_ID' => 0,
         ]);
         //Create a task2 self service value based
-        $task2 = factory(Task::class)->create([
+        $task2 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '@@ARRAY_OF_USERS',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
-        $appSelfValue = factory(AppAssignSelfServiceValue::class)->create([
+        $appSelfValue = AppAssignSelfServiceValue::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_ID' => $task2->TAS_ID
         ]);
-        factory(AppAssignSelfServiceValueGroup::class)->create([
+        AppAssignSelfServiceValueGroup::factory()->create([
             'ID' => $appSelfValue->ID,
             'GRP_UID' => $user->USR_UID,
             'ASSIGNEE_ID' => $user->USR_ID, //The usrId or grpId
             'ASSIGNEE_TYPE' => 1 //Related to the user=1 related to the group=2
         ]);
         //Create the register in self-service
-        factory(Delegation::class, $total / 2)->create([
+        Delegation::factory($total / 2)->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_INDEX' => $appSelfValue->DEL_INDEX,
             'TAS_ID' => $task2->TAS_ID,

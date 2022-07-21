@@ -24,8 +24,8 @@ class PMFGetCaseNotesTest extends TestCase
     public function it_get_case_notes()
     {
         // Create notes
-        $user = factory(User::class)->create();
-        $table = factory(AppNotes::class)->create([
+        $user = User::factory()->create();
+        $table = AppNotes::factory()->create([
             'USR_UID' => $user->USR_UID
         ]);
         // Force commit for propel

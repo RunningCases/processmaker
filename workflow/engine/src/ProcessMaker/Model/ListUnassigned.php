@@ -2,6 +2,7 @@
 
 namespace ProcessMaker\Model;
 
+use App\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use ListUnassigned as PropelListUnassigned;
 
@@ -12,6 +13,8 @@ use ListUnassigned as PropelListUnassigned;
  */
 class ListUnassigned extends Model
 {
+    use HasFactory;
+
     protected $table = "LIST_UNASSIGNED";
     // No timestamps
     public $timestamps = false;

@@ -34,35 +34,35 @@ class BootstrapTest extends TestCase
         $result = Bootstrap::streamCSSBigFile($filename);
 
         //add more assertions
-        $this->assertRegexp("/{$filename}/", $result);
-        $this->assertRegexp("/font-face/", $result);
-        $this->assertRegexp("/font-family/", $result);
+        $this->assertMatchesRegularExpression("/{$filename}/", $result);
+        $this->assertMatchesRegularExpression("/font-face/", $result);
+        $this->assertMatchesRegularExpression("/font-family/", $result);
 
         $filename = "jscolors";
         $result = Bootstrap::streamCSSBigFile($filename);
 
         //add more assertions
-        $this->assertRegexp("/{$filename}/", $result);
+        $this->assertMatchesRegularExpression("/{$filename}/", $result);
 
         $filename = "xmlcolors";
         $result = Bootstrap::streamCSSBigFile($filename);
 
         //add more assertions
-        $this->assertRegexp("/{$filename}/", $result);
+        $this->assertMatchesRegularExpression("/{$filename}/", $result);
 
         $filename = "classic";
         $result = Bootstrap::streamCSSBigFile($filename);
 
         //add more assertions
-        $this->assertRegexp("/{$filename}/", $result);
-        $this->assertRegexp("/font-family/", $result);
-        $this->assertRegexp("/ss_group_suit/", $result);
+        $this->assertMatchesRegularExpression("/{$filename}/", $result);
+        $this->assertMatchesRegularExpression("/font-family/", $result);
+        $this->assertMatchesRegularExpression("/ss_group_suit/", $result);
 
         $filename = "classic-extjs";
         $result = Bootstrap::streamCSSBigFile($filename);
 
         //add more assertions
-        $this->assertRegexp("/{$filename}/", $result);
+        $this->assertMatchesRegularExpression("/{$filename}/", $result);
     }
 
     /**
@@ -101,7 +101,7 @@ class BootstrapTest extends TestCase
         foreach ($files as $value) {
             $result = $result . File::get($value->getPathname());
         }
-        $this->assertRegExp("/{$channel}/", $result);
+        $this->assertMatchesRegularExpression("/{$channel}/", $result);
     }
 
     /**
@@ -136,6 +136,6 @@ class BootstrapTest extends TestCase
         foreach ($files as $value) {
             $result = $result . File::get($value->getPathname());
         }
-        $this->assertRegExp("/{$channel}/", $result);
+        $this->assertMatchesRegularExpression("/{$channel}/", $result);
     }
 }

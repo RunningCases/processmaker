@@ -23,7 +23,7 @@ class PMFGetProcessUidByNameTest extends TestCase
     public function it_return_process()
     {
         // Create process
-        $table = factory(Process::class)->create();
+        $table = Process::factory()->create();
         DB::commit();
         $result = PMFGetProcessUidByName($table->PRO_TITLE);
         $this->assertNotEmpty($result);
