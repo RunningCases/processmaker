@@ -10,7 +10,7 @@
         >
             {{ $t('ID_CLEAR') }}
         </b-button>
-    </div>    
+    </div>
 </template>
 <script>
 import { Event } from "vue-tables-2";

@@ -622,7 +622,7 @@ export default {
         // force to open case
         this.openDefaultCase();
         // define sort event
-        Event.$on("vue-tables.todo.sorted", function(data) {
+        Event.$on("vue-tables.custom.sorted", function(data) {
              that.$emit("updateSettings", {
                 data: data,
                 key: "orderBy",
@@ -1254,23 +1254,23 @@ export default {
             }
           };
           return dataEllipsisMap[page];
-        }
+        },
+        /**
+         * Reset the sort in the table
+         */
+        clearSort() {
+            if (this.$refs['vueTable']) {
+                this.$refs['vueTable'].setOrder(false);
+                this.$emit("updateSettings", {
+                    data: [],
+                    key: "orderBy",
+                    page: this.data.pageParent,
+                    type: "custom",
+                    id: this.data.customListId
+                });
+            }
+        },
     },
-    /**
-     * Reset the sort in the table
-     */
-    clearSort() {
-        if (this.$refs['vueTable']) {
-            this.$refs['vueTable'].setOrder(false)
-            this.$emit("updateSettings", {
-                data: [],
-                key: "orderBy",
-                page: that.data.pageParent,
-                type: "custom",
-                id: that.data.customListId
-            });
-        }
-    }
 };
 </script>
 <style>
