@@ -165,6 +165,11 @@ export default {
             options: {
                 filterable: false,
                 perPageValues: [],
+                pagination: { 
+                    chunk: 3,
+                    nav: 'scroll',
+                    edge: true
+                },
                 headings: {
                     case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
                     process_category: this.$i18n.t("ID_CATEGORY_PROCESS"),
@@ -179,8 +184,8 @@ export default {
                 },
                 texts: {
                     count: this.$i18n.t("ID_SHOWING_FROM_RECORDS_COUNT"),
-                    first: this.$i18n.t("ID_FIRST"),
-                    last: this.$i18n.t("ID_LAST"),
+                    first: "<<",
+                    last: ">>",
                     filter: this.$i18n.t("ID_FILTER") + ":",
                     limit: this.$i18n.t("ID_RECORDS") + ":",
                     page: this.$i18n.t("ID_PAGE") + ":",

@@ -170,6 +170,11 @@ export default {
       showTable: true,
       tableData: [],
       options: {
+        pagination: { 
+            chunk: 3,
+            nav: 'scroll',
+            edge: true
+        },
         headings: {
           task: this.$i18n.t("ID_TASK"),
           thread_title: this.$i18n.t('ID_CASE_THREAD_TITLE'),
@@ -180,8 +185,8 @@ export default {
         },
         texts: {
             count:this.$i18n.t("ID_SHOWING_FROM_RECORDS_COUNT"),
-            first: this.$i18n.t("ID_FIRST"),
-            last: this.$i18n.t("ID_LAST"),
+            first: "<<",
+            last: ">>",
             filter: this.$i18n.t("ID_FILTER") + ":",
             limit: this.$i18n.t("ID_RECORDS") + ":",
             page: this.$i18n.t("ID_PAGE") + ":",
