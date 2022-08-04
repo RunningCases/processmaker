@@ -1,6 +1,5 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import VueSidebarMenu from "vue-sidebar-menu";
 import VueI18n from 'vue-i18n';
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue';
 import { ServerTable, Event, ClientTable } from 'vue-tables-2';
@@ -22,7 +21,6 @@ import Home from "./Home";
 
 Vue.use(VueApexCharts);
 Vue.use(VueRouter);
-Vue.use(VueSidebarMenu);
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
 Vue.use(VueI18n);

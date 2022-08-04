@@ -25,11 +25,14 @@
                 :attributes="item.attributes"
                 @click.native="clickEvent"
             >
-                <custom-sidebar-menu-icon
+                <custom-tooltip
                     v-if="item.icon && !isMobileItem && item.specialType !='header'"
-                    :icon="item.icon"
-                    v-bind:style="setIconColor"
-                />
+                    :data="item"
+                    :collapsed="isCollapsed"
+                    :level="level"
+                    :customStyle="setIconColor"
+                    ref="tooltip"
+                ></custom-tooltip>
                 <transition name="fade-animation" :appear="isMobileItem">
                     <template
                         v-if="
@@ -39,19 +42,14 @@
                         "
                     >
                         <span :class="item.specialType != 'header'?'vsm--title': 'vsm--header vsm--title--header'">
-                            <template v-if="!verifyTaskMetrics">
-                                <custom-tooltip
-                                    :data="item"
-                                    ref="tooltip"
-                                ></custom-tooltip>
-                            </template>
-                            <template v-else>
+                            <template v-if="verifyTaskMetrics">
                                 <span>
                                     {{ item.title }}
                                 </span>
                             </template>
-                            <span v-if="item.sortable">
+                            <span v-if="item.sortable" :style="item.specialType != 'header'? 'clear: right' : 'clear: none'">
                                 <b-icon
+                                    class="vp-icon"
                                     :id="`gear-${item.id}`"
                                     :icon="item.sortIcon"
                                     @click="onClickSortSettings"
@@ -607,5 +605,9 @@ export default {
     line-height: 30px;
     margin-right: 10px;
     margin-left: 0px;
+}
+
+.vp-icon {
+    margin-left: 5%;
 }
 </style>

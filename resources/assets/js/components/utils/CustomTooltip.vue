@@ -1,14 +1,39 @@
 <template>
     <span
-        :id="`label-${data.id}`"
         @mouseover="hoverHandler"
         @mouseleave="unhoverHandler"
         v-bind:class="{highlightText: isHighlight, loadingTooltip: isLoading}"
     >
-        {{ data.title }}
+        <div
+            :id="`label-${data.id}-mobile`"
+            v-if="collapsed && mobile && level == 1"
+            class="float-left"
+        >
+            {{ data.title }}
+        </div>
+        <div
+            :id="`label-${data.id}`"
+            v-else-if="!collapsed || mobile || level > 1"
+            class="float-left"
+        >
+            <custom-sidebar-menu-icon
+                :icon="data.icon"
+                :style="customStyle"
+            />
+            {{ data.title }}
+        </div>
+        <div v-else-if="collapsed">
+            <custom-sidebar-menu-icon
+                :id="`label-${data.id}`"
+                :icon="data.icon"
+                :style="customStyle"
+            />
+        </div>
         <b-tooltip 
-            :target="`label-${data.id}`"
+            :target="mobile ? `label-${data.id}-mobile` : `label-${data.id}`"
+            :boundary="mobile ? `label-${data.id}-mobile` : `label-${data.id}`"
             :show.sync="showTooltip"
+            :placement="collapsed ? 'auto' : 'topright'"
             v-if="showTooltip"
         >
             {{ labelTooltip }}
@@ -23,11 +48,19 @@
 
 <script>
 import api from "./../../api/index";
+import CustomSidebarMenuIcon from "../menu/CustomSidebarMenuIcon.vue";
 
 export default {
     name: "CustomTooltip",
+    components: {
+        CustomSidebarMenuIcon,
+    },
     props: {
-        data: Object
+        data: Object,
+        collapsed: Boolean,
+        customStyle: Object,
+        level: Number,
+        mobile: Boolean
     },
     data() {
         return {
@@ -53,6 +86,12 @@ export default {
          * Delay the hover event
          */
         hoverHandler() {
+            if (this.loading) {
+                clearTimeout(this.loading);
+            }
+            if (this.hovering) {
+                clearTimeout(this.hovering);
+            }
             this.loading = setTimeout(() => { this.isLoading = true }, 1000) ;
             this.hovering = setTimeout(() => { this.setTooltip() }, 3000);
         },

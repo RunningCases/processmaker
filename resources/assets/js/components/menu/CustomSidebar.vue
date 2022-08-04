@@ -22,10 +22,13 @@
 <script>
 import api from "./../../api/index";
 import CustomSidebarMenuItem from "./CustomSidebarMenuItem";
+import SidebarMenu from '../menu/sidebar/components/SidebarMenu.vue'
 export default {
     name: "CustomSidebar",
     props: ["menu"],
-
+    components: {
+        SidebarMenu
+    },
     data() {
         return {
             collapsed: false,
