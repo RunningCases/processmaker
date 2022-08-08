@@ -71,8 +71,9 @@ if ($delegation->alreadyRouted($_SESSION['APPLICATION'], $_SESSION['INDEX'])) {
         die();
     } else {
         die('<script type="text/javascript">'
-            . 'window.parent.location="casesListExtJs?action=todo";'
-            . '</script>');
+            .'if(window.parent && window.parent.parent){'
+            .'window.parent.parent.postMessage("redirect=todo","*");'
+            .'}</script>');
     }
 }
 
