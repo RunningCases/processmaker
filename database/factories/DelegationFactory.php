@@ -27,6 +27,7 @@ $factory->define(\ProcessMaker\Model\Delegation::class, function(Faker $faker) {
         'DEL_TYPE' => 'NORMAL',
         'DEL_THREAD' => 1,
         'DEL_THREAD_STATUS' => 'OPEN',
+        'DEL_THREAD_STATUS_ID' => 1,
         'DEL_PRIORITY' => 3,
         'DEL_DELEGATE_DATE' => $faker->dateTime(),
         'DEL_INIT_DATE' => $faker->dateTime(),
@@ -79,6 +80,7 @@ $factory->state(\ProcessMaker\Model\Delegation::class, 'foreign_keys', function 
         'DEL_TYPE' => 'NORMAL',
         'DEL_THREAD' => 1,
         'DEL_THREAD_STATUS' => 'OPEN',
+        'DEL_THREAD_STATUS_ID' => 1,
         'DEL_PRIORITY' => 3,
         'DEL_DELEGATE_DATE' => $delegateDate,
         'DEL_INIT_DATE' => $initDate,
@@ -125,6 +127,7 @@ $factory->state(\ProcessMaker\Model\Delegation::class, 'web_entry', function (Fa
         'DEL_TYPE' => 'NORMAL',
         'DEL_THREAD' => 1,
         'DEL_THREAD_STATUS' => 'OPEN',
+        'DEL_THREAD_STATUS_ID' => 1,
         'DEL_PRIORITY' => 3,
         'DEL_DELEGATE_DATE' => $faker->dateTime(),
         'DEL_INIT_DATE' => $faker->dateTime(),
@@ -148,6 +151,7 @@ $factory->state(\ProcessMaker\Model\Delegation::class, 'open', function (Faker $
 
     return [
         'DEL_THREAD_STATUS' => 'OPEN',
+        'DEL_THREAD_STATUS_ID' => 1,
         'DEL_DELEGATE_DATE' => $delegateDate,
         'DEL_INIT_DATE' => $initDate,
         'DEL_RISK_DATE' => $riskDate,

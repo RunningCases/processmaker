@@ -144,6 +144,18 @@ class DelegationTest extends TestCase
     }
 
     /**
+     * This test scopeThreadIdOpen
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeThreadIdOpen()
+     * @test
+     */
+    public function it_return_scope_thread_id_open()
+    {
+        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $this->assertCount(1, $table->threadIdOpen()->get());
+    }
+
+    /**
      * This test scopeThreadPause
      *
      * @covers \ProcessMaker\Model\Delegation::scopeThreadPause()

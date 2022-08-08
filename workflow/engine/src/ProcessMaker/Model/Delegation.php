@@ -95,6 +95,17 @@ class Delegation extends Model
     }
 
     /**
+     * Scope a query to only include open threads
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeThreadIdOpen($query)
+    {
+        return $query->where('APP_DELEGATION.DEL_THREAD_STATUS_ID', 1);
+    }
+
+    /**
      * Scope a query to only include pause threads
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
@@ -2182,6 +2193,15 @@ class Delegation extends Model
         $query = Delegation::query()->select(['APP_NUMBER']);
         // Filter the title
         $query->title($search);
+        // Get open or last thread
+        $query->where(function ($query) {
+            // Get open threads
+            $query->threadIdOpen();
+            // Get last
+            $query->orWhere(function ($query) {
+                $query->lastThread();
+            });
+        });
         // Group by
         $query->groupBy('APP_NUMBER');
         // Get the result
