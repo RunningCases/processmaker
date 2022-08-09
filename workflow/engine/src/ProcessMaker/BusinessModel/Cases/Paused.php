@@ -25,6 +25,7 @@ class Paused extends AbstractCases
         'USERS.USR_LASTNAME', // Current User LastName
         'APP_DELEGATION.DEL_TASK_DUE_DATE', // Due Date
         'APP_DELEGATION.DEL_DELEGATE_DATE', // Delegate Date
+        'APP_DELEGATION.DEL_INIT_DATE', // Init Date
         'APP_DELEGATION.DEL_PRIORITY', // Priority
         'APP_DELEGATION.DEL_PREVIOUS', // Previous
         // Additional column for other functionalities
