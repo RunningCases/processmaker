@@ -40,47 +40,52 @@
         <h5 class="v-search-title">{{ title }}</h5>
         <div class="pm-mc-text-icon">
             <i :class="icon"></i>
-      </div>  
-      <b-input-group class="w-75 p-1">
-        <div class="input-group mb-3">
-          <div class="input-group-prepend">
-            <span
-              class="input-group-text bg-primary-pm text-white"
-              id="popover-target-1"
-              @click="searchClickHandler"
+        </div>
+        <b-input-group class="w-75 p-1">
+            <div class="input-group-tag mb-3">
+                <div class="input-group-prepend">
+                    <span
+                        class="input-group-text bg-primary-pm text-white"
+                        id="popover-target-1"
+                        @click="searchClickHandler"
+                    >
+                        <b-icon icon="search"></b-icon>
+                    </span>
+                    <b-tooltip target="popover-target-1">{{$t('ID_MY_CASES_SEARCH')}}</b-tooltip>
+                </div>
+            <b-form-tags
+                input-id="tags-pills"
+                v-model="searchTags"
+                :disabled="true"
+                v-if="filters.length > 0"
             >
-              <b-icon icon="search"></b-icon
-            ></span>
-              <b-tooltip target="popover-target-1">{{$t('ID_MY_CASES_SEARCH')}}</b-tooltip>
-          </div>
-          <b-form-tags input-id="tags-pills" v-model="searchTags">
-            <template v-slot="{ tags, tagVariant, removeTag }">
-              <div class="d-inline-block" style="font-size: 1rem">
-                <b-form-tag
-                  v-for="tag in tags"
-                  @remove="customRemove(removeTag, tag)"
-                  :key="tag"
-                  :title="tag"
-                  :variant="tagVariant"
-                  class="mr-1 badge badge-light"
-                >
-                  <div :id="tag">
-                    <i class="fas fa-tags"></i>
-                    {{ tagContent(tag) }}
-                  </div>
+                <template v-slot="{ tags, tagVariant, removeTag }" >
+                    <div class="d-inline-block" style="font-size: 1rem">
+                        <b-form-tag
+                            v-for="tag in tags"
+                            @remove="customRemove(removeTag, tag)"
+                            :key="tag"
+                            :title="tag"
+                            :variant="tagVariant"
+                            class="mr-1 badge badge-light"
+                        >
+                            <div :id="tag">
+                                <i class="fas fa-tags"></i>
+                                {{ tagContent(tag) }}
+                            </div>
 
-                  <component
-                    :filters="filters"
-                    v-bind:is="tagComponent(tag)"
-                    v-bind:info="tagInfo(tag)"
-                    v-bind:tag="tag"
-                    v-bind:filter="dataToFilter(tag)"
-                    @updateSearchTag="updateSearchTag"
-                  />
-                </b-form-tag>
-              </div>
-            </template>
-          </b-form-tags>
+                            <component
+                                :filters="filters"
+                                v-bind:is="tagComponent(tag)"
+                                v-bind:info="tagInfo(tag)"
+                                v-bind:tag="tag"
+                                v-bind:filter="dataToFilter(tag)"
+                                @updateSearchTag="updateSearchTag"
+                            />
+                        </b-form-tag>
+                    </div>
+                </template>
+            </b-form-tags>
         </div>
       </b-input-group>
     </div>
@@ -478,4 +483,14 @@ export default {
   line-height: 40px;
 }
 </style>
-
+<style scoped>
+.b-form-tags {
+    border: none;
+}
+.input-group-tag {
+    position: relative;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: stretch;
+}
+</style>
