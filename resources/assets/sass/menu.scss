@@ -110,7 +110,7 @@
   margin-right: 10px
 }
 
-.vsm--link_level-2>.vsm--icon {
+.vsm--link_level-2 > :not(.collapseDrop) .vsm--icon {
   margin-top: 0px;
   padding-left: 20px;
 }
