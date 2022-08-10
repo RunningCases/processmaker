@@ -47,6 +47,7 @@ class Home
      * @param int $offset
      * @param string $caseTitle
      * @param string $filterCases
+     * @param string $reviewStatus
      * @param string $sort
      * @param callable $callback
      * 
@@ -61,6 +62,7 @@ class Home
         int $offset = 0,
         string $caseTitle = '',
         string $filterCases = '',
+        string $reviewStatus = '',
         string $sort = 'APP_NUMBER,DESC',
         callable $callback = null
     )
@@ -71,6 +73,7 @@ class Home
         $properties['caseNumber'] = $caseNumber;
         $properties['caseTitle'] = $caseTitle;
         $properties['filterCases'] = $filterCases;
+        $properties['reviewStatus'] = $reviewStatus;
         $properties['category'] = $category;
         $properties['process'] = $process;
         $properties['task'] = $task;
@@ -103,6 +106,7 @@ class Home
      * @param string $delegateFrom
      * @param string $delegateTo
      * @param string $filterCases
+     * @param string $reviewStatus
      * @param string $sort
      * @param string $sendBy
      * @param callable $callback
@@ -120,6 +124,7 @@ class Home
         string $delegateFrom = '',
         string $delegateTo = '',
         string $filterCases = '',
+        string $reviewStatus = '',
         string $sort = 'APP_NUMBER,DESC',
         string $sendBy = '',
         callable $callback = null
@@ -133,6 +138,7 @@ class Home
         $properties['delegateFrom'] = $delegateFrom;
         $properties['delegateTo'] = $delegateTo;
         $properties['filterCases'] = $filterCases;
+        $properties['reviewStatus'] = $reviewStatus;
         $properties['category'] = $category;
         $properties['process'] = $process;
         $properties['task'] = $task;
@@ -166,6 +172,7 @@ class Home
      * @param string $delegateFrom
      * @param string $delegateTo
      * @param string $filterCases
+     * @param string $reviewStatus
      * @param string $sort
      * @param string $sendBy
      * @param callable $callback
@@ -183,6 +190,7 @@ class Home
         string $delegateFrom = '',
         string $delegateTo = '',
         string $filterCases = '',
+        string $reviewStatus = '',
         string $sort = 'APP_NUMBER,DESC',
         string $sendBy = '',
         callable $callback = null
@@ -196,6 +204,7 @@ class Home
         $properties['delegateFrom'] = $delegateFrom;
         $properties['delegateTo'] = $delegateTo;
         $properties['filterCases'] = $filterCases;
+        $properties['reviewStatus'] = $reviewStatus;
         $properties['category'] = $category;
         $properties['process'] = $process;
         $properties['task'] = $task;
@@ -231,6 +240,7 @@ class Home
      * @param string $delegateFrom
      * @param string $delegateTo
      * @param string $filterCases
+     * @param string $reviewStatus
      * @param string $sort
      * @param string $sendBy
      * @param callable $callback
@@ -248,6 +258,7 @@ class Home
         string $delegateFrom = '',
         string $delegateTo = '',
         string $filterCases = '',
+        string $reviewStatus = '',
         string $sort = 'APP_NUMBER,DESC',
         string $sendBy = '',
         callable $callback = null
@@ -261,6 +272,7 @@ class Home
         $properties['delegateFrom'] = $delegateFrom;
         $properties['delegateTo'] = $delegateTo;
         $properties['filterCases'] = $filterCases;
+        $properties['reviewStatus'] = $reviewStatus;
         $properties['category'] = $category;
         $properties['process'] = $process;
         $properties['task'] = $task;
@@ -376,6 +388,7 @@ class Home
      * @param int $offset
      * @param string $caseTitle
      * @param string $filterCases
+     * @param string $reviewStatus
      * @param string $sort
      * @param array $customFilters
      * 
@@ -391,6 +404,7 @@ class Home
         int $offset = 0,
         string $caseTitle = '',
         string $filterCases = '',
+        string $reviewStatus = '',
         string $sort = 'APP_NUMBER,DESC',
         array $customFilters = []
     )
@@ -404,11 +418,12 @@ class Home
             $offset,
             $caseTitle,
             $filterCases,
+            $reviewStatus,
             $sort
         ];
 
         //clear duplicate indexes
-        $keys = ['caseNumber', 'category', 'process', 'task', 'limit', 'offset', 'caseTitle', 'filterCases', 'sort'];
+        $keys = ['caseNumber', 'category', 'process', 'task', 'limit', 'offset', 'caseTitle', 'filterCases', 'reviewStatus', 'sort'];
         foreach ($keys as $value) {
             unset($customFilters[$value]);
         }
@@ -436,6 +451,7 @@ class Home
      * @param string $delegateFrom
      * @param string $delegateTo
      * @param string $filterCases
+     * @param string $reviewStatus
      * @param string $sort
      * @param string $sendBy
      * @param array $customFilters
@@ -454,6 +470,7 @@ class Home
         string $delegateFrom = '',
         string $delegateTo = '',
         string $filterCases = '',
+        string $reviewStatus = '',
         string $sort = 'APP_NUMBER,DESC',
         string $sendBy = '',
         array $customFilters = []
@@ -470,12 +487,13 @@ class Home
             $delegateFrom,
             $delegateTo,
             $filterCases,
+            $reviewStatus,
             $sort,
             $sendBy
         ];
 
         //clear duplicate indexes
-        $keys = ['caseNumber', 'category', 'process', 'task', 'limit', 'offset', 'caseTitle', 'delegateFrom', 'delegateTo', 'filterCases', 'sort', 'sendBy'];
+        $keys = ['caseNumber', 'category', 'process', 'task', 'limit', 'offset', 'caseTitle', 'delegateFrom', 'delegateTo', 'filterCases', 'reviewStatus', 'sort', 'sendBy'];
         foreach ($keys as $value) {
             unset($customFilters[$value]);
         }
@@ -503,6 +521,7 @@ class Home
      * @param string $delegateFrom
      * @param string $delegateTo
      * @param string $filterCases
+     * @param string $reviewStatus
      * @param string $sort
      * @param string $sendBy
      * @param array $customFilters
@@ -521,6 +540,7 @@ class Home
         string $delegateFrom = '',
         string $delegateTo = '',
         string $filterCases = '',
+        string $reviewStatus = '',
         string $sort = 'APP_NUMBER,DESC',
         string $sendBy = '',
         array $customFilters = []
@@ -537,12 +557,13 @@ class Home
             $delegateFrom,
             $delegateTo,
             $filterCases,
+            $reviewStatus,
             $sort,
             $sendBy
         ];
 
         //clear duplicate indexes
-        $keys = ['caseNumber', 'category', 'process', 'task', 'limit', 'offset', 'caseTitle', 'delegateFrom', 'delegateTo', 'filterCases', 'sort', 'sendBy'];
+        $keys = ['caseNumber', 'category', 'process', 'task', 'limit', 'offset', 'caseTitle', 'delegateFrom', 'delegateTo', 'filterCases', 'reviewStatus', 'sort', 'sendBy'];
         foreach ($keys as $value) {
             unset($customFilters[$value]);
         }
@@ -570,6 +591,7 @@ class Home
      * @param string $delegateFrom
      * @param string $delegateTo
      * @param string $filterCases
+     * @param string $reviewStatus
      * @param string $sort
      * @param string $sendBy
      * @param array $customFilters
@@ -588,6 +610,7 @@ class Home
         string $delegateFrom = '',
         string $delegateTo = '',
         string $filterCases = '',
+        string $reviewStatus = '',
         string $sort = 'APP_NUMBER,DESC',
         string $sendBy = '',
         array $customFilters = []
@@ -604,12 +627,13 @@ class Home
             $delegateFrom,
             $delegateTo,
             $filterCases,
+            $reviewStatus,
             $sort,
             $sendBy
         ];
 
         //clear duplicate indexes
-        $keys = ['caseNumber', 'category', 'process', 'task', 'limit', 'offset', 'caseTitle', 'delegateFrom', 'delegateTo', 'filterCases', 'sort', 'sendBy'];
+        $keys = ['caseNumber', 'category', 'process', 'task', 'limit', 'offset', 'caseTitle', 'delegateFrom', 'delegateTo', 'filterCases', 'reviewStatus', 'sort', 'sendBy'];
         foreach ($keys as $value) {
             unset($customFilters[$value]);
         }

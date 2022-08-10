@@ -272,10 +272,10 @@ class AbstractCasesTest extends TestCase
     }
 
     /**
-     * This check the getter and setter related to the inbox status
+     * This check the getter and setter related to the review status
      *
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setInboxStatus()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getInboxStatus()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setReviewStatus()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getReviewStatus()
      * @test
      */
     public function it_return_set_get_inbox_status()
@@ -283,8 +283,8 @@ class AbstractCasesTest extends TestCase
         $absCases = new AbstractCases();
         $arguments = ['READ', 'UNREAD'];
         $index = array_rand($arguments);
-        $absCases->setInboxStatus($arguments[$index]);
-        $actual = $absCases->getInboxStatus();
+        $absCases->setReviewStatus($arguments[$index]);
+        $actual = $absCases->getReviewStatus();
         if ($arguments[$index] === '') {
             $this->assertEmpty($actual);
         } else {
@@ -293,16 +293,16 @@ class AbstractCasesTest extends TestCase
     }
 
     /**
-     * This test the exception setInboxStatus
+     * This test the exception setReviewStatus
      *
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setInboxStatus()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setReviewStatus()
      * @test
      */
     public function it_return_exception_inbox_status()
     {
         $this->expectException(Exception::class);
         $absCases = new AbstractCases();
-        $absCases->setInboxStatus('INVALID_VALUE');
+        $absCases->setReviewStatus('INVALID_VALUE');
     }
 
     /**

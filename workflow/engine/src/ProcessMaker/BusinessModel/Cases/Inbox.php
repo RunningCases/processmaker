@@ -101,6 +101,10 @@ class Inbox extends AbstractCases
         if (!empty($this->getSendBy())) {
             $query->sendBy($this->getSendBy());
         }
+        // Specific review status
+        if (!empty($this->getReviewStatus())) {
+            $query->readUnread($this->getReviewStatus());
+        }
 
         return $query;
     }

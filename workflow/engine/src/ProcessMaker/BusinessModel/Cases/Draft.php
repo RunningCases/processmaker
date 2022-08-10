@@ -87,6 +87,10 @@ class Draft extends AbstractCases
         if (!empty($this->getCaseUid())) {
             $query->appUid($this->getCaseUid());
         }
+        // Specific review status
+        if (!empty($this->getReviewStatus())) {
+            $query->readUnread($this->getReviewStatus());
+        }
 
         return $query;
     }

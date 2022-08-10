@@ -299,6 +299,25 @@ class Delegation extends Model
     }
 
     /**
+     * Scope a query to only include unread thread
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $status
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeReadUnread($query, $status)
+    {
+        if ($status === 'READ') {
+            // READ
+            return $query->whereNotNull('DEL_INIT_DATE');
+        } else {
+            // UNREAD
+            return $query->whereNull('DEL_INIT_DATE');
+        }
+    }
+
+    /**
      * Scope a query to only include a specific delegate date
      *
      * @param \Illuminate\Database\Eloquent\Builder $query

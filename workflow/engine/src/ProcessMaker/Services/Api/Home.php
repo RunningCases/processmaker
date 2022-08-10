@@ -58,6 +58,7 @@ class Home extends Api
      * @param int $offset
      * @param string $caseTitle
      * @param string $filterCases
+     * @param string $filterCases
      * @param string $sort
      *
      * @return array
@@ -76,6 +77,7 @@ class Home extends Api
         int $offset = 0,
         string $caseTitle = '',
         string $filterCases = '',
+        string $reviewStatus = '',
         string $sort = 'APP_NUMBER,DESC'
     )
     {
@@ -90,6 +92,7 @@ class Home extends Api
                     $offset,
                     $caseTitle,
                     $filterCases,
+                    $reviewStatus,
                     $sort
             );
         } catch (Exception $e) {
@@ -113,6 +116,7 @@ class Home extends Api
      * @param string $delegateFrom
      * @param string $delegateTo
      * @param string $filterCases
+     * @param string $reviewStatus
      * @param string $sort
      * @param string $sendBy
      *
@@ -134,6 +138,7 @@ class Home extends Api
         string $delegateFrom = '',
         string $delegateTo = '',
         string $filterCases = '',
+        string $reviewStatus = '',
         string $sort = 'APP_NUMBER,DESC',
         string $sendBy = ''
     )
@@ -151,6 +156,7 @@ class Home extends Api
                     $delegateFrom,
                     $delegateTo,
                     $filterCases,
+                    $reviewStatus,
                     $sort,
                     $sendBy
             );
@@ -174,6 +180,7 @@ class Home extends Api
      * @param string $delegateFrom
      * @param string $delegateTo
      * @param string $filterCases
+     * @param string $reviewStatus
      * @param string $sort
      * @param string $sendBy
      *
@@ -195,6 +202,7 @@ class Home extends Api
         string $delegateFrom = '',
         string $delegateTo = '',
         string $filterCases = '',
+        string $reviewStatus = '',
         string $sort = 'APP_NUMBER,DESC',
         string $sendBy = ''
     )
@@ -212,6 +220,7 @@ class Home extends Api
                     $delegateFrom,
                     $delegateTo,
                     $filterCases,
+                    $reviewStatus,
                     $sort,
                     $sendBy
             );
@@ -235,6 +244,7 @@ class Home extends Api
      * @param string $delegateFrom
      * @param string $delegateTo
      * @param string $filterCases
+     * @param string $reviewStatus
      * @param string $sort
      * @param string $sendBy
      *
@@ -256,6 +266,7 @@ class Home extends Api
         string $delegateFrom = '',
         string $delegateTo = '',
         string $filterCases = '',
+        string $reviewStatus = '',
         string $sort = 'APP_NUMBER,DESC',
         string $sendBy = ''
     )
@@ -273,6 +284,7 @@ class Home extends Api
                     $delegateFrom,
                     $delegateTo,
                     $filterCases,
+                    $reviewStatus,
                     $sort,
                     $sendBy
             );
@@ -293,6 +305,7 @@ class Home extends Api
      * @param int $offset
      * @param string $caseTitle
      * @param string $filterCases
+     * @param string $reviewStatus
      * @param string $sort
      * @param array $request_data
      * @return array
@@ -310,6 +323,7 @@ class Home extends Api
         int $offset = 0,
         string $caseTitle = '',
         string $filterCases = '',
+        string $reviewStatus = '',
         string $sort = 'APP_NUMBER,DESC',
         array $request_data = []
     )
@@ -326,6 +340,7 @@ class Home extends Api
                     $offset,
                     $caseTitle,
                     $filterCases,
+                    $reviewStatus,
                     $sort,
                     $request_data
             );
@@ -349,6 +364,7 @@ class Home extends Api
      * @param string $delegateFrom
      * @param string $delegateTo
      * @param string $filterCases
+     * @param string $reviewStatus
      * @param string $sort
      * @param array $request_data
      * @return array
@@ -369,6 +385,7 @@ class Home extends Api
         string $delegateFrom = '',
         string $delegateTo = '',
         string $filterCases = '',
+        string $reviewStatus = '',
         string $sort = 'APP_NUMBER,DESC',
         array $request_data = []
     )
@@ -387,6 +404,7 @@ class Home extends Api
                     $delegateFrom,
                     $delegateTo,
                     $filterCases,
+                    $reviewStatus,
                     $sort,
                     $sendBy,
                     $request_data
@@ -411,6 +429,7 @@ class Home extends Api
      * @param string $delegateFrom
      * @param string $delegateTo
      * @param string $filterCases
+     * @param string $reviewStatus
      * @param string $sort
      * @param array $request_data
      * @return array
@@ -431,6 +450,7 @@ class Home extends Api
         string $delegateFrom = '',
         string $delegateTo = '',
         string $filterCases = '',
+        string $reviewStatus = '',
         string $sort = 'APP_NUMBER,DESC',
         array $request_data = []
     )
@@ -449,6 +469,7 @@ class Home extends Api
                     $delegateFrom,
                     $delegateTo,
                     $filterCases,
+                    $reviewStatus,
                     $sort,
                     $sendBy,
                     $request_data
@@ -473,6 +494,7 @@ class Home extends Api
      * @param string $delegateFrom
      * @param string $delegateTo
      * @param string $filterCases
+     * @param string $reviewStatus
      * @param string $sort
      * @param array $request_data
      * @return array
@@ -493,6 +515,7 @@ class Home extends Api
         string $delegateFrom = '',
         string $delegateTo = '',
         string $filterCases = '',
+        string $reviewStatus = '',
         string $sort = 'APP_NUMBER,DESC',
         array $request_data = []
     )
@@ -511,6 +534,7 @@ class Home extends Api
                     $delegateFrom,
                     $delegateTo,
                     $filterCases,
+                    $reviewStatus,
                     $sort,
                     $sendBy,
                     $request_data
