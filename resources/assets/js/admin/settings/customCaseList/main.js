@@ -4,6 +4,7 @@ import VueSidebarMenu from "vue-sidebar-menu";
 import VueI18n from 'vue-i18n';
 import { BootstrapVue } from 'bootstrap-vue';
 import { ServerTable, Event, ClientTable} from 'vue-tables-2';
+import VtTableBody from '../../../components/vuetable/extends/VtTableBody';
 import "@fortawesome/fontawesome-free/css/all.css";
 import 'bootstrap/dist/css/bootstrap-grid.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -18,7 +19,9 @@ Vue.use(VueSidebarMenu);
 Vue.use(BootstrapVue);
 Vue.use(VueI18n);
 Vue.use(ServerTable, {}, false, 'bootstrap3', {});
-Vue.use(ClientTable, {}, false, 'bootstrap3', {});
+Vue.use(ClientTable, {}, false, 'bootstrap3', {
+    tableBody: VtTableBody
+});
 window.ProcessMaker = {
     apiClient: require('axios')
 };
