@@ -99,4 +99,42 @@ class WebEntryTest extends TestCase
         $isWebEntry = BmWebEntry::isWebEntry($emptyProcess, $emptyFilePath);
         $this->assertFalse($isWebEntry);
     }
+
+    /**
+     * Test the method verifyHideActiveSessionWarningOption()
+     * @test
+     * @covers \ProcessMaker\BusinessModel\WebEntry::verifyHideActiveSessionWarningOption()
+     */
+    public function it_should_test_verifyHideActiveSessionWarningOption_method()
+    {
+        // Initializing variables
+        $phpExtension = '.php';
+        $postFileExtension = 'Post.php';
+        $infoFileExtension = 'Info.php';
+        $webEntryFilename = 'My_Custom_Form';
+
+        //assert true result
+        $webEntry = factory(WebEntry::class)->create([
+            'WE_DATA' => $webEntryFilename . $phpExtension,
+            'WE_HIDE_ACTIVE_SESSION_WARNING' => '0'
+        ]);
+
+        $weUid = $webEntry->WE_UID;
+        $webEntry = new BmWebEntry();
+        $result = $webEntry->verifyHideActiveSessionWarningOption($weUid);
+        
+        $this->assertEquals($result, true);
+
+        //assert false result
+        $webEntry = factory(WebEntry::class)->create([
+            'WE_DATA' => $webEntryFilename . $phpExtension,
+            'WE_HIDE_ACTIVE_SESSION_WARNING' => '1'
+        ]);
+
+        $weUid = $webEntry->WE_UID;
+        $webEntry = new BmWebEntry();
+        $result = $webEntry->verifyHideActiveSessionWarningOption($weUid);
+        
+        $this->assertEquals($result, false);
+    }
 }

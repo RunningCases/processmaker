@@ -598,6 +598,7 @@ class WebEntryEvent
                     'WE_CUSTOM_TITLE',
                     'WE_AUTHENTICATION',
                     'WE_HIDE_INFORMATION_BAR',
+                    'WE_HIDE_ACTIVE_SESSION_WARNING',
                     'WE_CALLBACK',
                     'WE_CALLBACK_URL',
                     'WE_LINK_GENERATION',
@@ -947,6 +948,7 @@ class WebEntryEvent
                         'WE_CUSTOM_TITLE' => 'WE_CUSTOM_TITLE',
                         'WE_AUTHENTICATION' => 'WE_AUTHENTICATION',
                         'WE_HIDE_INFORMATION_BAR' => 'WE_HIDE_INFORMATION_BAR',
+                        'WE_HIDE_ACTIVE_SESSION_WARNING' => 'WE_HIDE_ACTIVE_SESSION_WARNING',
                         'WE_CALLBACK' => 'WE_CALLBACK',
                         'WE_CALLBACK_URL' => 'WE_CALLBACK_URL',
                         'WE_LINK_GENERATION' => 'WE_LINK_GENERATION',
@@ -1086,6 +1088,7 @@ class WebEntryEvent
             $criteria->addSelectColumn(WebEntryPeer::WE_TYPE);
             $criteria->addSelectColumn(WebEntryPeer::WE_AUTHENTICATION);
             $criteria->addSelectColumn(WebEntryPeer::WE_HIDE_INFORMATION_BAR);
+            $criteria->addSelectColumn(WebEntryPeer::WE_HIDE_ACTIVE_SESSION_WARNING);
             $criteria->addSelectColumn(WebEntryPeer::WE_CALLBACK);
             $criteria->addSelectColumn(WebEntryPeer::WE_CALLBACK_URL);
             $criteria->addSelectColumn(WebEntryPeer::WE_LINK_GENERATION);
@@ -1136,6 +1139,7 @@ class WebEntryEvent
                 $this->getFieldNameByFormatFieldName("WE_CUSTOM_TITLE") => $record["WE_CUSTOM_TITLE"],
                 $this->getFieldNameByFormatFieldName("WE_AUTHENTICATION") => $record["WE_AUTHENTICATION"],
                 $this->getFieldNameByFormatFieldName("WE_HIDE_INFORMATION_BAR") => $record["WE_HIDE_INFORMATION_BAR"],
+                $this->getFieldNameByFormatFieldName("WE_HIDE_ACTIVE_SESSION_WARNING") => $record["WE_HIDE_ACTIVE_SESSION_WARNING"],
                 $this->getFieldNameByFormatFieldName("WE_CALLBACK") => $record["WE_CALLBACK"],
                 $this->getFieldNameByFormatFieldName("WE_CALLBACK_URL") => $record["WE_CALLBACK_URL"],
                 $this->getFieldNameByFormatFieldName("WE_LINK_GENERATION") => $record["WE_LINK_GENERATION"],

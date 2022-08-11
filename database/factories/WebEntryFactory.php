@@ -22,6 +22,7 @@ $factory->define(\ProcessMaker\Model\WebEntry::class, function(Faker $faker) {
         'WE_CUSTOM_TITLE' => $faker->words(5, true),
         'WE_AUTHENTICATION' => $faker->randomElement(['LOGIN_REQUIRED', 'ANONYMOUS']),
         'WE_HIDE_INFORMATION_BAR' => $faker->randomElement(['0', '1']),
+        'WE_HIDE_ACTIVE_SESSION_WARNING' => $faker->randomElement(['0', '1']),
         'WE_CALLBACK' => $faker->randomElement(['PROCESSMAKER', 'CUSTOM', 'CUSTOM_CLEAR']),
         'WE_CALLBACK_URL' => $faker->url,
         'WE_LINK_GENERATION' => $faker->randomElement(['DEFAULT', 'ADVANCED']),
