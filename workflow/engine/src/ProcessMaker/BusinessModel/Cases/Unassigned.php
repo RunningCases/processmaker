@@ -89,7 +89,6 @@ class Unassigned extends AbstractCases
         if (!empty($this->getCaseUid())) {
             $query->appUid($this->getCaseUid());
         }
-
         // Specific delegate date from
         if (!empty($this->getDelegateFrom())) {
             $query->delegateDateFrom($this->getDelegateFrom());
@@ -101,6 +100,10 @@ class Unassigned extends AbstractCases
         // Specific usrId represented by sendBy
         if (!empty($this->getSendBy())) {
             $query->sendBy($this->getSendBy());
+        }
+        // Specific review status
+        if (!empty($this->getReviewStatus())) {
+            $query->readUnread($this->getReviewStatus());
         }
 
         return $query;

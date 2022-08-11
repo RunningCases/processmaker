@@ -296,7 +296,7 @@ class HomeTest extends TestCase
             'CAL_COLUMNS' => '[{"field":"case_number","enableFilter":false,"set":true},{"field":"case_title","enableFilter":false,"set":true},{"field":"process_name","enableFilter":false,"set":true},{"field":"task","enableFilter":false,"set":true},{"field":"send_by","enableFilter":false,"set":true},{"field":"due_date","enableFilter":false,"set":true},{"field":"delegation_date","enableFilter":false,"set":true},{"field":"priority","enableFilter":false,"set":true},{"field":"VAR1","enableFilter":false,"set":true},{"field":"VAR2","enableFilter":false,"set":true},{"field":"VAR3","enableFilter":false,"set":false}]',
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID
         ]);
-        $arguments = [$caseList->CAL_ID, 0, 0, 0, 0, 15, 0, '', '', 'APP_NUMBER,DESC'];
+        $arguments = [$caseList->CAL_ID, 0, 0, 0, 0, 15, 0, '', '', '', 'APP_NUMBER,DESC'];
 
         $home = new Home($application->APP_INIT_USER);
         $result = $home->getCustomDraft(...$arguments);
@@ -350,7 +350,7 @@ class HomeTest extends TestCase
             'CAL_COLUMNS' => '[{"field":"case_number","enableFilter":false,"set":true},{"field":"case_title","enableFilter":false,"set":true},{"field":"process_name","enableFilter":false,"set":true},{"field":"task","enableFilter":false,"set":true},{"field":"send_by","enableFilter":false,"set":true},{"field":"due_date","enableFilter":false,"set":true},{"field":"delegation_date","enableFilter":false,"set":true},{"field":"priority","enableFilter":false,"set":true},{"field":"VAR1","enableFilter":false,"set":true},{"field":"VAR2","enableFilter":false,"set":true},{"field":"VAR3","enableFilter":false,"set":false}]',
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID
         ]);
-        $arguments = [$caseList->CAL_ID, 0, 0, 0, 0, 15, 0, '', '', '', '', 'APP_NUMBER,DESC'];
+        $arguments = [$caseList->CAL_ID, 0, 0, 0, 0, 15, 0, '', '', '', '', '', 'APP_NUMBER,DESC'];
 
         $home = new Home($application->APP_INIT_USER);
         $result = $home->getCustomInbox(...$arguments);
@@ -365,7 +365,7 @@ class HomeTest extends TestCase
      * @test
      * @covers \ProcessMaker\BusinessModel\Cases\Home::getCustomUnassigned()
      */
-    public function it_should_test_getCustomUnassignedt()
+    public function it_should_test_getCustomUnassigned()
     {
         $this->markTestIncomplete('Illegal mix of collations');
         $additionalTables = factory(AdditionalTables::class)->create();
@@ -430,7 +430,7 @@ class HomeTest extends TestCase
             'CAL_COLUMNS' => '[{"field":"case_number","enableFilter":false,"set":true},{"field":"case_title","enableFilter":false,"set":true},{"field":"process_name","enableFilter":false,"set":true},{"field":"task","enableFilter":false,"set":true},{"field":"send_by","enableFilter":false,"set":true},{"field":"due_date","enableFilter":false,"set":true},{"field":"delegation_date","enableFilter":false,"set":true},{"field":"priority","enableFilter":false,"set":true},{"field":"VAR1","enableFilter":false,"set":true},{"field":"VAR2","enableFilter":false,"set":true},{"field":"VAR3","enableFilter":false,"set":false}]',
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID
         ]);
-        $arguments = [$caseList->CAL_ID, 0, 0, 0, 0, 15, 0, '', '', '', '', 'APP_NUMBER,DESC'];
+        $arguments = [$caseList->CAL_ID, 0, 0, 0, 0, 15, 0, '', '', '', '', '', 'APP_NUMBER,DESC'];
 
         $home = new Home($application->APP_INIT_USER);
         $result = $home->getCustomUnassigned(...$arguments);
@@ -530,7 +530,7 @@ class HomeTest extends TestCase
             'CAL_COLUMNS' => '[{"field":"case_number","enableFilter":false,"set":true},{"field":"case_title","enableFilter":false,"set":true},{"field":"process_name","enableFilter":false,"set":true},{"field":"task","enableFilter":false,"set":true},{"field":"send_by","enableFilter":false,"set":true},{"field":"due_date","enableFilter":false,"set":true},{"field":"delegation_date","enableFilter":false,"set":true},{"field":"priority","enableFilter":false,"set":true},{"field":"VAR1","enableFilter":false,"set":true},{"field":"VAR2","enableFilter":false,"set":true},{"field":"VAR3","enableFilter":false,"set":false}]',
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID
         ]);
-        $arguments = [$caseList->CAL_ID, 0, 0, 0, 0, 15, 0, '', '', '', '', 'APP_NUMBER,DESC'];
+        $arguments = [$caseList->CAL_ID, 0, 0, 0, 0, 15, 0, '', '', '', '', '', 'APP_NUMBER,DESC'];
 
         $home = new Home($application1->APP_INIT_USER);
         $result = $home->getCustomPaused(...$arguments);

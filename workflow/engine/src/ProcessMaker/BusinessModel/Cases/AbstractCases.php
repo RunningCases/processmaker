@@ -3,7 +3,6 @@
 namespace ProcessMaker\BusinessModel\Cases;
 
 use Datetime;
-use DB;
 use Exception;
 use ProcessMaker\BusinessModel\Interfaces\CasesInterface;
 use ProcessMaker\BusinessModel\Validator;
@@ -14,7 +13,7 @@ use ProcessMaker\Model\User;
 class AbstractCases implements CasesInterface
 {
     // Constants for validate values
-    const INBOX_STATUSES = ['READ', 'UNREAD'];
+    const REVIEW_STATUSES = ['READ', 'UNREAD']; //0 => READ, 1 => UNREAD
     const PARTICIPATED_STATUSES = ['STARTED', 'IN_PROGRESS', 'COMPLETED', 'SUPERVISING'];
     const RISK_STATUSES = ['ON_TIME', 'AT_RISK', 'OVERDUE'];
     const CASE_STATUSES = [1 => 'DRAFT', 2 => 'TO_DO', 3 => 'COMPLETED', 4 => 'CANCELED'];
@@ -69,7 +68,7 @@ class AbstractCases implements CasesInterface
     private $valueToSearch = '';
 
     // Filter cases depending if were read or not, know as "$filter" in the old lists classes
-    private $inboxStatus = '';
+    private $reviewStatus = '';
 
     // Filter cases depending if the case was started or completed by the current user, know as "$filter" in the old lists classes
     private $participatedStatus = '';
@@ -373,23 +372,25 @@ class AbstractCases implements CasesInterface
     }
 
     /**
-     * Set inbox status
+     * Set review status
      *
-     * @param string $inboxStatus
+     * @param string $status
      *
      * @throws Exception
      */
-    public function setInboxStatus(string $inboxStatus)
+    public function setReviewStatus(string $status)
     {
         // Convert the value to upper case
-        $inboxStatus = strtoupper($inboxStatus);
+        $status = strtoupper($status);
 
-        // Validate the inbox status
-        if (!in_array($inboxStatus, self::INBOX_STATUSES)) {
-            throw new Exception("Inbox status '{$inboxStatus}' is not valid.");
+        // Validate the status value
+        if (!empty($status)) {
+            if (!in_array($status, self::REVIEW_STATUSES)) {
+                throw new Exception("Inbox status '{$status}' is not valid.");
+            }
         }
 
-        $this->inboxStatus = $inboxStatus;
+        $this->reviewStatus = $status;
     }
 
     /**
@@ -397,9 +398,9 @@ class AbstractCases implements CasesInterface
      *
      * @return string
      */
-    public function getInboxStatus()
+    public function getReviewStatus()
     {
-        return $this->inboxStatus;
+        return $this->reviewStatus;
     }
 
     /**
@@ -1412,6 +1413,10 @@ class AbstractCases implements CasesInterface
         if (get_class($this) === Inbox::class && !empty($properties['sendBy'])) {
             $this->setSendBy($properties['sendBy']);
         }
+        // Filter by Review Status
+        if (get_class($this) === Inbox::class && !empty($properties['reviewStatus'])) {
+            $this->setReviewStatus($properties['reviewStatus']);
+        }
         /** Apply filters related to PAUSED */
         // Filter date related to delegate from
         if (get_class($this) === Paused::class && !empty($properties['delegateFrom'])) {
@@ -1425,6 +1430,10 @@ class AbstractCases implements CasesInterface
         if (get_class($this) === Paused::class && !empty($properties['sendBy'])) {
             $this->setSendBy($properties['sendBy']);
         }
+        // Filter by Review Status
+        if (get_class($this) === Paused::class && !empty($properties['reviewStatus'])) {
+            $this->setReviewStatus($properties['reviewStatus']);
+        }
         /** Apply filters related to UNASSIGNED */
         // Filter date related to delegate from
         if (get_class($this) === Unassigned::class && !empty($properties['delegateFrom'])) {
@@ -1437,6 +1446,10 @@ class AbstractCases implements CasesInterface
         // Filter by Send By
         if (get_class($this) === Unassigned::class && !empty($properties['sendBy'])) {
             $this->setSendBy($properties['sendBy']);
+        }
+        // Filter by Review Status
+        if (get_class($this) === Unassigned::class && !empty($properties['reviewStatus'])) {
+            $this->setReviewStatus($properties['reviewStatus']);
         }
 
         /** Apply filters related to MY CASES */
