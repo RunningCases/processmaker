@@ -43,7 +43,6 @@ class ScheduleRunCommand extends BaseCommand
      */
     public function handle(Schedule $schedule, Dispatcher $dispatcher, ExceptionHandler $handler)
     {
-        $that = $this;
         $workspace = $this->option('workspace');
         $user = $this->option('user');
         if (!empty($workspace)) {
@@ -51,7 +50,7 @@ class ScheduleRunCommand extends BaseCommand
             $webApplication->setRootDir($this->option('processmakerPath'));
             $webApplication->loadEnvironment($workspace, false);
         }
-        TaskScheduler::all()->each(function ($p) use ($that, $user) {
+        TaskScheduler::all()->each(function ($p) use ($schedule, $user) {
             $win = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
             if ($p->enable == 1) {
                 $starting = isset($p->startingTime) ? $p->startingTime : "0:00";
@@ -78,7 +77,7 @@ class ScheduleRunCommand extends BaseCommand
                     $body = str_replace("report_by_process", "report_by_process +init-date'{$oneMonthAgo}' +finish-date'{$currentDate}'", $body);
                 }
 
-                $schedule = $that->schedule->exec($body)->cron($p->expression)->between($starting, $ending)->timezone($timezone)->when(function () use ($p) {
+                $schedule->exec($body)->cron($p->expression)->between($starting, $ending)->timezone($timezone)->when(function () use ($p) {
                     $now = Carbon::now();
                     $result = false;
                     $datework = Carbon::createFromFormat('Y-m-d H:i:s', $p->last_update);
