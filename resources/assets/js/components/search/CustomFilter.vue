@@ -35,7 +35,7 @@
                 <i :class="icon"></i>
             </div>
             <b-input-group class="w-75 p-1">
-                <div class="input-group mb-3">
+                <div class="input-group-tag mb-3">
                     <div class="input-group-prepend">
                         <span
                             class="input-group-text bg-primary-pm text-white"
@@ -45,7 +45,12 @@
                             <b-icon icon="search"></b-icon
                         ></span>
                     </div>
-                    <b-form-tags input-id="tags-pills" v-model="searchTags">
+                    <b-form-tags
+                        input-id="tags-pills"
+                        v-model="searchTags"
+                        :disabled="true"
+                        v-if="filters.length > 0"
+                    >
                         <template v-slot="{ tags, tagVariant, removeTag }">
                             <div class="d-inline-block" style="font-size: 1rem">
                                 <b-form-tag
@@ -374,5 +379,16 @@ export default {
 #checkbox-custom-filter > .custom-control-inline{
     display: block !important;
     margin-right: 1rem;
+}
+</style>
+<style scoped>
+.b-form-tags {
+    border: none;
+}
+.input-group-tag {
+    position: relative;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: stretch;
 }
 </style>

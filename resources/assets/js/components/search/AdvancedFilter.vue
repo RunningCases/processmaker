@@ -100,12 +100,13 @@
             <b-row>
                 <b-col>
                     <div class="d-flex flex-row">
-                        <div class="tag row">
+                        <div class="input-group-tag" v-if="filters && filters.length > 0">
                             <div class="col-11">
                                 <b-form-tags
                                     input-id="tags-pills"
                                     v-model="searchTags"
                                     size="sm"
+                                    :disabled="true"
                                 >
                                     <template v-slot="{ tags, tagVariant, removeTag }">
                                         <div
@@ -687,11 +688,16 @@ export default {
 .bv-example-row-flex-cols .row {
     min-height: 10rem;
 }
+.b-form-tags {
+    border: none;
+}
+.input-group-tag {
+    position: relative;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: stretch;
+}
 </style>
-
-    },
-};
-</script>
 <style lang="scss">
 .bv-example-row .row + .row {
     margin-top: 1rem;
