@@ -5791,7 +5791,7 @@ class G
         return $from;
     }
 
-    public function getRealExtension($extensionInpDoc)
+    public static function getRealExtension($extensionInpDoc)
     {
         $aux = explode('.', strtolower($extensionInpDoc));
         return isset($aux[1]) ? $aux[1] : '';
