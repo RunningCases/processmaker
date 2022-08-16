@@ -3,11 +3,13 @@
 namespace ProcessMaker\BusinessModel;
 
 use BasePeer;
+use Bootstrap;
 use BpmnFlowPeer;
 use Content;
 use Criteria;
 use Exception;
 use G;
+use Illuminate\Support\Facades\Log;
 use ProcessMaker\BusinessModel\Process as BusinessModelProcess;
 use ProcessMaker\BusinessModel\Validator as BusinessModelValidator;
 use ProcessMaker\Core\System;
@@ -984,6 +986,11 @@ class WebEntryEvent
                     $result = $webEntryEvent->save();
 
                     $cnn->commit();
+                    
+                    //log register
+                    if ($arrayData['WE_HIDE_ACTIVE_SESSION_WARNING'] === '1') {
+                        Log::channel(':webEntry')->info('Enable hide active session warning', Bootstrap::context());
+                    }
 
                     //Set WEE_TITLE
                     if (isset($arrayData["WEE_TITLE"])) {
