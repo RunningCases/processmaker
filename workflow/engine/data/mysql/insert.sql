@@ -253,7 +253,7 @@ INSERT INTO ISO_COUNTRY (IC_UID,IC_NAME,IC_SORT_ORDER)  VALUES
 ('CF', 'Central African Republic',' ') ,
 ('CG', 'Congo',' ') ,
 ('CH', 'Switzerland',' ') ,
-('CI', 'Cote-d'' lvoire',' ') ,
+('CI', 'Côte d''Ivoire',' ') ,
 ('CK', 'Cook Islands',' ') ,
 ('CL', 'Chile',' ') ,
 ('CM', 'Cameroon',' ') ,

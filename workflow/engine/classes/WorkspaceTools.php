@@ -1125,6 +1125,7 @@ class WorkspaceTools
         $this->upgradeSchema($systemSchema, false, false, $includeIndexes);
         $this->upgradeSchema($systemSchemaRbac, false, true); // Perform upgrade to RBAC
         $this->upgradeData();
+        $this->updateIsoCountry();
         $this->checkRbacPermissions(); //check or add new permissions
         $this->checkSchedulerTable();
         $this->checkSequenceNumber();
@@ -1443,6 +1444,28 @@ class WorkspaceTools
                 }
             }
         }
+    }
+     
+    /**
+     * Upgrade some IC_NAME values in the table ISO_COUNTRY
+     */
+    public function updateIsoCountry()
+    {
+        CLI::logging("->    Update table ISO_COUNTRY\n");
+
+        // Initializing
+        $con = Propel::getConnection(IsoCountryPeer::DATABASE_NAME);
+
+        // Update table ISO_COUNTRY
+        $con->begin();
+        $stmt = $con->createStatement();
+        $stmt->executeQuery(""
+            . "UPDATE `ISO_COUNTRY` "
+            . "SET `IC_NAME` = 'Côte d\'Ivoire' "
+            . "WHERE `IC_UID` = 'CI'");
+        $con->commit();
+
+        CLI::logging("-> Update table ISO_COUNTRY Done\n");
     }
 
     public function updateThisRegistry($data)
