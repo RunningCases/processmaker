@@ -32,6 +32,14 @@
                     >
                         {{ $t("ID_BY_PROCESS_NAME") }}
                     </b-form-checkbox>
+                    <b-form-checkbox
+                        id="checkbox-3"
+                        v-model="byReviewStatus"
+                        name="checkbox-3"
+                        value="reviewStatus"
+                    >
+                        {{ $t("ID_BY_REVIEW_STATUS") }}
+                    </b-form-checkbox>
                 </b-form-group>
             </template>
         </SearchPopover>
@@ -92,6 +100,7 @@ import CaseNumber from "./popovers/CaseNumber.vue";
 import CaseTitle from "./popovers/CaseTitle.vue";
 import ProcessName from "./popovers/ProcessName.vue";
 import ProcessCategory from "./popovers/ProcessCategory.vue";
+import ReviewStatus from "./popovers/ReviewStatus.vue";
 import DateFilter from "./popovers/DateFilter.vue";
 import TaskTitle from "./popovers/TaskTitle.vue";
 import CurrentUser from "./popovers/CurrentUser.vue";
@@ -106,6 +115,7 @@ export default {
         CaseTitle,
         ProcessName,
         ProcessCategory,
+        ReviewStatus,
         DateFilter,
         TaskTitle,
         CurrentUser,
@@ -287,10 +297,50 @@ export default {
                     return `${params.tagPrefix}:  ${data[0].label || ""}`;
                 },
             },
+            reviewStatus: {
+                type: "ReviewStatus",
+                id: "reviewStatus",
+                title: `${this.$i18n.t("ID_FILTER")}: ${this.$i18n.t(
+                    "ID_BY_REVIEW_STATUS"
+                )}`,
+                optionLabel: this.$i18n.t("ID_BY_REVIEW_STATUS"),
+                detail: "",
+                tagText: "",
+                tagPrefix: this.$i18n.t("ID_SEARCH_BY_REVIEW_STATUS"),
+                autoShow: true,
+                items: [
+                    {
+                        id: "reviewStatus",
+                        value: "",
+                        options: [
+                            this.$i18n.t("ID_READ_FILTER_OPTION"),
+                            this.$i18n.t("ID_UNREAD_FILTER_OPTION")
+                        ],
+                    }
+                ],
+                makeTagText: function(params, data) {
+                    let label = "";
+                    switch (data[0].value) {
+                        case "READ":
+                            label = this.items[0].options[0];
+                            break;
+
+                        case "UNREAD":
+                            label = this.items[0].options[1];
+                            break;
+
+                        default:
+                            label = "";
+                            break;
+                    }
+                    return `${this.tagPrefix} ${label}`;
+                },
+            },
             selected: "",
             itemModel: {},
             byProcessName: "",
             byProcessCategory: "",
+            byReviewStatus: "",
         };
     },
     computed: {
@@ -381,6 +431,23 @@ export default {
                     ]),
                 ];
             }
+            if (self.byReviewStatus !== "") {
+                if (element !== undefined) {
+                    this.reviewStatus.autoShow = false;
+                } else {
+                    this.reviewStatus.autoShow = true;
+                }
+                initialFilters = [
+                    ...new Set([
+                        ...initialFilters,
+                        ...this.prepareFilterItems(
+                            this.reviewStatus.items,
+                            self.byReviewStatus,
+                            true
+                        ),
+                    ]),
+                ];
+            }
             this.$emit("onUpdateFilters", {
                 params: initialFilters,
                 refresh: false,
@@ -455,6 +522,16 @@ export default {
                             ? self.processCategory.autoShow
                             : true;
                 }
+                if (item.fieldId === "reviewStatus") {
+                    self.searchTags.push(self.reviewStatus.id);
+                    self.byReviewStatus = self.reviewStatus.id;
+                    self.itemModel[self.reviewStatus.id] =
+                        self.reviewStatus;
+                    self.itemModel[self.reviewStatus.id].autoShow =
+                        typeof self.reviewStatus.autoShow !== "undefined"
+                            ? self.reviewStatus.autoShow
+                            : true;
+                }
             });
         },
         dataToFilter(id) {
@@ -511,6 +588,9 @@ export default {
             }
             if (tag === "processCategory") {
                 this.byProcessCategory = "";
+            }
+            if (tag === "reviewStatus") {
+                this.byReviewStatus = "";
             }
             this.$emit("onUpdateFilters", { params: temp, refresh: true });
         },
