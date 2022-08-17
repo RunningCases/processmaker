@@ -167,7 +167,7 @@ class StringHelper {
      * a natural way of getting a subtring, php's circular string buffer and strange
      * return values suck if you want to program strict as of C or friends 
      */
-    public static function substring($string, $startpos, $endpos = -1) {
+    public static function substring(string $string, $startpos, $endpos = -1) {
         $len    = strlen($string);
         $endpos = (int) (($endpos === -1) ? $len-1 : $endpos);
         if ($startpos > $len-1 || $startpos < 0) {
