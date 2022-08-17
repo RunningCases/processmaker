@@ -988,8 +988,13 @@ class WebEntryEvent
                     $cnn->commit();
                     
                     //log register
-                    if ($arrayData['WE_HIDE_ACTIVE_SESSION_WARNING'] === '1') {
-                        Log::channel(':webEntry')->info('Enable hide active session warning', Bootstrap::context());
+                    $onlyGenerateLink = isset($arrayData['EXTRA']) && isset($arrayData['EXTRA']['generateLink']);
+                    if ($arrayData['WE_HIDE_ACTIVE_SESSION_WARNING'] === '1' &&
+                        $arrayData['WE_AUTHENTICATION'] === 'LOGIN_REQUIRED' &&
+                        !$onlyGenerateLink
+                    ) {
+                        $context = Bootstrap::context(['usrUid' => $userUidUpdater]);
+                        Log::channel(':webEntry')->info('Hide Active Session Warning', $context);
                     }
 
                     //Set WEE_TITLE
