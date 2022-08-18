@@ -133,18 +133,35 @@ class ResponseReader
     public function getAllEmails(array $dataAbe)
     {
         try {
+            // Get Email Server info
             $emailServer = new EmailServer();
             $emailSetup = (!is_null(EmailServerPeer::retrieveByPK($dataAbe['ABE_EMAIL_SERVER_RECEIVER_UID']))) ?
                 $emailServer->getEmailServer($dataAbe['ABE_EMAIL_SERVER_RECEIVER_UID'], true) :
                 $emailServer->getEmailServerDefault();
-            if (empty($emailSetup) || (empty($emailSetup['MESS_INCOMING_SERVER']) && $emailSetup['MESS_INCOMING_PORT'] == 0)) {
-                throw (new Exception(G::LoadTranslation('ID_ABE_LOG_CANNOT_READ'), 500));
+
+            // Create an instance according to the engine type of the email server
+            if ($emailSetup['MESS_ENGINE'] === 'IMAP') {
+                if (empty($emailSetup['MESS_INCOMING_SERVER']) && $emailSetup['MESS_INCOMING_PORT'] == 0) {
+                    throw new Exception(G::LoadTranslation('ID_ABE_LOG_CANNOT_READ'), 500);
+                }
+
+                $mailbox = new Mailbox(
+                    '{'. $emailSetup['MESS_INCOMING_SERVER'] . ':' . $emailSetup['MESS_INCOMING_PORT'] . '/imap/ssl/novalidate-cert}INBOX',
+                    $emailSetup['MESS_ACCOUNT'],
+                    $this->decryptPassword($emailSetup)
+                );
+            } else {
+                if (empty($emailSetup['OAUTH_CLIENT_ID']) || empty($emailSetup['OAUTH_CLIENT_SECRET']) || empty($emailSetup['OAUTH_REFRESH_TOKEN'])) {
+                    throw new Exception(G::LoadTranslation('ID_ABE_LOG_CANNOT_READ'), 500);
+                }
+
+                if ($emailSetup['MESS_ENGINE'] === 'GMAILAPI') {
+                    $mailbox = new GmailMailbox($emailSetup);
+                } else if ($emailSetup['MESS_ENGINE'] === 'OFFICE365API') {
+                    $mailbox = new Office365Mailbox($emailSetup);
+                }
             }
-            $mailbox = new Mailbox(
-                '{'. $emailSetup['MESS_INCOMING_SERVER'] . ':' . $emailSetup['MESS_INCOMING_PORT'] . '/imap/ssl/novalidate-cert}INBOX',
-                $emailSetup['MESS_ACCOUNT'],
-                $this->decryptPassword($emailSetup)
-            );
+
             Log::channel(':' . $this->channel)->debug("Open mailbox", Bootstrap::context($emailSetup));
 
             // Read all messages into an array
@@ -152,7 +169,6 @@ class ResponseReader
             if ($mailsIds) {
                 // Get the first message and save its attachment(s) to disk:
                 foreach ($mailsIds as $key => $mailId) {
-                    /** @var IncomingMail $mail */
                     $mail = $mailbox->getMail($mailId, false);
                     Log::channel(':' . $this->channel)->debug("Get mail", Bootstrap::context(['mailId' => $mailId]));
                     if (!empty($mail->textPlain)) {
@@ -260,11 +276,11 @@ class ResponseReader
     /**
      * Derivation of the case with the mail information
      * @param array $caseInfo
-     * @param IncomingMail $mail
+     * @param object $mail
      * @param array $dataAbe
      * @throws Exception
      */
-    public function processABE(array $caseInfo, IncomingMail $mail, array $dataAbe = [])
+    public function processABE(array $caseInfo, object $mail, array $dataAbe = [])
     {
         try {
             $actionsByEmail = new ActionsByEmail();
@@ -383,11 +399,11 @@ class ResponseReader
      * Send an error message to the sender
      * @param string $msgError
      * @param array $caseInf
-     * @param IncomingMail $mail
+     * @param object $mail
      * @param array $emailSetup
      * @return \ProcessMaker\Util\Response|string|\WsResponse
      */
-    public function sendMessageError($msgError, array $caseInf, IncomingMail $mail, array $emailSetup)
+    public function sendMessageError($msgError, array $caseInf, object $mail, array $emailSetup)
     {
         $wsBase = new WsBase();
         $result = $wsBase->sendMessage(
