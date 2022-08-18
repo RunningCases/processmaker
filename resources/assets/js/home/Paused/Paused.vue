@@ -35,39 +35,89 @@
       name="paused"
     >
       <div slot="detail" slot-scope="props">
-        <div class="btn-default" @click="openCaseDetail(props.row)">
+        <div
+          class="btn-default"
+          :class="props.row.INIT_DATE ? '' : 'pm-main-text-color '"
+          @click="openCaseDetail(props.row)"
+        >
           <i class="fas fa-info-circle"></i>
         </div>
       </div>
-      <div slot="case_number" slot-scope="props">
+      <div
+        :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
+        slot="case_number"
+        slot-scope="props"
+      >
         {{ props.row.CASE_NUMBER }}
       </div>
-      <div slot="thread_title" slot-scope="props">
+      <div
+        :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
+        slot="thread_title"
+        slot-scope="props"
+      >
         {{ props.row.THREAD_TITLE }}
       </div>
-      <div slot="process_category" slot-scope="props">
+      <div
+        :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
+        slot="process_category"
+        slot-scope="props"
+      >
         {{ props.row.PROCESS_CATEGORY }}
       </div>
-      <div slot="process_name" slot-scope="props">
+      <div
+        :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
+        slot="process_name"
+        slot-scope="props"
+      >
         {{ props.row.PROCESS_NAME }}
       </div>
-      <div slot="task" slot-scope="props">
+      <div
+        :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
+        slot="task"
+        slot-scope="props"
+      >
         <TaskCell :data="props.row.TASK" />
       </div>
-      <div slot="send_by" slot-scope="props">
+      <div
+        :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
+        slot="send_by"
+        slot-scope="props"
+      >
           <CurrentUserCell :data="props.row.USER_DATA" />
       </div>
-      <div slot="current_user" slot-scope="props">
+      <div
+        :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
+        slot="current_user"
+        slot-scope="props"
+      >
         {{ props.row.USERNAME_DISPLAY_FORMAT }}
       </div>
-      <div slot="due_date" slot-scope="props">
+      <div
+        :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
+        slot="due_date"
+        slot-scope="props"
+      >
         {{ props.row.DUE_DATE }}
       </div>
-      <div slot="delegation_date" slot-scope="props">
+      <div
+        :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
+        slot="delegation_date"
+        slot-scope="props"
+      >
         {{ props.row.DELEGATION_DATE }}
       </div>
-      <div slot="priority" slot-scope="props">{{ props.row.PRIORITY }}</div>
-      <div slot="actions" slot-scope="props">
+      <div
+        :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
+        slot="priority"
+        slot-scope="props"
+      >
+        {{ props.row.PRIORITY }}
+      </div>
+      <div
+        :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
+        slot="actions"
+        slot-scope="props"
+      >
         <div @mouseover="updateDataEllipsis(props.row)">
           <ellipsis v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
         </div>
@@ -81,7 +131,11 @@
       <div slot="actions" slot-scope="props">
         <b-row>
           <b-col sm="12">
-            <div class="v-pm-card-info" @click="openCaseDetail(props.item)">
+            <div
+              class="v-pm-card-info"
+              :class="props.item.INIT_DATE ? '' : 'pm-main-text-color'"
+              @click="openCaseDetail(props.item)"
+            >
               <i class="fas fa-info-circle"></i>
             </div>
           </b-col>
@@ -93,71 +147,106 @@
         </b-row>
       </div>
       <div slot="case_number" slot-scope="props" class="v-card-text">
-        <span class="v-card-text-highlight"
+        <span
+          class="v-card-text-highlight"
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
           >{{ props["headings"][props.column] }} : {{ props["item"]["CASE_NUMBER"] }}</span
         >
       </div>
       <div slot="thread_title" slot-scope="props" class="v-card-text">
-        <span class="v-card-text-dark"
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-dark"
           >{{ props["headings"][props.column] }} :</span
         >
-        <span class="v-card-text-light">
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-light">
           {{ props["item"]["THREAD_TITLE"] }}
         </span>
       </div>
       <div slot="process_category" slot-scope="props" class="v-card-text">
-        <span class="v-card-text-dark"
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-dark"
           >{{ props["headings"][props.column] }} :</span
         >
-        <span class="v-card-text-light"
-          >{{ props["item"]["PROCESS_CATEGORY"] }}
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-light"
+        >
+          {{ props["item"]["PROCESS_CATEGORY"] }}
         </span>
       </div>
       <div slot="process_name" slot-scope="props" class="v-card-text">
-        <span class="v-card-text-dark"
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-dark"
           >{{ props["headings"][props.column] }} :</span
         >
-        <span class="v-card-text-light"
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-light"
           >{{ props["item"]["PROCESS_NAME"] }}
         </span>
       </div>
       <div slot="due_date" slot-scope="props" class="v-card-text">
-        <span class="v-card-text-dark"
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-dark"
           >{{ props["headings"][props.column] }} :</span
         >
-        <span class="v-card-text-light"
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-light"
           >{{ props["item"]["DUE_DATE"] }}
         </span>
       </div>
       <div slot="delegation_date" slot-scope="props" class="v-card-text">
-        <span class="v-card-text-dark"
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-dark"
           >{{ props["headings"][props.column] }} :</span
         >
-        <span class="v-card-text-light"
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-light"
           >{{ props["item"]["DELEGATION_DATE"] }}
         </span>
       </div>
       <div slot="priority" slot-scope="props" class="v-card-text">
-        <span class="v-card-text-dark"
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-dark"
           >{{ props["headings"][props.column] }} :</span
         >
-        <span class="v-card-text-light"
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-light"
           >{{ props["item"]["PRIORITY"] }}
         </span>
       </div>
       <div slot="task" slot-scope="props" class="v-card-text">
-        <span class="v-card-text-dark"
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-dark"
           >{{ props["headings"][props.column] }} :</span
         >
-        <span class="v-card-text-light">
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-light">
           <TaskCell :data="props.item.TASK" />
         </span>
       </div>
       <div slot="send_by" slot-scope="props" class="v-card-text">
-        <span class="v-card-text-dark"
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-dark"
           >{{ props["headings"][props.column] }} :</span
         >
-        <span class="v-card-text-light">
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-light">
             <CurrentUserCell :data="props.item.USER_DATA" />
         </span>
       </div>
@@ -170,7 +259,10 @@
       <div slot="actions" slot-scope="props">
         <b-row>
           <b-col sm="12">
-            <div class="v-pm-card-info" @click="openCaseDetail(props.item)">
+            <div
+              class="v-pm-card-info"
+              :class="props.item.INIT_DATE ? '' : 'pm-main-text-color'"
+              @click="openCaseDetail(props.item)">
               <i class="fas fa-info-circle"></i>
             </div>
           </b-col>
@@ -182,71 +274,105 @@
         </b-row>
       </div>
       <div slot="case_number" slot-scope="props" class="v-card-text">
-        <span class="v-card-text-highlight"
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-highlight"
           >{{ props["headings"][props.column] }} : {{ props["item"]["CASE_NUMBER"] }}</span
         >
       </div>
       <div slot="thread_title" slot-scope="props" class="v-card-text">
-        <span class="v-card-text-dark"
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-dark"
           >{{ props["headings"][props.column] }} :</span
         >
-        <span class="v-card-text-light">
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-light">
           {{ props["item"]["THREAD_TITLE"] }}
         </span>
       </div>
       <div slot="process_category" slot-scope="props" class="v-card-text">
-        <span class="v-card-text-dark"
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-dark"
           >{{ props["headings"][props.column] }} :</span
         >
-        <span class="v-card-text-light"
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-light"
           >{{ props["item"]["PROCESS_CATEGORY"] }}
         </span>
       </div>
       <div slot="process_name" slot-scope="props" class="v-card-text">
-        <span class="v-card-text-dark"
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-dark"
           >{{ props["headings"][props.column] }} :</span
         >
-        <span class="v-card-text-light"
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-light"
           >{{ props["item"]["PROCESS_NAME"] }}
         </span>
       </div>
       <div slot="due_date" slot-scope="props" class="v-card-text">
-        <span class="v-card-text-dark"
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-dark"
           >{{ props["headings"][props.column] }} :</span
         >
-        <span class="v-card-text-light"
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-light"
           >{{ props["item"]["DUE_DATE"] }}
         </span>
       </div>
       <div slot="delegation_date" slot-scope="props" class="v-card-text">
-        <span class="v-card-text-dark"
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-dark"
           >{{ props["headings"][props.column] }} :</span
         >
-        <span class="v-card-text-light"
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-light"
           >{{ props["item"]["DELEGATION_DATE"] }}
         </span>
       </div>
       <div slot="priority" slot-scope="props" class="v-card-text">
-        <span class="v-card-text-dark"
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-dark"
           >{{ props["headings"][props.column] }} :</span
         >
-        <span class="v-card-text-light"
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-light"
           >{{ props["item"]["PRIORITY"] }}
         </span>
       </div>
       <div slot="task" slot-scope="props" class="v-card-text">
-        <span class="v-card-text-dark"
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-dark"
           >{{ props["headings"][props.column] }} :</span
         >
-        <span class="v-card-text-light">
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-light">
           <TaskCell :data="props.item.TASK" />
         </span>
       </div>
       <div slot="send_by" slot-scope="props" class="v-card-text">
-        <span class="v-card-text-dark"
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-dark"
           >{{ props["headings"][props.column] }} :</span
         >
-        <span class="v-card-text-light">
+        <span
+          :class="props.item.INIT_DATE ? '' : 'font-weight-bold'"
+          class="v-card-text-light">
             <CurrentUserCell :data="props.item.USER_DATA" />
         </span>
       </div>
@@ -446,7 +572,7 @@ export default {
      */
     ProcessMaker() {
       return window.ProcessMaker;
-    },
+    }
   },
   updated() {},
   beforeCreate() {},
@@ -600,6 +726,7 @@ export default {
           }),
           DUE_DATE: v.DEL_TASK_DUE_DATE_LABEL,
           DELEGATION_DATE: v.DEL_DELEGATE_DATE_LABEL,
+          INIT_DATE: v.DEL_INIT_DATE,
           PRIORITY: v.DEL_PRIORITY_LABEL,
           DEL_INDEX: v.DEL_INDEX,
           APP_UID: v.APP_UID,
@@ -655,6 +782,7 @@ export default {
         DEL_INDEX: item.DEL_INDEX,
         PRO_UID: item.PRO_UID,
         TAS_UID: item.TAS_UID,
+        INIT_DATE: item.INIT_DATE,
         ACTION: "todo"
       });
       this.$emit("onUpdatePage", "XCase");
@@ -673,6 +801,7 @@ export default {
             DEL_INDEX: item.DEL_INDEX,
             PRO_UID: item.PRO_UID,
             TAS_UID: item.TAS_UID,
+            INIT_DATE: item.INIT_DATE,
             APP_NUMBER: item.CASE_NUMBER,
           });
           that.$emit("onUpdatePage", "case-detail");
