@@ -523,7 +523,7 @@ class CaseList extends Model
         //merge with stored information
         $result = [];
         foreach ($default as &$column) {
-            foreach ($storedColumns as $storedColumn) {
+            foreach ($storedColumns as $keyStoredColumn => $storedColumn) {
                 if (!is_object($storedColumn)) {
                     continue;
                 }
@@ -538,10 +538,23 @@ class CaseList extends Model
                     if (isset($storedColumn['set'])) {
                         $column['set'] = $storedColumn['set'];
                     }
+                    //for column ordering, this will be removed later
+                    $column['sortIndex'] = $keyStoredColumn;
                     break;
                 }
             }
             $result[] = $column;
+        }
+
+        //sort columns by 'sortIndex', then 'sortIndex' will be removed.
+        $n = count($result);
+        usort($result, function ($a, $b) use ($n) {
+            $a1 = isset($a['sortIndex']) ? $a['sortIndex'] : $n;
+            $b1 = isset($b['sortIndex']) ? $b['sortIndex'] : $n;
+            return $a1 - $b1;
+        });
+        foreach ($result as &$value) {
+            unset($value['sortIndex']);
         }
 
         return $result;
