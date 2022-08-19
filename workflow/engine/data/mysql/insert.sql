@@ -58848,6 +58848,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_MAFE_076bbf458415eb4b6684ebad6c6094c0','en','Variable Name:', NOW()) ,
 ( 'LABEL','ID_MAFE_0778b522479c97b0c98fb221e86f8054','en','Invalid operation, please delete elements individually', NOW()) ,
 ( 'LABEL','ID_MAFE_07a61978b92831579bbbb72fdf2a3b58','en','useStrict', NOW()) ,
+( 'LABEL','ID_MAFE_707db4ba20fd9293b2e7e9e4a93fb504','en','By disabling this option, there''s a security vulnerability if any other user has access to your web browser. It might impersonate your current session.', NOW()) ,
 ( 'LABEL','ID_MAFE_085fea7abdc5d904fe69a3081efd7398','en','Signal', NOW()) ,
 ( 'LABEL','ID_MAFE_087fb8756d4add87f2d162304ccd486b','en','No records found', NOW()) ,
 ( 'LABEL','ID_MAFE_08898cf72a0c0bab1fd5a011cb430875','en','Filename generated', NOW()) ,
@@ -59253,6 +59254,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_MAFE_5cdf3f8e0de1cb63a3cfb8bec5a5db9d','en','There are problems getting the triggers wizard list, please try again.', NOW()) ,
+( 'LABEL','ID_MAFE_5d06160dfb6e0fde71b8d320d793f322','en','Hide Active Session Warning', NOW()) ,
 ( 'LABEL','ID_MAFE_5d085d8447bc84ead2b9af188a8e4f0c','en','Before action', NOW()) ,
 ( 'LABEL','ID_MAFE_5d89fe1813446d4b6fb1586b0287f788','en','Step assigned successfully.', NOW()) ,
 ( 'LABEL','ID_MAFE_5da01bc260f45532692827ab75ae3076','en','Variable type', NOW()) ,

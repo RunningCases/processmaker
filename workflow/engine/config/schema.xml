@@ -3581,6 +3581,7 @@
         <column name="WE_CUSTOM_TITLE" type="LONGVARCHAR"/>
         <column name="WE_AUTHENTICATION" type="VARCHAR" size="14" required="true" default="ANONYMOUS"/>
         <column name="WE_HIDE_INFORMATION_BAR" type="CHAR" size="1" default="1"/>
+        <column name="WE_HIDE_ACTIVE_SESSION_WARNING" type="CHAR" size="1" default="1"/>
         <column name="WE_CALLBACK" type="VARCHAR" size="13" required="true" default="PROCESSMAKER"/>
         <column name="WE_CALLBACK_URL" type="LONGVARCHAR"/>
         <column name="WE_LINK_GENERATION" type="VARCHAR" size="8" required="true" default="DEFAULT"/>

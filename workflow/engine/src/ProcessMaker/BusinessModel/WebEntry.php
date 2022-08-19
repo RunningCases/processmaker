@@ -8,6 +8,7 @@ use G;
 use Illuminate\Support\Facades\DB;
 use ProcessMaker\Core\System;
 use ProcessMaker\Model\Application;
+use ProcessMaker\Model\WebEntry as WebEntryModel;
 use Publisher;
 use RBAC;
 use ResultSet;
@@ -1102,7 +1103,7 @@ class WebEntry
      */
     public function isWebEntryOne($weUid)
     {
-        if ($this->verifyCurrentSession()) {
+        if ($this->verifyCurrentSession($weUid)) {
             global $G_PUBLISH;
             $G_PUBLISH = new Publisher();
             $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/checkContinueOrCloseSession', '', [], SYS_URI . 'login/checkContinueOrCloseSession');
@@ -1119,9 +1120,10 @@ class WebEntry
 
     /**
      * Verify the current sessión exist for display webentry message confirmation.
+     * @param string $weUid
      * @return bool
      */
-    private function verifyCurrentSession(): bool
+    private function verifyCurrentSession(string $weUid): bool
     {
         //verify normal flow
         $rule1 = !empty($_SESSION['USER_LOGGED']) && empty($_SESSION['__WEBENTRYCONTINUE__']);
@@ -1135,8 +1137,29 @@ class WebEntry
 
         //verify saml session
         $rule3 = !(!empty($_SESSION['samlNameId']) && !empty($_SESSION['samlSessionIndex']));
+        
+        //verify current session only for required user login
+        $rule4 = $this->verifyHideActiveSessionWarningOption($weUid);
 
-        return $rule1 && $rule2 && $rule3;
+        return $rule1 && $rule2 && $rule3 && $rule4;
+    }
+
+    /**
+     * Return false if 'hide active session' is enabled only for 'require user login'.
+     * @param string $weUid
+     * @return bool
+     */
+    public function verifyHideActiveSessionWarningOption(string $weUid): bool
+    {
+        $result = true;
+        $webentry = WebEntryModel::select('WE_HIDE_ACTIVE_SESSION_WARNING', 'WE_AUTHENTICATION')
+            ->where('WE_UID', '=', $weUid)
+            ->get()
+            ->first();
+        if ($webentry->WE_AUTHENTICATION === 'LOGIN_REQUIRED') {
+            $result = intval($webentry->WE_HIDE_ACTIVE_SESSION_WARNING) === 0;
+        }
+        return $result;
     }
 
     /**

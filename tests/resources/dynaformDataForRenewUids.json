@@ -781,6 +781,7 @@
             "WE_TYPE": "SINGLE",
             "WE_AUTHENTICATION": "ANONYMOUS",
             "WE_HIDE_INFORMATION_BAR": "1",
+            "WE_HIDE_ACTIVE_SESSION_WARNING": "0",
             "WE_CALLBACK": "PROCESSMAKER",
             "WE_CALLBACK_URL": "",
             "WE_LINK_GENERATION": "DEFAULT",
