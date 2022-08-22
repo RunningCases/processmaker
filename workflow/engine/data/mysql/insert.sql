@@ -57330,11 +57330,12 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_BY_PARTICIPATION','en','By Participation','2021-07-13') ,
 ( 'LABEL','ID_BY_PROCESS_CATEGORY','en','By Process Category','2021-07-13') ,
 ( 'LABEL','ID_BY_PROCESS_NAME','en','By Process Name','2020-12-16') ,
-( 'LABEL','ID_BY_TASK','en','By Task','2020-12-16') ,
+( 'LABEL','ID_BY_REVIEW_STATUS','en','By Review Status','2022-08-17') ,
 ( 'LABEL','ID_BY_ROLE','en','By Role','2020-12-15') ,
 ( 'LABEL','ID_BY_SEND_BY','en','By Send By','2021-08-31') ,
 ( 'LABEL','ID_BY_STATUS','en','By Status','2020-12-16') ,
 ( 'LABEL','ID_BY_START_DATE','en','By Start Date','2020-12-16') ,
+( 'LABEL','ID_BY_TASK','en','By Task','2020-12-16') ,
 ( 'LABEL','ID_CACHE_BTN_BUILD','en','Build Cache','2014-01-15') ,
 ( 'LABEL','ID_CACHE_BTN_SETUP_PASSWRD','en','Setup Password','2014-01-15') ,
 ( 'LABEL','ID_CACHE_BTN_SETUP_SESSION','en','Delete older session files','2014-01-15') ,
@@ -60799,6 +60800,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_RB_DATABASE_NAME','en','Rbac Database Name','2014-01-15') ,
 ( 'LABEL','ID_REACTIVATE','en','Reactivate','2014-01-15') ,
 ( 'LABEL','ID_REACTIVATING_CASE','en','Reactivating case...','2014-01-15') ,
+( 'LABEL','ID_READ_FILTER_OPTION','en','Read','2022-08-17') ,
 ( 'LABEL','ID_READ_ONLINE_DOCUMENTATION','en','Read Online Documentation','2014-01-15') ,
 ( 'LABEL','ID_REALLY_SHOULD','en','You really should do it','2014-01-15') ,
 ( 'LABEL','ID_REASON','en','Reason','2016-10-20') ,
@@ -61018,6 +61020,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_SEARCH_BY_PARTICIPATION','en','Search by Participation:','2021-07-13') ,
 ( 'LABEL','ID_SEARCH_BY_PROCESS_CATEGORY','en','Search by Process Category:','2021-07-13') ,
 ( 'LABEL','ID_SEARCH_BY_PROCESS_NAME','en','Search by Process Name:','2020-12-16') ,
+( 'LABEL','ID_SEARCH_BY_REVIEW_STATUS','en','Search by Review Status:','2022-08-17') ,
 ( 'LABEL','ID_SEARCH_BY_SEND_BY','en','Search By Send By:','2021-08-31') ,
 ( 'LABEL','ID_SEARCH_BY_START_DATE','en','Search by Start Date:','2020-12-16') ,
 ( 'LABEL','ID_SEARCH_BY_STATUS','en','Search by Status:','2020-12-22') ,
@@ -61547,6 +61550,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_UNPAUSE_DATE','en','Unpause Date','2014-01-15') ,
 ( 'LABEL','ID_UNPAUSE_TIME','en','Unpause Time','2014-01-15') ,
 ( 'LABEL','ID_UNPAUSING_CASE','en','Unpausing case...','2014-01-15') ,
+( 'LABEL','ID_UNREAD_FILTER_OPTION','en','Unread','2022-08-17') ,
 ( 'LABEL','ID_UNSAVED_CHANGES_QUESTION','en','You are about to close a window and there may be some unsaved changes. Are you sure to continue?','2015-08-17') ;
 INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 

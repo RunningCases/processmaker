@@ -3132,6 +3132,12 @@ msgid "By Process Name"
 msgstr "By Process Name"
 
 # TRANSLATION
+# LABEL/ID_BY_REVIEW_STATUS
+#: LABEL/ID_BY_REVIEW_STATUS
+msgid "By Review Status"
+msgstr "By Review Status"
+
+# TRANSLATION
 # LABEL/ID_BY_TASK
 #: LABEL/ID_BY_TASK
 msgid "By Task"
@@ -23292,6 +23298,12 @@ msgid "Reactivating case..."
 msgstr "Reactivating case..."
 
 # TRANSLATION
+# LABEL/ID_READ_FILTER_OPTION
+#: LABEL/ID_READ_FILTER_OPTION
+msgid "Read"
+msgstr "Read"
+
+# TRANSLATION
 # LABEL/ID_READ_ONLINE_DOCUMENTATION
 #: LABEL/ID_READ_ONLINE_DOCUMENTATION
 msgid "Read Online Documentation"
@@ -24562,6 +24574,12 @@ msgstr "Search by Process Category:"
 #: LABEL/ID_SEARCH_BY_PROCESS_NAME
 msgid "Search by Process Name:"
 msgstr "Search by Process Name:"
+
+# TRANSLATION
+# LABEL/ID_SEARCH_BY_REVIEW_STATUS
+#: LABEL/ID_SEARCH_BY_REVIEW_STATUS
+msgid "Search by Review Status:"
+msgstr "Search by Review Status:"
 
 # TRANSLATION
 # LABEL/ID_SEARCH_BY_SEND_BY
@@ -27400,6 +27418,12 @@ msgstr "Unpause Time"
 #: LABEL/ID_UNPAUSING_CASE
 msgid "Unpausing case..."
 msgstr "Unpausing case..."
+
+# TRANSLATION
+# LABEL/ID_UNREAD_FILTER_OPTION
+#: LABEL/ID_UNREAD_FILTER_OPTION
+msgid "Unread"
+msgstr "Unread"
 
 # TRANSLATION
 # LABEL/ID_UNSAVED_CHANGES_QUESTION
