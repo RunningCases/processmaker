@@ -152,7 +152,7 @@
                     <b-col sm="12">
                         <div
                             class="v-pm-card-info"
-                            :class="props.row.INIT_DATE ? '' : 'pm-main-text-color '"
+                            :class="props.item.INIT_DATE ? '' : 'pm-main-text-color '"
                             @click="openCaseDetail(props.item)"
                         >
                             <i class="fas fa-info-circle"></i>
