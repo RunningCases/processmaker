@@ -139,7 +139,7 @@ export default {
                 detail: "",
                 tagText: "",
                 tagPrefix: this.$i18n.t("ID_SEARCH_BY_REVIEW_STATUS"),
-                autoShow: true,
+                autoShow: false,
                 items: [
                     {
                         id: "reviewStatus",
