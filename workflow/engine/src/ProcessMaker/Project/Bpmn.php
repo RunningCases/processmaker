@@ -288,7 +288,14 @@ class Bpmn extends Handler
         return $response;
     }
 
-    public function exists($projectUid)
+    /**
+     * This method verifies if a project exists
+     * 
+     * @param string $projectUid Unique id of Project
+     * 
+     * return boolean  
+     */
+    public static function exists($projectUid)
     {
         try {
             $obj = ProjectPeer::retrieveByPK($projectUid);
