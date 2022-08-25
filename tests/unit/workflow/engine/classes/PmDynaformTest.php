@@ -50,7 +50,6 @@ class PmDynaformTest extends TestCase
         $process = Process::factory(1)->create();
 
         $dynaform = Dynaform::factory(1)->create([
-            'DYN_ID' => 6,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
             'DYN_CONTENT' => G::json_encode($arrayForm)
@@ -74,7 +73,6 @@ class PmDynaformTest extends TestCase
         $process = Process::factory(1)->create();
 
         $dynaform = Dynaform::factory(1)->create([
-            'DYN_ID' => 5,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
             'DYN_CONTENT' => G::json_encode($arrayForm)
@@ -98,7 +96,6 @@ class PmDynaformTest extends TestCase
         $process = Process::factory(1)->create();
 
         $dynaform = Dynaform::factory(1)->create([
-            'DYN_ID' => 5,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
             'DYN_CONTENT' => G::json_encode($arrayForm)
@@ -122,7 +119,6 @@ class PmDynaformTest extends TestCase
         $process = Process::factory(1)->create();
 
         $dynaform = Dynaform::factory(1)->create([
-            'DYN_ID' => 5,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
             'DYN_CONTENT' => G::json_encode($arrayForm)
@@ -146,7 +142,6 @@ class PmDynaformTest extends TestCase
         $process = Process::factory(1)->create();
 
         $dynaform = Dynaform::factory(1)->create([
-            'DYN_ID' => 5,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
             'DYN_CONTENT' => G::json_encode($arrayForm)
@@ -171,7 +166,6 @@ class PmDynaformTest extends TestCase
         $process = Process::factory(1)->create();
 
         $dynaform = Dynaform::factory(1)->create([
-            'DYN_ID' => 5,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
             'DYN_CONTENT' => G::json_encode($arrayForm)
@@ -196,7 +190,6 @@ class PmDynaformTest extends TestCase
         $process = Process::factory(1)->create();
 
         $dynaform = Dynaform::factory(1)->create([
-            'DYN_ID' => 4,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
             'DYN_CONTENT' => G::json_encode($arrayForm)
@@ -225,7 +218,6 @@ class PmDynaformTest extends TestCase
         $process = Process::factory(1)->create();
 
         $dynaform = Dynaform::factory(1)->create([
-            'DYN_ID' => 6,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
             'DYN_CONTENT' => G::json_encode($arrayForm)
@@ -249,7 +241,6 @@ class PmDynaformTest extends TestCase
         $process = Process::factory(1)->create();
 
         $dynaform = Dynaform::factory(1)->create([
-            'DYN_ID' => 5,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
             'DYN_CONTENT' => G::json_encode($arrayForm)
@@ -273,7 +264,6 @@ class PmDynaformTest extends TestCase
         $process = Process::factory(1)->create();
 
         $dynaform = Dynaform::factory(1)->create([
-            'DYN_ID' => 3,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
             'DYN_CONTENT' => G::json_encode($arrayForm)
@@ -297,7 +287,6 @@ class PmDynaformTest extends TestCase
 
         $arrayForm = $this->createArrayDynaform();
         $dynaform = Dynaform::factory(1)->create([
-            'DYN_ID' => 7,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
             'DYN_CONTENT' => G::json_encode($arrayForm)
@@ -333,7 +322,6 @@ class PmDynaformTest extends TestCase
 
         $arrayForm = $this->createArrayDynaform();
         $dynaform = Dynaform::factory(1)->create([
-            'DYN_ID' => 7,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
             'DYN_CONTENT' => G::json_encode($arrayForm)
@@ -341,7 +329,6 @@ class PmDynaformTest extends TestCase
 
         $arrayForm2 = $this->createArrayDynaform();
         $dynaform2 = Dynaform::factory(1)->create([
-            'DYN_ID' => 9,
             'DYN_UID' => $arrayForm2['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
             'DYN_CONTENT' => G::json_encode($arrayForm2)
@@ -367,7 +354,6 @@ class PmDynaformTest extends TestCase
 
         $arrayForm = $this->createArrayDynaform();
         $dynaform = Dynaform::factory(1)->create([
-            'DYN_ID' => 7,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
             'DYN_CONTENT' => G::json_encode($arrayForm)
@@ -375,7 +361,6 @@ class PmDynaformTest extends TestCase
 
         $arrayForm2 = $this->createArrayDynaform();
         $dynaform2 = Dynaform::factory(1)->create([
-            'DYN_ID' => 9,
             'DYN_UID' => $arrayForm2['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
             'DYN_CONTENT' => G::json_encode($arrayForm2)
@@ -418,7 +403,6 @@ class PmDynaformTest extends TestCase
         $process = Process::factory(1)->create();
 
         $dynaform = Dynaform::factory(1)->create([
-            'DYN_ID' => 1,
             'DYN_UID' => $arrayForm['items'][0]['id'],
             'PRO_UID' => $process[0]->PRO_UID,
             'DYN_CONTENT' => G::json_encode($arrayForm)
@@ -445,7 +429,6 @@ class PmDynaformTest extends TestCase
         $process = Process::factory(1)->create();
 
         $dynaform = Dynaform::factory(1)->create([
-            'DYN_ID' => 2,
             'PRO_UID' => $process[0]->PRO_UID,
             'DYN_CONTENT' => G::json_encode($arrayForm)
         ]);

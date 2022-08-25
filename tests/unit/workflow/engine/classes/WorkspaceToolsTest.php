@@ -40,27 +40,32 @@ class WorkspaceToolsTest extends TestCase
         Delegation::factory()->create([
             'APP_UID' => $application1->APP_UID,
             'APP_NUMBER' => $application1->APP_NUMBER,
+            'DEL_TITLE' => $application1->APP_TITLE,
             'DEL_INDEX' => 1
         ]);
         Delegation::factory()->create([
             'APP_UID' => $application1->APP_UID,
             'APP_NUMBER' => $application1->APP_NUMBER,
+            'DEL_TITLE' => $application1->APP_TITLE,
             'DEL_INDEX' => 2
         ]);
         $delegation1 = Delegation::factory()->create([
             'APP_UID' => $application1->APP_UID,
             'APP_NUMBER' => $application1->APP_NUMBER,
+            'DEL_TITLE' => $application1->APP_TITLE,
             'DEL_INDEX' => 3,
         ]);
 
         Delegation::factory()->create([
             'APP_UID' => $application2->APP_UID,
             'APP_NUMBER' => $application2->APP_NUMBER,
+            'DEL_TITLE' => $application2->APP_TITLE,
             'DEL_INDEX' => 1
         ]);
         $delegation2 = Delegation::factory()->create([
             'APP_UID' => $application2->APP_UID,
             'APP_NUMBER' => $application2->APP_NUMBER,
+            'DEL_TITLE' => $application2->APP_TITLE,
             'DEL_INDEX' => 2,
             'DEL_LAST_INDEX' => 1
         ]);
@@ -68,11 +73,13 @@ class WorkspaceToolsTest extends TestCase
         Delegation::factory()->create([
             'APP_UID' => $application3->APP_UID,
             'APP_NUMBER' => $application3->APP_NUMBER,
+            'DEL_TITLE' => $application3->APP_TITLE,
             'DEL_INDEX' => 1
         ]);
         $delegation3 = Delegation::factory()->create([
             'APP_UID' => $application3->APP_UID,
             'APP_NUMBER' => $application3->APP_NUMBER,
+            'DEL_TITLE' => $application3->APP_TITLE,
             'DEL_INDEX' => 2,
             'DEL_LAST_INDEX' => 1
         ]);

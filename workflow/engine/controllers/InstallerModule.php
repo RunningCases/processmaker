@@ -13,7 +13,7 @@ include PATH_LANGUAGECONT . "translation." . SYS_LANG;
 class InstallerModule extends Controller
 {
     const MYSQL_VERSION_MAXIMUM_SUPPORTED = "5.7";
-    const PHP_VERSION_MINIMUM_SUPPORTED = "8.1";
+    const PHP_VERSION_MINIMUM_SUPPORTED = "7.3";
     const PHP_VERSION_NOT_SUPPORTED = "8.2";
     public $path_config;
     public $path_languages;
