@@ -86,7 +86,7 @@ abstract class TestCase extends BaseTestCase
      */
     public function truncateNonInitialModels(): void
     {
-        DB::statement("set global max_connections = 300;");
+        DB::statement("set global max_connections = 500;");
         if (empty(static::$truncateInitialTables)) {
             $initialTables = [
                 'RBAC_PERMISSIONS',

@@ -31,7 +31,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": "^7.4|^8.1",
+        "php": ">=7.4",
         "laravel/framework": "8.83.*",
         "luracast/restler": "3.0",
         "bshaffer/oauth2-server-php": "v1.0",
@@ -58,7 +58,7 @@
         "league/oauth2-client": "^2.4",
         "league/oauth2-google": "^3.0",
         "tecnickcom/tcpdf": "6.4.*",
-        "fzaninotto/faker": "^1.7",
+        "fzaninotto/faker": "dev-master",
         "predis/predis": "1.1.1",
         "phpmyadmin/sql-parser": "^5.3",
         "aws/aws-sdk-php": "~3.0",
