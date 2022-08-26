@@ -285,7 +285,7 @@
                                             ></i>
                                         </b-button>
                                     </div>
-                                    <div slot="sort"><i class="fa fa-align-justify handle"></i></div>
+                                    <div slot="sort"><i class="fa fa-align-justify handle sort-handle"></i></div>
                                 </v-client-table>
                             </b-form-group>
                         </b-col>
@@ -802,5 +802,8 @@ export default {
 
 .invalid .typo__label {
     color: #f04124;
+}
+.sort-handle {
+    color: gray
 }
 </style>
