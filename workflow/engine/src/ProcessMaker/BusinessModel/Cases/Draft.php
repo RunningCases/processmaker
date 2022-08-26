@@ -23,6 +23,7 @@ class Draft extends AbstractCases
         'TASK.TAS_TITLE', // Task
         'APP_DELEGATION.DEL_TASK_DUE_DATE', // Due Date
         'APP_DELEGATION.DEL_DELEGATE_DATE', // Delegate Date
+        'APP_DELEGATION.DEL_INIT_DATE', // Init Date
         'APP_DELEGATION.DEL_PRIORITY', // Priority
         'APP_DELEGATION.DEL_PREVIOUS', // Previous
         // Additional column for other functionalities
@@ -85,6 +86,10 @@ class Draft extends AbstractCases
         // Specific case uid PMFCaseLink
         if (!empty($this->getCaseUid())) {
             $query->appUid($this->getCaseUid());
+        }
+        // Specific review status
+        if (!empty($this->getReviewStatus())) {
+            $query->readUnread($this->getReviewStatus());
         }
 
         return $query;

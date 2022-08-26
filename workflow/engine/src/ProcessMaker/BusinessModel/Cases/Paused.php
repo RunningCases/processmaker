@@ -25,6 +25,7 @@ class Paused extends AbstractCases
         'USERS.USR_LASTNAME', // Current User LastName
         'APP_DELEGATION.DEL_TASK_DUE_DATE', // Due Date
         'APP_DELEGATION.DEL_DELEGATE_DATE', // Delegate Date
+        'APP_DELEGATION.DEL_INIT_DATE', // Init Date
         'APP_DELEGATION.DEL_PRIORITY', // Priority
         'APP_DELEGATION.DEL_PREVIOUS', // Previous
         // Additional column for other functionalities
@@ -99,6 +100,10 @@ class Paused extends AbstractCases
         // Specific usrId represented by sendBy
         if (!empty($this->getSendBy())) {
             $query->sendBy($this->getSendBy());
+        }
+        // Specific review status
+        if (!empty($this->getReviewStatus())) {
+            $query->readUnread($this->getReviewStatus());
         }
 
         return $query;

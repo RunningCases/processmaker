@@ -1,6 +1,11 @@
 <template>
   <div class="pm-vue-card">
-    <div class="card pm-vue-card-inside" style="width: 20rem" @dblclick="dblClick">
+    <div
+      :class="item.INIT_DATE ? 'pm-case-unread' : 'pm-case-read'"
+      class="card pm-vue-card-inside"
+      style="width: 20rem"
+      @dblclick="dblClick"
+    >
       <div class="card-view-body">
         <slot> </slot>
       </div>
@@ -48,5 +53,25 @@ export default {
   flex: 1 1 auto;
   min-height: 1px;
   padding: 1.25rem;
+}
+.pm-case-read {
+  border-left: 15px solid transparent;
+  border-radius: 0.25rem;
+  border-width: 1px 1px 1px 15px;
+  background-image:
+    linear-gradient(white, white),
+    linear-gradient(to bottom, #70C6F3, #0099DC);
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+}
+.pm-case-unread {
+  border-left: 15px solid transparent;
+  border-radius: 0.25rem;
+  border-width: 1px 1px 1px 15px;
+  background-image: 
+    linear-gradient(white, white),
+    linear-gradient(to bottom, rgba(204,204,204,1),rgba(135,135,135,1));
+  background-origin: border-box;
+  background-clip: content-box, border-box;
 }
 </style>
