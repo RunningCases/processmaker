@@ -147,7 +147,7 @@ class GmailOAuthTest extends TestCase
     public function it_should_create_email_server()
     {
         global $RBAC;
-        $user = User::where('USR_ID', '=', 1)->get()->first();
+        $user = User::where('USR_ID', '=', 1)->first();
         $_SESSION['USER_LOGGED'] = $user['USR_UID'];
         $RBAC = RBAC::getSingleton(PATH_DATA, session_id());
         $RBAC->initRBAC();

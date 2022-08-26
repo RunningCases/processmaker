@@ -706,7 +706,7 @@ class ReportTablesTest extends TestCase
         $proUid = $result->processUid;
         $grid = '';
 
-        $app = Application::where('APP_UID', '=', $result->applicationUid)->get()->first();
+        $app = Application::where('APP_UID', '=', $result->applicationUid)->first();
         $appData = unserialize($app->APP_DATA);
         unset($appData['var_Textarea1']);
         $appData = serialize($appData);
@@ -742,7 +742,7 @@ class ReportTablesTest extends TestCase
         $proUid = $result->processUid;
         $grid = '';
 
-        $app = Application::where('APP_UID', '=', $result->applicationUid)->get()->first();
+        $app = Application::where('APP_UID', '=', $result->applicationUid)->first();
         $appData = unserialize($app->APP_DATA);
         $appData['var_Textarea1'] = [];
         $appData = serialize($appData);
@@ -779,7 +779,7 @@ class ReportTablesTest extends TestCase
         $proUid = $result->processUid;
         $grid = 'var_Grid1';
 
-        $app = Application::where('APP_UID', '=', $result->applicationUid)->get()->first();
+        $app = Application::where('APP_UID', '=', $result->applicationUid)->first();
         $appData = unserialize($app->APP_DATA);
         unset($appData['var_Grid1'][1]['var_Textarea1']);
         $appData = serialize($appData);
@@ -897,7 +897,7 @@ class ReportTablesTest extends TestCase
         $proUid = $result->processUid;
         $grid = 'var_Grid1';
 
-        $app = Application::where('APP_UID', '=', $result->applicationUid)->get()->first();
+        $app = Application::where('APP_UID', '=', $result->applicationUid)->first();
         $appData = unserialize($app->APP_DATA);
         $appData['var_Textarea1'] = [];
         $appData = serialize($appData);

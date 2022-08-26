@@ -67,6 +67,6 @@ class Groupwf extends Model
     public static function getGroupId($grpUid)
     {
         $query = Groupwf::select('GRP_ID')->where('GRP_UID', $grpUid);
-        return $query->get()->first()->toArray();
+        return $query->first()->toArray();
     }
 }

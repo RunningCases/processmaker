@@ -2561,7 +2561,6 @@ class LdapAdvanced
                 ->where('GRP_STATUS', '=', 'ACTIVE')
                 ->where('GRP_TITLE', '=', $title)
                 ->orderBy('GRP_ID', 'ASC')
-                ->get()
                 ->first();
             if (!empty($groupWf)) {
                 return $groupWf->GRP_UID;

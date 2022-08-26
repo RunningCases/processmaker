@@ -42,7 +42,7 @@ class ServerTest extends TestCase
      */
     public function it_should_test_post_token_with_valid_credentials()
     {
-        $user = User::where('USR_ID', '=', 1)->get()->first();
+        $user = User::where('USR_ID', '=', 1)->first();
         $oauthClients = factory(OauthClients::class)->create([
             "USR_UID" => $user->USR_UID
         ]);
@@ -80,7 +80,7 @@ class ServerTest extends TestCase
      */
     public function it_should_test_post_token_with_return_handle_token()
     {
-        $user = User::where('USR_ID', '=', 1)->get()->first();
+        $user = User::where('USR_ID', '=', 1)->first();
         $oauthClients = factory(OauthClients::class)->create([
             "USR_UID" => $user->USR_UID
         ]);
@@ -116,7 +116,7 @@ class ServerTest extends TestCase
      */
     public function it_should_test_post_token_with_empty_client_id()
     {
-        $user = User::where('USR_ID', '=', 1)->get()->first();
+        $user = User::where('USR_ID', '=', 1)->first();
         $oauthClients = factory(OauthClients::class)->create([
             "USR_UID" => $user->USR_UID
         ]);
@@ -155,8 +155,8 @@ class ServerTest extends TestCase
      */
     public function it_should_test_post_token_for_pm_client_id()
     {
-        $user = User::where('USR_ID', '=', 1)->get()->first();
-        $oauthClients = OauthClients::where('CLIENT_ID', '=', 'x-pm-local-client')->get()->first();
+        $user = User::where('USR_ID', '=', 1)->first();
+        $oauthClients = OauthClients::where('CLIENT_ID', '=', 'x-pm-local-client')->first();
 
         $data = '{
             "grant_type":"password",

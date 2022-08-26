@@ -104,7 +104,6 @@ switch ($function) {
         $authenticationSource = RbacAuthenticationSource::query()
             ->select(['AUTH_SOURCE_UID', 'AUTH_SOURCE_NAME'])
             ->where('AUTH_SOURCE_NAME', '=', $authSourceName)
-            ->get()
             ->first();
         $row = false;
         $suggestName = "";
@@ -114,7 +113,6 @@ switch ($function) {
                 ->select(['AUTH_SOURCE_NAME'])
                 ->where('AUTH_SOURCE_NAME', 'LIKE', "%{$authSourceName}%")
                 ->orderBy('AUTH_SOURCE_NAME', 'desc')
-                ->get()
                 ->first();
             if (!empty($lastAuthenticationSource)) {
                 $name = $lastAuthenticationSource->AUTH_SOURCE_NAME;
