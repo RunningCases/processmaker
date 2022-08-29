@@ -190,7 +190,7 @@ class CaseList extends Model
      * @param string $newColumns
      * @return void
      */
-    private function checkColumnsConfigurationChanges(int $calId, string $type, string $newColumns): void
+    private static function checkColumnsConfigurationChanges(int $calId, string $type, string $newColumns): void
     {
         $caseList = CaseList::where('CAL_ID', '=', $calId)->first();
         if ($caseList->CAL_COLUMNS === $newColumns) {
