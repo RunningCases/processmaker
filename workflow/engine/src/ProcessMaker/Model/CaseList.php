@@ -172,6 +172,8 @@ class CaseList extends Model
         }
         $attributes['CAL_COLUMNS'] = json_encode($attributes['CAL_COLUMNS']);
 
+        self::checkColumnsConfigurationChanges($id, $attributes['CAL_TYPE'], $attributes['CAL_COLUMNS']);
+
         $caseList = CaseList::where('CAL_ID', '=', $id);
         $caseList->update($attributes);
         $model = $caseList->get()->first();
@@ -179,6 +181,45 @@ class CaseList extends Model
             $model->CAL_COLUMNS = json_decode($model->CAL_COLUMNS);
         }
         return $model;
+    }
+
+    /**
+     * Check if the columns configuration has changed.
+     * @param int $calId
+     * @param string $type
+     * @param string $newColumns
+     * @return void
+     */
+    private function checkColumnsConfigurationChanges(int $calId, string $type, string $newColumns): void
+    {
+        $caseList = CaseList::where('CAL_ID', '=', $calId)->first();
+        if ($caseList->CAL_COLUMNS === $newColumns) {
+            return;
+        }
+
+        $listUserConfig = UserConfig::where('USC_NAME', '=', 'userConfig')
+            ->select()
+            ->get();
+        foreach ($listUserConfig as $userConfig) {
+            if (empty($userConfig->USC_SETTING)) {
+                continue;
+            }
+            $uscSetting = json_decode($userConfig->USC_SETTING);
+            if (!property_exists($uscSetting, $type)) {
+                continue;
+            }
+            if (!property_exists($uscSetting->{$type}, 'customCaseList')) {
+                continue;
+            }
+            if (!property_exists($uscSetting->{$type}->customCaseList, $calId)) {
+                continue;
+            }
+            if (!property_exists($uscSetting->{$type}->customCaseList->{$calId}, 'columns')) {
+                continue;
+            }
+            $uscSetting->{$type}->customCaseList->{$calId}->columns = ['detail', 'actions'];
+            UserConfig::editSetting($userConfig->USR_ID, 'userConfig', (array) $uscSetting);
+        }
     }
 
     /**
