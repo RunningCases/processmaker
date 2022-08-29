@@ -172,6 +172,8 @@ class CaseList extends Model
         }
         $attributes['CAL_COLUMNS'] = json_encode($attributes['CAL_COLUMNS']);
 
+        self::checkColumnsConfigurationChanges($id, $attributes['CAL_TYPE'], $attributes['CAL_COLUMNS']);
+
         $caseList = CaseList::where('CAL_ID', '=', $id);
         $caseList->update($attributes);
         $model = $caseList->get()->first();
@@ -179,6 +181,45 @@ class CaseList extends Model
             $model->CAL_COLUMNS = json_decode($model->CAL_COLUMNS);
         }
         return $model;
+    }
+
+    /**
+     * Check if the columns configuration has changed.
+     * @param int $calId
+     * @param string $type
+     * @param string $newColumns
+     * @return void
+     */
+    private function checkColumnsConfigurationChanges(int $calId, string $type, string $newColumns): void
+    {
+        $caseList = CaseList::where('CAL_ID', '=', $calId)->first();
+        if ($caseList->CAL_COLUMNS === $newColumns) {
+            return;
+        }
+
+        $listUserConfig = UserConfig::where('USC_NAME', '=', 'userConfig')
+            ->select()
+            ->get();
+        foreach ($listUserConfig as $userConfig) {
+            if (empty($userConfig->USC_SETTING)) {
+                continue;
+            }
+            $uscSetting = json_decode($userConfig->USC_SETTING);
+            if (!property_exists($uscSetting, $type)) {
+                continue;
+            }
+            if (!property_exists($uscSetting->{$type}, 'customCaseList')) {
+                continue;
+            }
+            if (!property_exists($uscSetting->{$type}->customCaseList, $calId)) {
+                continue;
+            }
+            if (!property_exists($uscSetting->{$type}->customCaseList->{$calId}, 'columns')) {
+                continue;
+            }
+            $uscSetting->{$type}->customCaseList->{$calId}->columns = ['detail', 'actions'];
+            UserConfig::editSetting($userConfig->USR_ID, 'userConfig', (array) $uscSetting);
+        }
     }
 
     /**
@@ -523,7 +564,7 @@ class CaseList extends Model
         //merge with stored information
         $result = [];
         foreach ($default as &$column) {
-            foreach ($storedColumns as $storedColumn) {
+            foreach ($storedColumns as $keyStoredColumn => $storedColumn) {
                 if (!is_object($storedColumn)) {
                     continue;
                 }
@@ -538,10 +579,23 @@ class CaseList extends Model
                     if (isset($storedColumn['set'])) {
                         $column['set'] = $storedColumn['set'];
                     }
+                    //for column ordering, this will be removed later
+                    $column['sortIndex'] = $keyStoredColumn;
                     break;
                 }
             }
             $result[] = $column;
+        }
+
+        //sort columns by 'sortIndex', then 'sortIndex' will be removed.
+        $n = count($result);
+        usort($result, function ($a, $b) use ($n) {
+            $a1 = isset($a['sortIndex']) ? $a['sortIndex'] : $n;
+            $b1 = isset($b['sortIndex']) ? $b['sortIndex'] : $n;
+            return $a1 - $b1;
+        });
+        foreach ($result as &$value) {
+            unset($value['sortIndex']);
         }
 
         return $result;

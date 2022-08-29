@@ -285,6 +285,7 @@
                                             ></i>
                                         </b-button>
                                     </div>
+                                    <div slot="sort"><i class="fa fa-align-justify handle sort-handle"></i></div>
                                 </v-client-table>
                             </b-form-group>
                         </b-col>
@@ -307,13 +308,17 @@
 </template>
 <script>
 import Multiselect from "vue-multiselect";
+import draggable from "vuedraggable";
+import eventBus from "../../../home/EventBus/eventBus";
 import Api from "./Api/CaseList";
 import IconPicker from "../../../components/iconPicker/IconPicker.vue";
 import ModalPreview from "../../Modals/ModalPreview.vue";
+import _ from 'lodash';
 
 export default {
     name: "CaseListSketh",
     components: {
+        draggable,
         Multiselect,
         IconPicker,
         IconPicker,
@@ -322,6 +327,8 @@ export default {
     props: ["params", "module"],
     data() {
         return {
+            enabled: true,
+            dragging: false,
             icon: "fas fa-user-cog",
             isLoading: false,
             isButtonDisabled: false,
@@ -349,6 +356,7 @@ export default {
                 texts: {
                     count: "",
                 },
+                isDraggable: false,
             },
             dataCaseList: [],
             columnsCaseList: [
@@ -359,6 +367,7 @@ export default {
                 "typeSearch",
                 "enableFilter",
                 "action",
+                "sort",
             ],
             caseListOptions: {
                 headings: {
@@ -368,6 +377,7 @@ export default {
                     typeSearch: this.$i18n.t("ID_TYPE_OF_SEARCHING"),
                     enableFilter: this.$i18n.t("ID_ENABLE_SEARCH_FILTER"),
                     action: "",
+                    sort: "",
                 },
                 filterable: false,
                 perPage: 1000,
@@ -376,6 +386,7 @@ export default {
                 texts: {
                     count: "",
                 },
+                isDraggable: true,
             },
             defaultCaseList: [],
             isValidName: null,
@@ -390,10 +401,15 @@ export default {
         },
     },
     mounted() {
+        let that = this;
         this.getDefaultColumns(this.module.key);
         if(this.params.id) {
             this.editMode();
         }
+
+        eventBus.$on("sort-case-list", (data) => {
+            that.sortCaseList(data);
+        });
     },
     methods: {
         /**
@@ -745,6 +761,12 @@ export default {
         disabledField(field){
             const fields = [ "due_date" , "process_category" , "process_name" , "priority" ];
             return !(fields.indexOf(field) == -1);
+        },
+        sortCaseList(data) {
+            let auxList = _.cloneDeep(this.dataCaseList);
+            let aux = auxList.splice(data.oldIndex, 1);
+            auxList.splice(data.newIndex, 0, aux[0]);
+            this.dataCaseList = auxList;
         }
     },
 };
@@ -780,5 +802,8 @@ export default {
 
 .invalid .typo__label {
     color: #f04124;
+}
+.sort-handle {
+    color: gray
 }
 </style>
