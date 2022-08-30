@@ -268,7 +268,6 @@ class NotificationDevice
             $dataGroupVariable = isset($appFields["APP_DATA"][$nextTaskGroupVariable]) ? $appFields["APP_DATA"][$nextTaskGroupVariable] 
                 : (isset($appFields[$nextTaskGroupVariable]) ? $appFields[$nextTaskGroupVariable] : '');
             if (!empty($dataGroupVariable)) {
-                $dataGroupVariable = $appFields["APP_DATA"][$nextTaskGroupVariable];
                 $dataGroupVariable = (is_array($dataGroupVariable))? $dataGroupVariable : trim($dataGroupVariable);
                 if (!empty($dataGroupVariable) && is_array($dataGroupVariable)){
                     $arrayTaskUser[] = $dataGroupVariable;
