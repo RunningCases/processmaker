@@ -214,10 +214,7 @@ class CaseList extends Model
             if (!property_exists($uscSetting->{$type}->customCaseList, $calId)) {
                 continue;
             }
-            if (!property_exists($uscSetting->{$type}->customCaseList->{$calId}, 'columns')) {
-                continue;
-            }
-            $uscSetting->{$type}->customCaseList->{$calId}->columns = ['detail', 'actions'];
+            unset($uscSetting->{$type}->customCaseList->{$calId});
             UserConfig::editSetting($userConfig->USR_ID, 'userConfig', (array) $uscSetting);
         }
     }
