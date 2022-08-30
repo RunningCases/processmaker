@@ -35,7 +35,7 @@ class CasesMenuHighlightTest extends TestCase
     {
         global $RBAC;
 
-        $this->user = User::where('USR_ID', '=', 1)->get()->first();
+        $this->user = User::where('USR_ID', '=', 1)->first();
 
         $_SESSION['USER_LOGGED'] = $this->user['USR_UID'];
 

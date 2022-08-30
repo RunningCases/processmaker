@@ -61,7 +61,7 @@ class EmailServerTest extends TestCase
     private function loadUserSession()
     {
         global $RBAC;
-        $user = User::where('USR_ID', '=', 1)->get()->first();
+        $user = User::where('USR_ID', '=', 1)->first();
         $_SESSION['USER_LOGGED'] = $user['USR_UID'];
         $RBAC = RBAC::getSingleton(PATH_DATA, session_id());
         $RBAC->initRBAC();

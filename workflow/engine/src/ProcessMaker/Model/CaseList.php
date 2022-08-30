@@ -93,7 +93,6 @@ class CaseList extends Model
                 'ADDITIONAL_TABLES.ADD_TAB_NAME',
                 'ADDITIONAL_TABLES.PRO_UID'
             ])
-            ->get()
             ->first();
 
         return $caseList;
@@ -176,7 +175,7 @@ class CaseList extends Model
 
         $caseList = CaseList::where('CAL_ID', '=', $id);
         $caseList->update($attributes);
-        $model = $caseList->get()->first();
+        $model = $caseList->first();
         if (!is_null($model)) {
             $model->CAL_COLUMNS = json_decode($model->CAL_COLUMNS);
         }
@@ -230,7 +229,7 @@ class CaseList extends Model
     public static function deleteSetting(int $id)
     {
         $caseList = CaseList::where('CAL_ID', '=', $id);
-        $model = $caseList->get()->first();
+        $model = $caseList->first();
         if (!is_null($model)) {
             $caseList->delete();
             $model->CAL_COLUMNS = json_decode($model->CAL_COLUMNS);
@@ -315,7 +314,6 @@ class CaseList extends Model
                 'CASE_LIST.*',
                 'ADDITIONAL_TABLES.ADD_TAB_NAME'
             ])
-            ->get()
             ->first();
         if (empty($model)) {
             throw new Exception(G::LoadTranslation('ID_DOES_NOT_EXIST'));
@@ -363,7 +361,6 @@ class CaseList extends Model
 
             //the pmtable not exist
             $table = AdditionalTables::where('ADD_TAB_NAME', '=', $tableName)
-                ->get()
                 ->first();
             if ($table === null) {
                 return [
@@ -393,7 +390,6 @@ class CaseList extends Model
 
             //the name of the case list already exist
             $list = CaseList::where('CAL_NAME', '=', $array['name'])
-                ->get()
                 ->first();
             $requestData['duplicateName'] = $requestData['duplicateName'] ?? '';
             if ($requestData['duplicateName'] !== 'continue') {

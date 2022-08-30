@@ -162,7 +162,6 @@ try {
             $dateCreate = empty($_REQUEST["UEA_DATE_CREATE"]) ? date("Y-m-d H:i:s") : $_REQUEST["UEA_DATE_CREATE"];
 
             $userExtendedAttributes = UserExtendedAttributes::where('UEA_ID', '=', $id)
-                    ->get()
                     ->first();
             if (empty($userExtendedAttributes)) {
                 $userExtendedAttributes = new UserExtendedAttributes();
@@ -194,7 +193,6 @@ try {
             $userExtendedAttributes = UserExtendedAttributes::query()
                     ->where('UEA_NAME', '=', trim($name))
                     ->where('UEA_ID', '<>', $id)
-                    ->get()
                     ->first();
             $result = [
                 "valid" => empty($userExtendedAttributes),
@@ -208,7 +206,6 @@ try {
             $userExtendedAttributes = UserExtendedAttributes::query()
                     ->where('UEA_ATTRIBUTE_ID', '=', trim($attributeId))
                     ->where('UEA_ID', '<>', $id)
-                    ->get()
                     ->first();
             $result = [
                 "valid" => empty($userExtendedAttributes),
@@ -221,7 +218,6 @@ try {
             $attributeId = empty($_REQUEST["attributeId"]) ? "" : $_REQUEST["attributeId"];
             $user = User::query()
                     ->where("USR_EXTENDED_ATTRIBUTES_DATA", "LIKE", "%\"{$attributeId}\"%")
-                    ->get()
                     ->first();
             $isUsed = false;
             $message = "";

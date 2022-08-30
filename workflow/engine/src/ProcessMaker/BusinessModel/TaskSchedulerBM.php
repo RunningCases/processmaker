@@ -350,7 +350,6 @@ class TaskSchedulerBM
             $scheduler = TaskScheduler::select()
                 ->where('title', '=', $service['title'])
                 ->where('description', '=', $service['description'])
-                ->get()
                 ->first();
             if (is_null($scheduler)) {
                 self::registerScheduledTask($service);

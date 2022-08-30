@@ -29,7 +29,6 @@ class UserConfig extends Model
     {
         $userConfig = UserConfig::where('USR_ID', '=', $id)
             ->where('USC_NAME', '=', $name)
-            ->get()
             ->first();
         if (empty($userConfig)) {
             return null;

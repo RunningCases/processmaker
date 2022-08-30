@@ -308,7 +308,6 @@ class Home
             ->where('CAL_ID', '=', $id)
             ->join('ADDITIONAL_TABLES', 'ADDITIONAL_TABLES.ADD_TAB_UID', '=', 'CASE_LIST.ADD_TAB_UID')
             ->join('PROCESS', 'PROCESS.PRO_UID', '=', 'ADDITIONAL_TABLES.PRO_UID')
-            ->get()
             ->first();
         if (!empty($caseList)) {
             $tableName = $caseList->ADD_TAB_NAME;

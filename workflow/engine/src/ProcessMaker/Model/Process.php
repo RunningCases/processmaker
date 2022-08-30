@@ -495,7 +495,6 @@ class Process extends Model
         $process = Process::query()
             ->where($key, $proId)
             ->where('PRO_STATUS', 'ACTIVE')
-            ->get()
             ->first();
         return !empty($process);
     }
