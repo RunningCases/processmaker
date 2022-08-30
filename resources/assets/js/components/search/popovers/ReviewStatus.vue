@@ -45,6 +45,9 @@ export default {
             ]
         };
     },
+    created() {
+        this.selected = this.filter[0].value;
+    },
     methods: {
         /**
          * On Ok event handler
