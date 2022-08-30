@@ -868,7 +868,7 @@ export default {
                                 }
                             }
                             that.headings[item.field] = item.name;
-                            if(item.enableFilter){
+                            if(item.set){
                                 columns.push(item.field);
                             }
                         });
