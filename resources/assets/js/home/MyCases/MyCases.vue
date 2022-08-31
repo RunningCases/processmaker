@@ -796,15 +796,13 @@ export default {
 };
 </script>
 <style>
+.VueTables__row {
+  height: 75px;
+}
 .v-container-mycases {
     padding-top: 20px;
     padding-bottom: 20px;
     padding-left: 50px;
     padding-right: 50px;
 }
-/*.btn-clear-sort {
-    position: fixed;
-    margin-top: 16px;
-    margin-left: -11px;
-}*/
 </style>

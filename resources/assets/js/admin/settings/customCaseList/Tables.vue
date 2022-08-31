@@ -12,9 +12,9 @@
         ref="table" 
     >
         <div slot="actions" slot-scope="props">
-            <div @mouseover="updateDataEllipsis(props.row)">
-                <ellipsis v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
-            </div>
+            <div @mouseenter="updateDataEllipsis(props.row)" @mouseleave="showEllipsis = false">
+          <ellipsis v-if="dataEllipsis" :data="dataEllipsis" :ref="'ellipsis' + props.row.APP_UID"> </ellipsis>
+        </div>
         </div>
         <div slot="owner" slot-scope="props">
             <OwnerCell :data="props.row.owner" />
@@ -279,42 +279,51 @@ export default {
         updateDataEllipsis(data) {
             let that = this;
             this.showEllipsis = !this.showEllipsis;
-            if (this.showEllipsis) {
-                this.dataEllipsis = {
-                    buttons: {
-                        note: {
-                            name: "edit",
-                            icon: "far fa-edit",
-                            fn: function() {
-                                that.editCustomCaseList(data);
-                            }
-                        },
-                        open: {
-                            name: "delete",
-                            icon: "far fa-trash-alt",
-                            color: "red",
-                            fn: function() {
-                                that.showModalDelete(data);
-                            }
-                        },
-                        reassign: {
-                            name: "download",
-                            icon: "fas fa-arrow-circle-down",
-                            fn: function() {
-                                that.downloadCaseList(data);
-                            }
-                        },
-                        preview: {
-                            name: "preview",
-                            icon: "fas fa-tv",
-                            color: "green",
-                            fn: function() {
-                                that.showPreview(data);
-                            }
+            this.dataEllipsis = {
+                buttons: {
+                    note: {
+                        name: "edit",
+                        icon: "far fa-edit",
+                        fn: function() {
+                            that.editCustomCaseList(data);
+                        }
+                    },
+                    open: {
+                        name: "delete",
+                        icon: "far fa-trash-alt",
+                        color: "red",
+                        fn: function() {
+                            that.showModalDelete(data);
+                        }
+                    },
+                    reassign: {
+                        name: "download",
+                        icon: "fas fa-arrow-circle-down",
+                        fn: function() {
+                            that.downloadCaseList(data);
+                        }
+                    },
+                    preview: {
+                        name: "preview",
+                        icon: "fas fa-tv",
+                        color: "green",
+                        fn: function() {
+                            that.showPreview(data);
                         }
                     }
                 }
             }
+            if (this.showEllipsis) {
+                for (let ellipsis in this.$refs) {
+                    if (!ellipsis.indexOf('ellipsis')) {
+                        if (ellipsis !== 'ellipsis' + data.APP_UID) {
+                            this.$refs[ellipsis].hideActionButtons();
+                        }
+                    }
+                }
+                this.showEllipsis = false;
+            }
+            
         },
         importCustomCaseList() {
             this.$refs["modal-import"].show();
@@ -323,6 +332,9 @@ export default {
 };
 </script>
 <style>
+.VueTables__row {
+  height: 75px;
+}
 .float-right {
     padding-left: 1.5%;
 }

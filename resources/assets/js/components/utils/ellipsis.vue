@@ -1,5 +1,14 @@
 <template>
     <div>
+        <div 
+            class="ellipsis-button align-middle"
+            v-show="!showActions"
+            @mouseover="showActionButtons"
+        >
+            <span>
+                <i class="fas fa-ellipsis-v"></i>
+            </span>
+        </div>
         <div class="float-right" v-show="showActions">
             <transition name="fade">
                 <div
@@ -20,15 +29,6 @@
                     </div>
                 </div>
             </transition>
-        </div>
-        <div 
-            class="ellipsis-button align-middle"
-            v-show="!showActions"
-            @mouseover="showActionButtons"
-        >
-            <span>
-                <i class="fas fa-ellipsis-v"></i>
-            </span>
         </div>
     </div>
 </template>
@@ -124,6 +124,7 @@ export default {
         z-index: 999;
         display: inline-flex !important;
         opacity: 1 !important;
+        height: 50px !important;
     }
     .btn-outline-info {
         border: none;

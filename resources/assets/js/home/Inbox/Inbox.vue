@@ -119,8 +119,8 @@
         slot="actions"
         slot-scope="props"
       >
-        <div @mouseover="updateDataEllipsis(props.row)">
-          <ellipsis v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
+        <div @mouseenter="updateDataEllipsis(props.row, view = true)" @mouseleave="showEllipsis = false">
+          <ellipsis v-if="dataEllipsis" :data="dataEllipsis" :ref="'ellipsis' + props.row.APP_UID"> </ellipsis>
         </div>
       </div>
     </v-server-table>
@@ -932,44 +932,52 @@ export default {
      * Show options in the ellipsis 
      * @param {objec} data
      */
-    updateDataEllipsis(data) {
-        let that = this;
-        this.showEllipsis = !this.showEllipsis;
-        if (this.showEllipsis) {
-          this.dataEllipsis = {
-            buttons: {
-              open: {
-                name: "open",
-                icon: "far fa-edit",
-                fn: function() {
-                  that.openCase(data)
-                }
-              },
-              note: {
-                name: "case note",
-                icon: "far fa-comments",
-                fn: function() {
-                  that.openComments(data);
-                }
-              },
-              reassign: {
-                name: "reassign case",
-                icon: "fas fa-undo",
-                fn: function() {
-                  that.showModalReassign(data);
-                }
-              },
-              pause: {
-                name: "pause case",
-                icon: "far fa-pause-circle",
-                fn: function() {
-                  that.showModalPause(data);
-                }
-              }
+    updateDataEllipsis(data, view = false) {
+      let that = this;
+      this.showEllipsis = !this.showEllipsis;
+      this.dataEllipsis = {
+        buttons: {
+          open: {
+            name: "open",
+            icon: "far fa-edit",
+            fn: function() {
+              that.openCase(data)
+            }
+          },
+          note: {
+            name: "case note",
+            icon: "far fa-comments",
+            fn: function() {
+              that.openComments(data);
+            }
+          },
+          reassign: {
+            name: "reassign case",
+            icon: "fas fa-undo",
+            fn: function() {
+              that.showModalReassign(data);
+            }
+          },
+          pause: {
+            name: "pause case",
+            icon: "far fa-pause-circle",
+            fn: function() {
+              that.showModalPause(data);
             }
           }
         }
-      },
+      }
+      if (this.showEllipsis && view) {
+        for (let ellipsis in this.$refs) {
+          if (!ellipsis.indexOf('ellipsis')) {
+            if (ellipsis !== 'ellipsis' + data.APP_UID) {
+              this.$refs[ellipsis].hideActionButtons();
+            }
+          }
+        }
+        this.showEllipsis = false;
+      }
+    },
       /**
        * Show the alert message
        * @param {string} message - message to be displayen in the body
@@ -1024,6 +1032,9 @@ export default {
 };
 </script>
 <style>
+.VueTables__row {
+  height: 75px;
+}
 .v-container-todo {
   padding-top: 20px;
   padding-bottom: 20px;

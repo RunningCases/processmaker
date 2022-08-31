@@ -107,8 +107,8 @@
         slot="actions"
         slot-scope="props"
       >
-        <div @mouseover="updateDataEllipsis(props.row)">
-          <ellipsis v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
+        <div @mouseenter="updateDataEllipsis(props.row, view = true)" @mouseleave="showEllipsis = false">
+          <ellipsis v-if="dataEllipsis" :data="dataEllipsis" :ref="'ellipsis' + props.row.APP_UID"> </ellipsis>
         </div>
       </div>
     </v-server-table>
@@ -879,28 +879,36 @@ export default {
      * Show options in the ellipsis 
      * @param {object} data
      */
-    updateDataEllipsis(data) {
+    updateDataEllipsis(data, view = false) {
       let that = this;
       this.showEllipsis = !this.showEllipsis;
-      if (this.showEllipsis) {
-        this.dataEllipsis = {
-          buttons: {
-            note: {
-              name: "case note",
-              icon: "far fa-comments",
-              fn: function() {
-                that.openComments(data);
-              }
-            },
-            claim: {
-              name: "claim case",
-              icon: "fas fa-briefcase",
-              fn: function() {
-                that.claimCase(data);
-              }
+      this.dataEllipsis = {
+        buttons: {
+          note: {
+            name: "case note",
+            icon: "far fa-comments",
+            fn: function() {
+              that.openComments(data);
+            }
+          },
+          claim: {
+            name: "claim case",
+            icon: "fas fa-briefcase",
+            fn: function() {
+              that.claimCase(data);
             }
           }
         }
+      }
+      if (this.showEllipsis && view) {
+        for (let ellipsis in this.$refs) {
+          if (!ellipsis.indexOf('ellipsis')) {
+            if (ellipsis !== 'ellipsis' + data.APP_UID) {
+              this.$refs[ellipsis].hideActionButtons();
+            }
+          }
+        }
+        this.showEllipsis = false;
       }
     },
     /**
@@ -957,6 +965,9 @@ export default {
 };
 </script>
 <style>
+.VueTables__row {
+  height: 75px;
+}
 .v-container-unassigned {
   padding-top: 20px;
   padding-bottom: 20px;

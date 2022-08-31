@@ -662,6 +662,9 @@ export default {
 };
 </script>
 <style>
+.VueTables__row {
+  height: 75px;
+}
 .VuePagination__count {
     display: none;
 }
