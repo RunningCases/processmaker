@@ -68,7 +68,14 @@ class Configurations // extends Configuration
         }
 
         foreach ($from as $k => $v) {
-            if (isset($v) && array_key_exists($k, $object)) {
+            $existKeyInObject = false;
+            if (is_object($object)) {
+                $existKeyInObject = property_exists($object, $k);
+            }
+            if (is_array($object)) {
+                $existKeyInObject = array_key_exists($k, $object);
+            }
+            if (isset($v) && $existKeyInObject) {
                 if (is_object($v)) {
                     throw new Exception('Object is not permited inside configuration array.');
                 }

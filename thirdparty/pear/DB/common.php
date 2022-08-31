@@ -1348,7 +1348,7 @@ class DB_common extends PEAR
         if (!is_array($row = $res->fetchRow($fetchmode))) {
             $ret = array();
         } else {
-            if (!array_key_exists($col, $row)) {
+            if (is_array($row) && !array_key_exists($col, $row)) {
                 $ret =& $this->raiseError(DB_ERROR_NOSUCHFIELD);
             } else {
                 $ret = array($row[$col]);

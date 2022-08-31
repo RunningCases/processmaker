@@ -553,7 +553,7 @@ function upgradeContent($args, $opts)
  * Verify if we need to execute an external program for each workspace
  * If we apply the command for all workspaces, we will need to execute one by one by redefining the constants
  * @param string $args, workspaceName that we need to apply the database-upgrade
- * @param string $opts
+ * @param array $opts
  *
  * @return void
  */
