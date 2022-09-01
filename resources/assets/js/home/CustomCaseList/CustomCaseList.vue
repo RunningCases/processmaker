@@ -128,10 +128,11 @@
                 slot="actions"
                 slot-scope="props"
             >
-                <div @mouseover="updateDataEllipsis(props.row)">
+                <div @mouseenter="updateDataEllipsis(props.row, view = true)" @mouseleave="showEllipsis = false">
                     <ellipsis
                         v-if="dataEllipsis"
                         :data="dataEllipsis"
+                        :ref="'ellipsis' + props.row.APP_UID"
                     >
                     </ellipsis>
                 </div>
@@ -1151,10 +1152,18 @@ export default {
          * Show options in the ellipsis
          * @param {objec} data
          */
-        updateDataEllipsis(data) {
+        updateDataEllipsis(data, view = false) {
             this.showEllipsis = !this.showEllipsis;
-            if (this.showEllipsis) {
-                this.dataEllipsis = this.ellipsisItemFactory(data, this.data.pageParent);
+            this.dataEllipsis = this.ellipsisItemFactory(data, this.data.pageParent);
+            if (this.showEllipsis && view) {
+                for (let ellipsis in this.$refs) {
+                    if (!ellipsis.indexOf('ellipsis')) {
+                        if (ellipsis !== 'ellipsis' + data.APP_UID) {
+                            this.$refs[ellipsis].hideActionButtons();
+                        }
+                    }
+                }
+                this.showEllipsis = false;
             }
         },
         /**
@@ -1334,6 +1343,9 @@ export default {
 };
 </script>
 <style>
+.VueTables__row {
+  height: 75px;
+}
 .v-container-todo {
     padding-top: 20px;
     padding-bottom: 20px;
