@@ -718,7 +718,7 @@
                     this.validate.USR_EMAIL.message = this.$root.translation('ID_IS_REQUIRED');
                     return;
                 }
-                if (/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@([a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4}))|((([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))$/i.test(this.form.USR_EMAIL) === false) {
+                if (/^(\w+)([-+.'][\w]+)*@(\w[-\w]*\.){1,5}([A-Za-z]){2,6}$/.test(this.form.USR_EMAIL) === false) {
                     this.validate.USR_EMAIL.state = false;
                     this.validate.USR_EMAIL.message = this.$root.translation('ID_INVALID_VALUE', [this.$root.translation('ID_EMAIL')]);
                 }
