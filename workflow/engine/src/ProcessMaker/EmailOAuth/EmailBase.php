@@ -379,13 +379,17 @@ trait EmailBase
      */
     public function sendTestMailWithPHPMailerOAuth($provider = 'League\OAuth2\Client\Provider\Google'): PHPMailerOAuth
     {
+        $options = [
+            'clientId' => $this->clientID,
+            'clientSecret' => $this->clientSecret,
+            'accessType' => 'offline'
+        ];
+        if ($provider === 'Stevenmaguire\OAuth2\Client\Provider\Microsoft') {
+            $options['urlAuthorize'] = self::URL_AUTHORIZE;
+            $options['urlAccessToken'] = self::URL_ACCESS_TOKEN;
+        }
         $phpMailerOAuth = new PHPMailerOAuth([
-            'provider' => new $provider([
-                'clientId' => $this->clientID,
-                'clientSecret' => $this->clientSecret,
-                'redirectUri' => $this->refreshToken,
-                'accessType' => 'offline'
-                ]),
+            'provider' => new $provider($options),
             'clientId' => $this->clientID,
             'clientSecret' => $this->clientSecret,
             'refreshToken' => $this->refreshToken,

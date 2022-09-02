@@ -20,10 +20,9 @@ try {
     $office365Client = $office365OAuth->getOffice365Client();
 
     $accessToken = $office365Client->getAccessToken('authorization_code', [
-        'code' => $_GET['code']
+        'code' => $_GET['code'],
+        'scope' => Office365OAuth::SMTP_SCOPE
     ]);
-
-    $token = $accessToken->getToken();
 
     $office365OAuth->setRefreshToken($accessToken->getRefreshToken());
     $office365OAuth->saveEmailServer();

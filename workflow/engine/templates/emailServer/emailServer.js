@@ -635,8 +635,8 @@ emailServer.application = {
                 ["IMAP", "SMTP - IMAP (PHPMailer)"],
                 /*----------------------------------********---------------------------------*/
                 ["MAIL", "Mail (PHP)"],
-                ["GMAILAPI", "GMAIL API (PHPMailer)"],
-                ["OFFICE365API", "OFFICE 365 API (PHPMailer)"]
+                ["GMAILAPI", "GMAIL API SMTP-IMAP"],
+                ["OFFICE365API", "OFFICE 365 API SMTP-IMAP"]
             ]
         });
 

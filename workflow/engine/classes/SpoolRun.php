@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Log;
 use PHPMailer\PHPMailer\OAuth;
 use PHPMailer\PHPMailer\PHPMailer;
 use ProcessMaker\Core\System;
+use ProcessMaker\Office365OAuth\Office365OAuth;
 
 /**
  * @package workflow.engine.ProcessMaker
@@ -565,6 +566,12 @@ class SpoolRun
                                 $phpMailer->Username = $this->config['MESS_ACCOUNT'];
                                 $phpMailer->Password = $this->config['MESS_PASSWORD'];
                             } else {
+                                // Define initial options for the provider
+                                $options = [
+                                    'clientId' => $this->config['OAUTH_CLIENT_ID'],
+                                    'clientSecret' => $this->config['OAUTH_CLIENT_SECRET'],
+                                    'accessType' => 'offline'
+                                ];
                                 // Get provider
                                 switch ($this->config['MESS_ENGINE']) {
                                     case 'GMAILAPI':
@@ -572,18 +579,14 @@ class SpoolRun
                                         break;
                                     case 'OFFICE365API':
                                         $providerClass = '\Stevenmaguire\OAuth2\Client\Provider\Microsoft';
+                                        $options['urlAuthorize'] = Office365OAuth::URL_AUTHORIZE;
+                                        $options['urlAccessToken'] = Office365OAuth::URL_ACCESS_TOKEN;
                                         break;
                                     default:
                                         throw new Exception('Only Google and Microsoft OAuth2 providers are currently supported.');
                                         break;
                                 }
-                                $provider = new $providerClass(
-                                    [
-                                        'clientId' => $this->config['OAUTH_CLIENT_ID'],
-                                        'clientSecret' => $this->config['OAUTH_CLIENT_SECRET'],
-                                        'accessType' => 'offline'
-                                    ]
-                                );
+                                $provider = new $providerClass($options);
 
                                 // Set OAuth to use
                                 $phpMailer->setOAuth(
