@@ -4263,6 +4263,20 @@ class WorkspaceTools
                                     APP_STATUS_ID = 0");
         $con->commit();
 
+        // Populating APPLICATION.PRO_ID
+        CLI::logging("->   Populating APPLICATION.PRO_ID \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $stmt->executeQuery("UPDATE `APPLICATION` AS `AP`
+                            INNER JOIN (
+                                SELECT `PROCESS`.`PRO_UID`, `PROCESS`.`PRO_ID`
+                                FROM `PROCESS`
+                            ) AS `PRO`
+                            ON (`AP`.`PRO_UID` = `PRO`.`PRO_UID`)
+                            SET `AP`.`PRO_ID` = `PRO`.`PRO_ID`
+                            WHERE `AP`.`PRO_ID` = 0");
+        $con->commit();
+
         // Populating APPLICATION.APP_INIT_USER_ID
         CLI::logging("->   Populating APPLICATION.APP_INIT_USER_ID  \n");
         $con->begin();
