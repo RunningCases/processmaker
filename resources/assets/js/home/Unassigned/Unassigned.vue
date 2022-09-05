@@ -107,9 +107,7 @@
         slot="actions"
         slot-scope="props"
       >
-        <div @mouseenter="updateDataEllipsis(props.row, view = true)" @mouseleave="showEllipsis = false">
-          <ellipsis v-if="dataEllipsis" :data="dataEllipsis" :ref="'ellipsis' + props.row.APP_UID"> </ellipsis>
-        </div>
+        <ellipsis :data="updateDataEllipsis(props.row)"> </ellipsis>
       </div>
     </v-server-table>
     <VueCardView
@@ -129,9 +127,7 @@
             </div>
           </b-col>
           <b-col sm="12">
-            <div class="ellipsis-container" @mouseover="updateDataEllipsis(props.item)">
-              <ellipsis v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
-            </div>
+            <ellipsis class="ellipsis-container" :data="updateDataEllipsis(props.item)"> </ellipsis>
           </b-col>
         </b-row>
       </div>
@@ -273,9 +269,7 @@
             </div>
           </b-col>
           <b-col sm="12">
-            <div class="ellipsis-container" @mouseover="updateDataEllipsis(props.item)">
-              <ellipsis v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
-            </div>
+            <ellipsis class="ellipsis-container" :data="updateDataEllipsis(props.item)"> </ellipsis>
           </b-col>
         </b-row>
       </div>
@@ -549,10 +543,6 @@ export default {
           "PAUSED": this.$i18n.t("ID_PAUSED"),
           "UNASSIGNED": this.$i18n.t("ID_UNASSIGNED")
       },
-      dataEllipsis: {
-        buttons: {}
-      },
-      showEllipsis: false,
       dataSubtitle: null
     };
   },
@@ -879,10 +869,10 @@ export default {
      * Show options in the ellipsis 
      * @param {object} data
      */
-    updateDataEllipsis(data, view = false) {
+    updateDataEllipsis(data) {
       let that = this;
-      this.showEllipsis = !this.showEllipsis;
-      this.dataEllipsis = {
+      return {
+        APP_UID: data.APP_UID,
         buttons: {
           note: {
             name: "case note",
@@ -899,16 +889,6 @@ export default {
             }
           }
         }
-      }
-      if (this.showEllipsis && view) {
-        for (let ellipsis in this.$refs) {
-          if (!ellipsis.indexOf('ellipsis')) {
-            if (ellipsis !== 'ellipsis' + data.APP_UID) {
-              this.$refs[ellipsis].hideActionButtons();
-            }
-          }
-        }
-        this.showEllipsis = false;
       }
     },
     /**
