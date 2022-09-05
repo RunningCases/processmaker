@@ -18,7 +18,6 @@ class Step extends Model
             ->where('TAS_UID', '=', $tasUid)
             ->where('STEP_TYPE_OBJ', '=', $stepTypeObj)
             ->where('STEP_UID_OBJ', '=', $stepUidObj)
-            ->get()
             ->first();
         return $step;
     }

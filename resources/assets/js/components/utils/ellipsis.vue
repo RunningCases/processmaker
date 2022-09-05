@@ -1,5 +1,14 @@
 <template>
     <div>
+        <div 
+            class="ellipsis-button align-middle"
+            v-show="!showActions"
+            @mouseenter="showActionButtons"
+        >
+            <span>
+                <i class="fas fa-ellipsis-v"></i>
+            </span>
+        </div>
         <div class="float-right" v-show="showActions">
             <transition name="fade">
                 <div
@@ -21,19 +30,11 @@
                 </div>
             </transition>
         </div>
-        <div 
-            class="ellipsis-button align-middle"
-            v-show="!showActions"
-            @mouseover="showActionButtons"
-        >
-            <span>
-                <i class="fas fa-ellipsis-v"></i>
-            </span>
-        </div>
     </div>
 </template>
 
 <script>
+import eventBus from "./../../home/EventBus/eventBus"
 export default {
     name: "Ellipsis",
     props: {
@@ -44,7 +45,16 @@ export default {
             showActions: false
         }
     },
-    mounted () {},
+    mounted () {
+        eventBus.$on('closeEllipsis', this.hideActionButtons);
+    },
+    deactivated () {
+        eventBus.$off('closeEllipsis', this.hideActionButtons);
+    },
+    destroyed () {
+        eventBus.$off('closeEllipsis', this.hideActionButtons);
+    },
+
     methods: {
         /**
          * Callback function from parent
@@ -63,6 +73,7 @@ export default {
             this.showActions = true;
             if (this.showActions) {
                 if (this.$parent.Row !== undefined) {
+                    eventBus.$emit('closeEllipsis', this.data);
                     for (i = 0; i < this.$parent.$parent.$parent.$children.length -1 ; i++){
                         this.$parent.$parent.$parent.$children[i].$el.style.opacity = 0.15
                     }
@@ -82,16 +93,20 @@ export default {
         },
         /**
          * Hide action buttons
+         * @param {object} dataE
          */
-        hideActionButtons() {
+        hideActionButtons(dataE) {
             var i,
                 elelemts;
-            this.showActions = false;
             if (this.$parent.Row !== undefined) {
-                for (i = 0; i < this.$parent.$parent.$parent.$children.length -1 ; i++){
-                    this.$parent.$parent.$parent.$children[i].$el.style.opacity = 1
+                if (this.data.APP_UID !== dataE.APP_UID) {
+                    this.showActions = false;
+                    for (i = 0; i < this.$parent.$parent.$parent.$children.length -1 ; i++){
+                        this.$parent.$parent.$parent.$children[i].$el.style.opacity = 1
+                    }
                 }
             } else if (this.$parent.item !== undefined) {
+                this.showActions = false;
                 if (this.$parent.$parent.$parent.$refs.vueListView !== undefined) {
                     elelemts = this.$parent.$el.getElementsByClassName('col-sm-5');
                     elelemts[0].style.opacity = 1;
@@ -124,6 +139,7 @@ export default {
         z-index: 999;
         display: inline-flex !important;
         opacity: 1 !important;
+        height: 50px !important;
     }
     .btn-outline-info {
         border: none;

@@ -139,7 +139,6 @@ class AppNotesTest extends TestCase
     public function it_should_test_send_note_notification_without_user()
     {
         $user = User::where('USR_UID', '=', '00000000000000000000000000000001')
-                ->get()
                 ->first();
         $application = factory(Application::class)->create();
         $delegation = factory(Delegation::class)->create([
@@ -159,7 +158,7 @@ class AppNotesTest extends TestCase
         $appNotes->sendNoteNotification(...$params);
 
         //assert
-        $appMessage = AppMessage::where('APP_UID', '=', $application->APP_UID)->get()->first()->toArray();
+        $appMessage = AppMessage::where('APP_UID', '=', $application->APP_UID)->first()->toArray();
         $this->assertArrayHasKey('APP_UID', $appMessage);
         $this->assertEquals($appMessage['APP_UID'], $application->APP_UID);
     }
@@ -172,7 +171,6 @@ class AppNotesTest extends TestCase
     public function it_should_test_send_note_notification_with_attach_files()
     {
         $user = User::where('USR_UID', '=', '00000000000000000000000000000001')
-                ->get()
                 ->first();
         $application = factory(Application::class)->create();
         $delegation = factory(Delegation::class)->create([
@@ -200,7 +198,7 @@ class AppNotesTest extends TestCase
         $appNotes->sendNoteNotification(...$params);
 
         //assert
-        $appMessage = AppMessage::where('APP_UID', '=', $application->APP_UID)->get()->first()->toArray();
+        $appMessage = AppMessage::where('APP_UID', '=', $application->APP_UID)->first()->toArray();
         $this->assertArrayHasKey('APP_UID', $appMessage);
         $this->assertEquals($appMessage['APP_UID'], $application->APP_UID);
     }

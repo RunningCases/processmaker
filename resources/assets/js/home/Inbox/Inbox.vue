@@ -119,9 +119,7 @@
         slot="actions"
         slot-scope="props"
       >
-        <div @mouseover="updateDataEllipsis(props.row)">
-          <ellipsis v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
-        </div>
+        <ellipsis :data="updateDataEllipsis(props.row)"> </ellipsis>
       </div>
     </v-server-table>
     <VueCardView
@@ -141,9 +139,7 @@
             </div>
           </b-col>
           <b-col sm="12">
-            <div class="ellipsis-container" @mouseover="updateDataEllipsis(props.item)">
-              <ellipsis v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
-            </div>
+            <ellipsis class="ellipsis-container" :data="updateDataEllipsis(props.item)"> </ellipsis>
           </b-col>
         </b-row>
       </div>
@@ -285,9 +281,7 @@
             </div>
           </b-col>
           <b-col sm="12">
-            <div class="ellipsis-container" @mouseover="updateDataEllipsis(props.item)">
-              <ellipsis v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
-            </div>
+            <ellipsis class="ellipsis-container" :data="updateDataEllipsis(props.item)"> </ellipsis>
           </b-col>
         </b-row>
       </div>
@@ -564,10 +558,6 @@ export default {
         PAUSED: this.$i18n.t("ID_PAUSED"),
         UNASSIGNED: this.$i18n.t("ID_UNASSIGNED"),
       },
-      dataEllipsis: {
-        buttons: {}
-      },
-      showEllipsis: false,
       dataSubtitle: null,
     };
   },
@@ -933,43 +923,41 @@ export default {
      * @param {objec} data
      */
     updateDataEllipsis(data) {
-        let that = this;
-        this.showEllipsis = !this.showEllipsis;
-        if (this.showEllipsis) {
-          this.dataEllipsis = {
-            buttons: {
-              open: {
-                name: "open",
-                icon: "far fa-edit",
-                fn: function() {
-                  that.openCase(data)
-                }
-              },
-              note: {
-                name: "case note",
-                icon: "far fa-comments",
-                fn: function() {
-                  that.openComments(data);
-                }
-              },
-              reassign: {
-                name: "reassign case",
-                icon: "fas fa-undo",
-                fn: function() {
-                  that.showModalReassign(data);
-                }
-              },
-              pause: {
-                name: "pause case",
-                icon: "far fa-pause-circle",
-                fn: function() {
-                  that.showModalPause(data);
-                }
-              }
+      let that = this;
+      return {
+        APP_UID: data.APP_UID,
+        buttons: {
+          open: {
+            name: "open",
+            icon: "far fa-edit",
+            fn: function() {
+              that.openCase(data)
+            }
+          },
+          note: {
+            name: "case note",
+            icon: "far fa-comments",
+            fn: function() {
+              that.openComments(data);
+            }
+          },
+          reassign: {
+            name: "reassign case",
+            icon: "fas fa-undo",
+            fn: function() {
+              that.showModalReassign(data);
+            }
+          },
+          pause: {
+            name: "pause case",
+            icon: "far fa-pause-circle",
+            fn: function() {
+              that.showModalPause(data);
             }
           }
         }
-      },
+      }
+    },
       /**
        * Show the alert message
        * @param {string} message - message to be displayen in the body
@@ -1024,6 +1012,9 @@ export default {
 };
 </script>
 <style>
+.VueTables__row {
+  height: 75px;
+}
 .v-container-todo {
   padding-top: 20px;
   padding-bottom: 20px;

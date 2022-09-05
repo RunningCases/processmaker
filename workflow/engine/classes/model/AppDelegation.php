@@ -1,32 +1,9 @@
 <?php
-/**
- * AppDelegation.php
- *
- * @package workflow.engine.classes.model
- *
- * ProcessMaker Open Source Edition
- * Copyright (C) 2004 - 2011 Colosa Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
- * Coral Gables, FL, 33134, USA, or email info@colosa.com.
- *
- */
 
+use Illuminate\Database\Eloquent\Builder;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Plugins\PluginRegistry;
+use ProcessMaker\Util\BatchProcessWithIndexes;
 
 /**
  * Skeleton subclass for representing a row from the 'APP_DELEGATION' table.
@@ -569,35 +546,97 @@ class AppDelegation extends BaseAppDelegation
         }
     }
 
-    //usually this function is called when routing in the flow, so by default cron =0
-    public function calculateDuration($cron = 0)
+    /**
+     * Usually this function is called when routing in the flow, so by default cron = 0
+     * @param int $cron
+     * @return void
+     */
+    public function calculateDuration($cron = 0): void
     {
         $this->writeFileIfCalledFromCronForCalculateDuration($cron);
         $this->patchDataWithValuesForCalculateDuration();
-        $rs = $this->recordSetForCalculateDuration();
-        $rs->next();
-        $row = $rs->getRow();
-        $i = 0;
-        $calendar = new Calendar();
-        $now = new DateTime();
-        while (is_array($row)) {
-            $oAppDel = AppDelegationPeer::retrieveByPk($row['APP_UID'], $row['DEL_INDEX']);
-            $calendar = new Calendar();
-            $calendar->getCalendar($row['USR_UID'], $row['PRO_UID'], $row['TAS_UID']);
-            $calData = $calendar->getCalendarData();
-            $calculatedValues = $this->getValuesToStoreForCalculateDuration($row, $calendar, $calData, $now);
 
-            $oAppDel->setDelStarted($calculatedValues['isStarted']);
-            $oAppDel->setDelFinished($calculatedValues['isFinished']);
-            $oAppDel->setDelDelayed($calculatedValues['isDelayed']);
-            $oAppDel->setDelQueueDuration($calculatedValues['queueTime']);
-            $oAppDel->setDelDelayDuration($calculatedValues['delayTime']);
-            $oAppDel->setDelDuration($calculatedValues['durationTime']);
-            $oAppDel->setAppOverduePercentage($calculatedValues['percentDelay']);
-            $RES = $oAppDel->save();
-            $rs->next();
-            $row = $rs->getRow();
-        }
+        $builder = $this->getAppDelegationTask();
+        $count = $builder->count();
+        $now = new DateTime();
+
+        $batch = new BatchProcessWithIndexes($count);
+        $batch->process(function ($start, $limit) use ($builder, $now) {
+            $results = $builder
+                ->offset($start)
+                ->limit($limit)
+                ->get();
+            foreach ($results as $object) {
+                $appDelegationTask = $object->toArray();
+                $this->updateAppDelegationWithCalendar($appDelegationTask, $now);
+            }
+        });
+    }
+
+    /**
+     * Get APP_DELEGATION and TASK tables where 'started' and 'finished' are 0.
+     * @return iterable
+     */
+    private function getAppDelegationTask(): Builder
+    {
+        $columns = [
+            'APP_DELEGATION.APP_UID',
+            'APP_DELEGATION.DEL_INDEX',
+            'APP_DELEGATION.USR_UID',
+            'APP_DELEGATION.PRO_UID',
+            'APP_DELEGATION.TAS_UID',
+            'APP_DELEGATION.DEL_DELEGATE_DATE',
+            'APP_DELEGATION.DEL_INIT_DATE',
+            'APP_DELEGATION.DEL_TASK_DUE_DATE',
+            'APP_DELEGATION.DEL_FINISH_DATE',
+            'APP_DELEGATION.DEL_DURATION',
+            'APP_DELEGATION.DEL_QUEUE_DURATION',
+            'APP_DELEGATION.DEL_DELAY_DURATION',
+            'APP_DELEGATION.DEL_STARTED',
+            'APP_DELEGATION.DEL_FINISHED',
+            'APP_DELEGATION.DEL_DELAYED',
+            'TASK.TAS_DURATION',
+            'TASK.TAS_TIMEUNIT',
+            'TASK.TAS_TYPE_DAY'
+        ];
+        $builder = Delegation::query()
+            ->select($columns)
+            ->leftjoin('TASK', function ($join) {
+                $join->on('APP_DELEGATION.TAS_UID', '=', 'TASK.TAS_UID');
+            })
+            ->where(function ($query) {
+                $query->where('APP_DELEGATION.DEL_STARTED', '=', 0)
+                ->orWhere('APP_DELEGATION.DEL_FINISHED', '=', 0);
+            })
+            ->orderBy('DELEGATION_ID', 'asc');
+        return $builder;
+    }
+
+    /**
+     * Update the APP_DELEGATION table with the calculated calendar results.
+     * @param array $appDelegationTask
+     * @param DateTime $date
+     * @return void
+     */
+    private function updateAppDelegationWithCalendar(array $appDelegationTask, DateTime $date): void
+    {
+        $calendar = new Calendar();
+        $calendar->getCalendar($appDelegationTask['USR_UID'], $appDelegationTask['PRO_UID'], $appDelegationTask['TAS_UID']);
+        $calData = $calendar->getCalendarData();
+        $calculatedValues = $this->getValuesToStoreForCalculateDuration($appDelegationTask, $calendar, $calData, $date);
+
+        Delegation::select()
+            ->where('APP_UID', '=', $appDelegationTask['APP_UID'])
+            ->where('DEL_INDEX', '=', $appDelegationTask['DEL_INDEX'])
+            ->update([
+                'DEL_STARTED' => $calculatedValues['isStarted'],
+                'DEL_FINISHED' => $calculatedValues['isFinished'],
+                'DEL_DELAYED' => $calculatedValues['isDelayed'],
+                'DEL_QUEUE_DURATION' => $calculatedValues['queueTime'],
+                'DEL_DELAY_DURATION' => $calculatedValues['delayTime'],
+                'DEL_DURATION' => $calculatedValues['durationTime'],
+                'APP_OVERDUE_PERCENTAGE' => $calculatedValues['percentDelay']
+        ]);
     }
 
     public function getValuesToStoreForCalculateDuration($row, $calendar, $calData, $nowDate)
@@ -706,39 +745,6 @@ class AppDelegation extends BaseAppDelegation
         return new DateTime($stringDate);
     }
 
-    private function recordSetForCalculateDuration()
-    {
-        //walk in all rows with DEL_STARTED = 0 or DEL_FINISHED = 0
-        $c = new Criteria('workflow');
-        $c->clearSelectColumns();
-        $c->addSelectColumn(AppDelegationPeer::APP_UID);
-        $c->addSelectColumn(AppDelegationPeer::DEL_INDEX);
-        $c->addSelectColumn(AppDelegationPeer::USR_UID);
-        $c->addSelectColumn(AppDelegationPeer::PRO_UID);
-        $c->addSelectColumn(AppDelegationPeer::TAS_UID);
-        $c->addSelectColumn(AppDelegationPeer::DEL_DELEGATE_DATE);
-        $c->addSelectColumn(AppDelegationPeer::DEL_INIT_DATE);
-        $c->addSelectColumn(AppDelegationPeer::DEL_TASK_DUE_DATE);
-        $c->addSelectColumn(AppDelegationPeer::DEL_FINISH_DATE);
-        $c->addSelectColumn(AppDelegationPeer::DEL_DURATION);
-        $c->addSelectColumn(AppDelegationPeer::DEL_QUEUE_DURATION);
-        $c->addSelectColumn(AppDelegationPeer::DEL_DELAY_DURATION);
-        $c->addSelectColumn(AppDelegationPeer::DEL_STARTED);
-        $c->addSelectColumn(AppDelegationPeer::DEL_FINISHED);
-        $c->addSelectColumn(AppDelegationPeer::DEL_DELAYED);
-        $c->addSelectColumn(TaskPeer::TAS_DURATION);
-        $c->addSelectColumn(TaskPeer::TAS_TIMEUNIT);
-        $c->addSelectColumn(TaskPeer::TAS_TYPE_DAY);
-
-        $c->addJoin(AppDelegationPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
-        $cton1 = $c->getNewCriterion(AppDelegationPeer::DEL_STARTED, 0);
-        $cton2 = $c->getNewCriterion(AppDelegationPeer::DEL_FINISHED, 0);
-        $cton1->addOR($cton2);
-        $c->add($cton1);
-        $rs = AppDelegationPeer::doSelectRS($c);
-        $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        return $rs;
-    }
     private function writeFileIfCalledFromCronForCalculateDuration($cron)
     {
         if ($cron == 1) {

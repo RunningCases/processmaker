@@ -7,6 +7,7 @@ use ProcessMaker\Core\JobsManager;
 use ProcessMaker\Core\System;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Fields;
+use ProcessMaker\Util\BatchProcessWithIndexes;
 
 require_once 'classes/model/om/BaseAdditionalTables.php';
 
@@ -782,19 +783,17 @@ class AdditionalTables extends BaseAdditionalTables
         $reportTableBatchRegeneration = $config['report_table_batch_regeneration'];
 
         // Initializing more variables
-        $size = $n;
-        $start = 0;
-        $limit = $reportTableBatchRegeneration;
+        $batch = new BatchProcessWithIndexes($n);
+        $batch->setLimit($reportTableBatchRegeneration);
 
         // Creating jobs
-        for ($i = 1; $start < $size; $i++) {
-            $closure = function() use($workspace, $tableName, $type, $processUid, $gridKey, $addTabUid, $start, $limit) {
+        $batch->process(function ($start, $limit) use ($workspace, $tableName, $type, $processUid, $gridKey, $addTabUid) {
+            $closure = function () use ($workspace, $tableName, $type, $processUid, $gridKey, $addTabUid, $start, $limit) {
                 $workspaceTools = new WorkspaceTools($workspace);
                 $workspaceTools->generateDataReport($tableName, $type, $processUid, $gridKey, $addTabUid, $start, $limit);
             };
             JobsManager::getSingleton()->dispatch(GenerateReportTable::class, $closure);
-            $start = $i * $limit;
-        }
+        });
     }
 
     /**

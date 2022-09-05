@@ -128,13 +128,7 @@
                 slot="actions"
                 slot-scope="props"
             >
-                <div @mouseover="updateDataEllipsis(props.row)">
-                    <ellipsis
-                        v-if="dataEllipsis"
-                        :data="dataEllipsis"
-                    >
-                    </ellipsis>
-                </div>
+                <ellipsis :data="updateDataEllipsis(props.row)"> </ellipsis>
             </div>
         </v-server-table>
         <VueCardView
@@ -159,12 +153,7 @@
                         </div>
                     </b-col>
                     <b-col sm="12">
-                        <div @mouseover="updateDataEllipsis(props.item)">
-                            <ellipsis 
-                                v-if="dataEllipsis" 
-                                :data="dataEllipsis">
-                            </ellipsis>
-                        </div>
+                        <ellipsis class="ellipsis-container" :data="updateDataEllipsis(props.item)"> </ellipsis>
                     </b-col>
                 </b-row>
             </b-col>
@@ -222,9 +211,7 @@
                 </div>
             </b-col>
             <b-col sm="12">
-                <div class="ellipsis-container" @mouseover="updateDataEllipsis(props.item)">
-                <ellipsis v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
-                </div>
+                <ellipsis class="ellipsis-container" :data="updateDataEllipsis(props.item)"> </ellipsis>
             </b-col>
             </b-row>
         </div>
@@ -445,10 +432,6 @@ export default {
                 PAUSED: this.$i18n.t("ID_PAUSED"),
                 UNASSIGNED: this.$i18n.t("ID_UNASSIGNED"),
             },
-            dataEllipsis: {
-                buttons: {},
-            },
-            showEllipsis: false,
             dataSubtitle: {
                 subtitle: this.data.pageName,
                 icon: this.data.pageIcon,
@@ -868,7 +851,7 @@ export default {
                                 }
                             }
                             that.headings[item.field] = item.name;
-                            if(item.enableFilter){
+                            if(item.set){
                                 columns.push(item.field);
                             }
                         });
@@ -1152,10 +1135,7 @@ export default {
          * @param {objec} data
          */
         updateDataEllipsis(data) {
-            this.showEllipsis = !this.showEllipsis;
-            if (this.showEllipsis) {
-                this.dataEllipsis = this.ellipsisItemFactory(data, this.data.pageParent);
-            }
+            return this.ellipsisItemFactory(data, this.data.pageParent);
         },
         /**
          * Show the alert message
@@ -1220,6 +1200,7 @@ export default {
           let that = this;
           let dataEllipsisMap = {
             inbox: {
+              APP_UID: data.APP_UID,
               buttons: {
                   open: {
                       name: "open",
@@ -1252,6 +1233,7 @@ export default {
               },
             },
             draft: {
+              APP_UID: data.APP_UID,
               buttons: {
                 open: {
                   name: "open",
@@ -1270,6 +1252,7 @@ export default {
               }
             },
             paused: {
+              APP_UID: data.APP_UID,  
               buttons: {
                 note: {
                   name: "case note",
@@ -1295,6 +1278,7 @@ export default {
               }
             },
             unassigned: {
+              APP_UID: data.APP_UID,  
               buttons: {
                 note: {
                   name: "case note",
@@ -1334,6 +1318,9 @@ export default {
 };
 </script>
 <style>
+.VueTables__row {
+  height: 75px;
+}
 .v-container-todo {
     padding-top: 20px;
     padding-bottom: 20px;

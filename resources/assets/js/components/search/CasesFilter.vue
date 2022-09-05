@@ -33,6 +33,7 @@
                         {{ $t("ID_BY_PROCESS_NAME") }}
                     </b-form-checkbox>
                     <b-form-checkbox
+                        v-if="!(title === $t('ID_DRAFT'))"
                         id="checkbox-3"
                         v-model="byReviewStatus"
                         name="checkbox-3"

@@ -41,7 +41,7 @@ class CasesTraitTest extends TestCase
      */
     private function prepareDerivationData()
     {
-        $user = User::where('USR_ID', '=', 1)->get()->first();
+        $user = User::where('USR_ID', '=', 1)->first();
 
         $process = factory(Process::class)->create([
             'PRO_CREATE_USER' => $user->USR_UID
@@ -176,7 +176,7 @@ class CasesTraitTest extends TestCase
         $cases = new Cases();
         $cases->routeCase($processUid, $application, $postForm, $status, $flagGmail, $tasUid, $index, $userLogged);
 
-        $result = Delegation::where('APP_UID', '=', $application)->where('DEL_INDEX', '=', $index)->get()->first();
+        $result = Delegation::where('APP_UID', '=', $application)->where('DEL_INDEX', '=', $index)->first();
 
         $this->assertEquals('CLOSED', $result->DEL_THREAD_STATUS);
     }
@@ -231,7 +231,7 @@ class CasesTraitTest extends TestCase
         $cases = new Cases();
         $cases->routeCase($processUid, $appUid, $postForm, $status, $flagGmail, $tasUid, $index, $userLogged);
 
-        $result = Delegation::where('APP_UID', '=', $appUid)->where('DEL_INDEX', '=', $index)->get()->first();
+        $result = Delegation::where('APP_UID', '=', $appUid)->where('DEL_INDEX', '=', $index)->first();
 
         $this->assertEquals('CLOSED', $result->DEL_THREAD_STATUS);
     }
@@ -302,7 +302,7 @@ class CasesTraitTest extends TestCase
      */
     public function it_should_verify_if_abe_is_completed()
     {
-        $user = User::where('USR_ID', '=', 1)->get()->first();
+        $user = User::where('USR_ID', '=', 1)->first();
 
         $process = factory(Process::class)->create([
             'PRO_CREATE_USER' => $user->USR_UID

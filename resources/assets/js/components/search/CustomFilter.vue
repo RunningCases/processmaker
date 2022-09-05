@@ -26,6 +26,7 @@
                     >
                     </b-form-checkbox-group>
                     <b-form-checkbox
+                        v-if="!(title === $t('ID_DRAFT'))"
                         id="checkbox-review-status"
                         v-model="byReviewStatus"
                         name="checkbox-review"

@@ -65,7 +65,8 @@
         "aws/aws-sdk-php": "~3.0",
         "cretueusebiu/laravel-javascript": "^0.2.1",
         "stevenmaguire/oauth2-microsoft": "^2.2",
-        "phpseclib/mcrypt_compat": "^2.0"
+        "phpseclib/mcrypt_compat": "^2.0",
+        "microsoft/microsoft-graph": "^1.7"
     },
     "require-dev": {
         "guzzlehttp/guzzle": "^6.3",
@@ -127,6 +128,12 @@
             "class-alias-maps": [
                 "bootstrap/classaliasmap.php"
             ]
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "kylekatarnls/update-helper": true,
+            "typo3/class-alias-loader": true
         }
     }
 }

@@ -1154,7 +1154,6 @@ class WebEntry
         $result = true;
         $webentry = WebEntryModel::select('WE_HIDE_ACTIVE_SESSION_WARNING', 'WE_AUTHENTICATION')
             ->where('WE_UID', '=', $weUid)
-            ->get()
             ->first();
         if ($webentry->WE_AUTHENTICATION === 'LOGIN_REQUIRED') {
             $result = intval($webentry->WE_HIDE_ACTIVE_SESSION_WARNING) === 0;
