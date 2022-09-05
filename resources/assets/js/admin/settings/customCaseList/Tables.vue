@@ -12,9 +12,7 @@
         ref="table" 
     >
         <div slot="actions" slot-scope="props">
-            <div @mouseenter="updateDataEllipsis(props.row)" @mouseleave="showEllipsis = false">
-          <ellipsis v-if="dataEllipsis" :data="dataEllipsis" :ref="'ellipsis' + props.row.APP_UID"> </ellipsis>
-        </div>
+            <ellipsis :data="updateDataEllipsis(props.row)"> </ellipsis>
         </div>
         <div slot="owner" slot-scope="props">
             <OwnerCell :data="props.row.owner" />
@@ -46,10 +44,6 @@ export default {
     },
     data() {
         return {
-            dataEllipsis: {
-                buttons: {}
-            },
-            showEllipsis: false,
             newList: {
                 title: this.$i18n.t("New List"),
                 class: "btn-success",
@@ -278,8 +272,8 @@ export default {
         */
         updateDataEllipsis(data) {
             let that = this;
-            this.showEllipsis = !this.showEllipsis;
-            this.dataEllipsis = {
+            return {
+                APP_UID: data.id,
                 buttons: {
                     note: {
                         name: "edit",
@@ -313,17 +307,6 @@ export default {
                     }
                 }
             }
-            if (this.showEllipsis) {
-                for (let ellipsis in this.$refs) {
-                    if (!ellipsis.indexOf('ellipsis')) {
-                        if (ellipsis !== 'ellipsis' + data.APP_UID) {
-                            this.$refs[ellipsis].hideActionButtons();
-                        }
-                    }
-                }
-                this.showEllipsis = false;
-            }
-            
         },
         importCustomCaseList() {
             this.$refs["modal-import"].show();
