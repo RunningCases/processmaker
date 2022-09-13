@@ -17,7 +17,7 @@ class ServerTest extends TestCase
     /**
      * Setup method.
      */
-    public function setUp(): void
+    public function setUp()
     {
         parent::setUp();
         $this->server = $_SERVER;
@@ -29,7 +29,7 @@ class ServerTest extends TestCase
     /**
      * Teardown method.
      */
-    public function tearDown(): void
+    public function tearDown()
     {
         parent::tearDown();
         $_SERVER = $this->server;
@@ -42,8 +42,8 @@ class ServerTest extends TestCase
      */
     public function it_should_test_post_token_with_valid_credentials()
     {
-        $user = User::where('USR_ID', '=', 1)->get()->first();
-        $oauthClients = OauthClients::factory()->create([
+        $user = User::where('USR_ID', '=', 1)->first();
+        $oauthClients = factory(OauthClients::class)->create([
             "USR_UID" => $user->USR_UID
         ]);
 
@@ -80,8 +80,8 @@ class ServerTest extends TestCase
      */
     public function it_should_test_post_token_with_return_handle_token()
     {
-        $user = User::where('USR_ID', '=', 1)->get()->first();
-        $oauthClients = OauthClients::factory()->create([
+        $user = User::where('USR_ID', '=', 1)->first();
+        $oauthClients = factory(OauthClients::class)->create([
             "USR_UID" => $user->USR_UID
         ]);
 
@@ -116,8 +116,8 @@ class ServerTest extends TestCase
      */
     public function it_should_test_post_token_with_empty_client_id()
     {
-        $user = User::where('USR_ID', '=', 1)->get()->first();
-        $oauthClients = OauthClients::factory()->create([
+        $user = User::where('USR_ID', '=', 1)->first();
+        $oauthClients = factory(OauthClients::class)->create([
             "USR_UID" => $user->USR_UID
         ]);
 
@@ -155,8 +155,8 @@ class ServerTest extends TestCase
      */
     public function it_should_test_post_token_for_pm_client_id()
     {
-        $user = User::where('USR_ID', '=', 1)->get()->first();
-        $oauthClients = OauthClients::where('CLIENT_ID', '=', 'x-pm-local-client')->get()->first();
+        $user = User::where('USR_ID', '=', 1)->first();
+        $oauthClients = OauthClients::where('CLIENT_ID', '=', 'x-pm-local-client')->first();
 
         $data = '{
             "grant_type":"password",
@@ -202,7 +202,7 @@ class ServerTest extends TestCase
         file_put_contents($filename, $data);
 
         LicenseManager::truncate();
-        LicenseManager::factory()->create([
+        factory(LicenseManager::class)->create([
             "LICENSE_DATA" => $data,
             "LICENSE_PATH" => $filename,
             "LICENSE_WORKSPACE" => env('MAIN_SYS_SYS')
