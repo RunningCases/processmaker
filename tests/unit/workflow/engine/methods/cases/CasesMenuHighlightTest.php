@@ -20,7 +20,7 @@ class CasesMenuHighlightTest extends TestCase
     /**
      * This sets the initial parameters for each test.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->settingUserLogged();
@@ -52,17 +52,17 @@ class CasesMenuHighlightTest extends TestCase
     public function it_should_test_the_response_of_the_cases_menu_highlight_file()
     {
         // Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
 
         // Create a task self service
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
 
         // Assign the current user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'USR_UID' => $this->user->USR_UID,
             'TU_RELATION' => 1, //Related to the user
@@ -70,7 +70,7 @@ class CasesMenuHighlightTest extends TestCase
         ]);
 
         // Create records in delegation relate to self-service
-        factory(Delegation::class, 10)->create([
+        Delegation::factory(10)->create([
             'TAS_ID' => $task->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0

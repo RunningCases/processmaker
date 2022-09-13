@@ -20,7 +20,7 @@ class FilesManagerTest extends TestCase
     /**
      * Set up method.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->faker = Factory::create();
@@ -30,7 +30,7 @@ class FilesManagerTest extends TestCase
     /**
      * Tear down method.
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->directories = array_reverse($this->directories);
@@ -46,9 +46,9 @@ class FilesManagerTest extends TestCase
      */
     public function it_should_deleted_public_files_when_not_exist()
     {
-        $processFiles = factory(ProcessFilesModel::class)->create();
+        $processFiles = ProcessFilesModel::factory()->create();
 
-        $emailEvent = factory(EmailEventModel::class)->create([
+        $emailEvent = EmailEventModel::factory()->create([
             'PRF_UID' => $processFiles->PRF_UID
         ]);
 
@@ -77,11 +77,11 @@ class FilesManagerTest extends TestCase
      */
     public function it_should_deleted_a_template_file($type, $separator)
     {
-        $user = factory(UserModel::class)->create([
+        $user = UserModel::factory()->create([
             'USR_UID' => G::generateUniqueID()
         ]);
 
-        $process = factory(ProcessModel::class)->create([
+        $process = ProcessModel::factory()->create([
             'PRO_UID' => G::generateUniqueID()
         ]);
 
@@ -105,7 +105,7 @@ class FilesManagerTest extends TestCase
         $path = $directory . "/" . $fileName;
         file_put_contents($path, $this->faker->randomHtml());
 
-        $processFiles = factory(ProcessFilesModel::class)->create([
+        $processFiles = ProcessFilesModel::factory()->create([
             'PRF_UID' => G::generateUniqueID(),
             'PRO_UID' => $process->PRO_UID,
             'USR_UID' => $user->USR_UID,
@@ -131,11 +131,11 @@ class FilesManagerTest extends TestCase
      */
     public function it_should_deleted_a_public_file($type, $separator)
     {
-        $user = factory(UserModel::class)->create([
+        $user = UserModel::factory()->create([
             'USR_UID' => G::generateUniqueID()
         ]);
 
-        $process = factory(ProcessModel::class)->create([
+        $process = ProcessModel::factory()->create([
             'PRO_UID' => G::generateUniqueID()
         ]);
 
@@ -159,7 +159,7 @@ class FilesManagerTest extends TestCase
         $path = $directory . "/" . $fileName;
         file_put_contents($path, $this->faker->randomHtml());
 
-        $processFiles = factory(ProcessFilesModel::class)->create([
+        $processFiles = ProcessFilesModel::factory()->create([
             'PRF_UID' => G::generateUniqueID(),
             'PRO_UID' => $process->PRO_UID,
             'USR_UID' => $user->USR_UID,
@@ -185,22 +185,22 @@ class FilesManagerTest extends TestCase
      */
     public function it_should_deleted_public_files_with_event_relation()
     {
-        $user = factory(UserModel::class)->create([
+        $user = UserModel::factory()->create([
             'USR_UID' => G::generateUniqueID()
         ]);
 
-        $process = factory(ProcessModel::class)->create([
+        $process = ProcessModel::factory()->create([
             'PRO_UID' => G::generateUniqueID()
         ]);
 
-        $processFiles = factory(ProcessFilesModel::class)->create([
+        $processFiles = ProcessFilesModel::factory()->create([
             'PRF_UID' => G::generateUniqueID(),
             'PRO_UID' => $process->PRO_UID,
             'USR_UID' => $user->USR_UID,
             'PRF_PATH' => '/'
         ]);
 
-        $emailEvent = factory(EmailEventModel::class)->create([
+        $emailEvent = EmailEventModel::factory()->create([
             'PRF_UID' => $processFiles->PRF_UID
         ]);
 

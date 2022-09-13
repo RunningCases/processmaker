@@ -26,15 +26,6 @@ class ProcessesTest extends TestCase
     public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
-    }
-
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
-    protected function setUp()
-    {
-        parent::setUp();
         $this->processes = new Processes();
     }
 
@@ -57,10 +48,10 @@ class ProcessesTest extends TestCase
      */
     public function it_should_return_dynaforms()
     {
-        $process = factory(Process::class)->create()->first();
+        $process = Process::factory()->create()->first();
         $proUid = $process->PRO_UID;
 
-        $dynaforms = factory(Dynaform::class, 6)
+        $dynaforms = Dynaform::factory(6)
                 ->create([
                     'PRO_UID' => $proUid
                 ])
@@ -109,10 +100,10 @@ class ProcessesTest extends TestCase
      */
     public function it_should_return_input_documents()
     {
-        $process = factory(Process::class)->create()->first();
+        $process = Process::factory()->create()->first();
         $proUid = $process->PRO_UID;
 
-        $inputDocument = factory(InputDocument::class, 6)
+        $inputDocument = InputDocument::factory(6)
                 ->create([
                     'PRO_UID' => $proUid
                 ])
@@ -161,10 +152,10 @@ class ProcessesTest extends TestCase
      */
     public function it_should_return_output_documents()
     {
-        $process = factory(Process::class)->create()->first();
+        $process = Process::factory()->create()->first();
         $proUid = $process->PRO_UID;
 
-        $outputDocument = factory(OutputDocument::class, 6)
+        $outputDocument = OutputDocument::factory(6)
                 ->create([
                     'PRO_UID' => $proUid
                 ])
@@ -443,7 +434,7 @@ class ProcessesTest extends TestCase
      */
     public function it_should_get_workflow_data()
     {
-        $process = factory(\ProcessMaker\Model\Process::class)->create();
+        $process = \ProcessMaker\Model\Process::factory()->create();
         $processes = new Processes();
         $result = $processes->getWorkflowData($process->PRO_UID);
         $this->assertNotNull($result);
@@ -493,7 +484,7 @@ class ProcessesTest extends TestCase
      */
     public function it_create_variables_from_import_old()
     {
-        $process = factory(\ProcessMaker\Model\Process::class)->create();
+        $process = \ProcessMaker\Model\Process::factory()->create();
         $attributes[] = [
             'VAR_UID' => G::generateUniqueID(),
             'PRJ_UID' => $process->PRO_UID,
@@ -526,7 +517,7 @@ class ProcessesTest extends TestCase
      */
     public function it_create_variables_from_import_new()
     {
-        $process = factory(\ProcessMaker\Model\Process::class)->create();
+        $process = \ProcessMaker\Model\Process::factory()->create();
         $attributes[] = [
             'VAR_UID' => G::generateUniqueID(),
             'PRJ_UID' => $process->PRO_UID,

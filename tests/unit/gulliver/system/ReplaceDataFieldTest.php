@@ -33,7 +33,7 @@ class ReplaceDataFieldTest extends TestCase
         $stringToCheck = G::replaceDataField($string, $result, $dbEngine, $recursive);
 
         // Assert the @qq is not being set as an empty value
-        $this->assertRegExp("/asa@qq.fds/", $stringToCheck);
+        $this->assertMatchesRegularExpression("/asa@qq.fds/", $stringToCheck);
 
         // Testing with a "@qstring" value
         $result = [
@@ -48,7 +48,7 @@ class ReplaceDataFieldTest extends TestCase
         $stringToCheck = G::replaceDataField($string, $result, $dbEngine, $recursive);
 
         // Assert the @qstring is not being set as an empty value
-        $this->assertRegExp("/@qstring/", $stringToCheck);
+        $this->assertMatchesRegularExpression("/@qstring/", $stringToCheck);
     }
 
     /**
@@ -80,7 +80,7 @@ class ReplaceDataFieldTest extends TestCase
         $stringToCheck = G::replaceDataField($string, $result, $dbEngine, $recursive);
 
         // Assert the @qq is not being set as an empty value
-        $this->assertRegExp("/asa@qq.fds/", $stringToCheck);
+        $this->assertMatchesRegularExpression("/asa@qq.fds/", $stringToCheck);
 
         // Testing with a "@qstring" value
         $result = [
@@ -95,7 +95,7 @@ class ReplaceDataFieldTest extends TestCase
         $stringToCheck = G::replaceDataField($string, $result, $dbEngine, $recursive);
 
         // Assert the @qstring is not being set as an empty value
-        $this->assertRegExp("/@qstring/", $stringToCheck);
+        $this->assertMatchesRegularExpression("/@qstring/", $stringToCheck);
     }
 
     /**
@@ -119,7 +119,7 @@ class ReplaceDataFieldTest extends TestCase
         $stringToCheck = G::replaceDataField($string, $variables, $dbEngine, $recursive);
 
         // The variable @#DOC_UID inside in the variable "@#upload_New" shouldn't be replaced
-        $this->assertRegExp("/@#DOC_UID/", $stringToCheck);
+        $this->assertMatchesRegularExpression("/@#DOC_UID/", $stringToCheck);
 
         // Set parameters to test the method
         $dbEngine = 'mysql';
@@ -129,7 +129,7 @@ class ReplaceDataFieldTest extends TestCase
         $stringToCheck = G::replaceDataField($string, $variables, $dbEngine, $recursive);
 
         // The variable @#DOC_UID inside in the variable "@#upload_New" should be replaced correctly
-        $this->assertRegExp("/1988828025cc89aba0cd2b8079038028/", $stringToCheck);
+        $this->assertMatchesRegularExpression("/1988828025cc89aba0cd2b8079038028/", $stringToCheck);
     }
 
     /**
@@ -153,7 +153,7 @@ class ReplaceDataFieldTest extends TestCase
         $stringToCheck = G::replaceDataField($string, $variables, $dbEngine, $recursive);
 
         // The variable @=DOC_UID inside in the variable "@=upload_New" shouldn't be replaced
-        $this->assertRegExp("/@=DOC_UID/", $stringToCheck);
+        $this->assertMatchesRegularExpression("/@=DOC_UID/", $stringToCheck);
 
         // Set parameters to test the method
         $dbEngine = 'mysql';
@@ -163,6 +163,6 @@ class ReplaceDataFieldTest extends TestCase
         $stringToCheck = G::replaceDataField($string, $variables, $dbEngine, $recursive);
 
         // The variable @=DOC_UID inside in the variable "@=upload_New" should be replaced correctly
-        $this->assertRegExp("/1988828025cc89aba0cd2b8079038028/", $stringToCheck);
+        $this->assertMatchesRegularExpression("/1988828025cc89aba0cd2b8079038028/", $stringToCheck);
     }
 }

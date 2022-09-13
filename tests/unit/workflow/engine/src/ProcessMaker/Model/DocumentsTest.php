@@ -23,7 +23,7 @@ class DocumentsTest extends TestCase
      */
     public function it_test_get_case_note_files()
     {
-        $appDoc = factory(Documents::class)->states('case_notes')->create();
+        $appDoc =Documents::factory()->case_notes()->create();
         $doc = new Documents();
         $res = $doc->getAppFiles($appDoc->APP_UID, Documents::DOC_TYPE_CASE_NOTE);
         $this->assertNotEmpty($res);
@@ -37,8 +37,8 @@ class DocumentsTest extends TestCase
      */
     public function it_should_test_get_attached_files_from_the_casenote()
     {
-        $appNote = factory(AppNotes::class)->create();
-        $appDocument = factory(Documents::class)->create([
+        $appNote =AppNotes::factory()->create();
+        $appDocument =Documents::factory()->create([
             'DOC_ID' => $appNote->NOTE_ID
         ]);
 
@@ -57,8 +57,8 @@ class DocumentsTest extends TestCase
      */
     public function it_should_test_get_files()
     {
-        $appNote = factory(AppNotes::class)->create();
-        $appDocument = factory(Documents::class)->create([
+        $appNote =AppNotes::factory()->create();
+        $appDocument =Documents::factory()->create([
             'DOC_ID' => $appNote->NOTE_ID
         ]);
         $result = Documents::getFiles($appDocument->DOC_ID);

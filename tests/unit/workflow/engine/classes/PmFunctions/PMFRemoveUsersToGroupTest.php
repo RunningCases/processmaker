@@ -25,9 +25,9 @@ class PMFRemoveUsersToGroupTest extends TestCase
     public function it_remove_user_group()
     {
         // Create group
-        $user = factory(User::class)->create();
-        $group = factory(Groupwf::class)->create();
-        $groupUser = factory(GroupUser::class)->create([
+        $user = User::factory()->create();
+        $group = Groupwf::factory()->create();
+        $groupUser = GroupUser::factory()->create([
             'GRP_UID' => $group->GRP_UID,
             'GRP_ID' => $group->GRP_ID,
             'USR_UID' =>$user->USR_UID

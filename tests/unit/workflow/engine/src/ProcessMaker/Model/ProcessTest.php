@@ -23,7 +23,7 @@ class ProcessTest extends TestCase
     /**
      * Call the setUp parent method
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Process::query()->delete();
@@ -37,8 +37,8 @@ class ProcessTest extends TestCase
      */
     public function it_has_tasks()
     {
-        $process = factory(Process::class)->create();
-        factory(Task::class)->create([
+        $process = Process::factory()->create();
+        Task::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'PRO_ID' => $process->PRO_ID
         ]);
@@ -53,9 +53,9 @@ class ProcessTest extends TestCase
      */
     public function it_has_a_creator()
     {
-        $process = factory(Process::class)->create([
+        $process = Process::factory()->create([
             'PRO_CREATE_USER' => function () {
-                return factory(User::class)->create()->USR_UID;
+                return User::factory()->create()->USR_UID;
             }
         ]);
         $this->assertInstanceOf(User::class, $process->creator);
@@ -69,9 +69,9 @@ class ProcessTest extends TestCase
      */
     public function it_has_an_category()
     {
-        $process = factory(Process::class)->create([
+        $process = Process::factory()->create([
             'PRO_CATEGORY' => function () {
-                return factory(ProcessCategory::class)->create()->CATEGORY_UID;
+                return ProcessCategory::factory()->create()->CATEGORY_UID;
             }
         ]);
         $this->assertInstanceOf(ProcessCategory::class, $process->category);
@@ -86,7 +86,7 @@ class ProcessTest extends TestCase
     public function it_should_return_all_the_processes_for_an_specific_user()
     {
         //Create process
-        $process = factory(Process::class, 2)->states('foreign_keys')->create([]);
+        $process = Process::factory(2)->foreign_keys()->create([]);
         //Create a Process object
         $pro = new Process();
         //Call the getProcessList() method
@@ -111,13 +111,13 @@ class ProcessTest extends TestCase
         $catUid2 = G::generateUniqueID();
 
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Create process
-        $process1 = factory(Process::class)->create([
+        $process1 = Process::factory()->create([
             'PRO_CREATE_USER' => $user['USR_UID'],
             'PRO_CATEGORY' => $catUid1
         ]);
-        $process2 = factory(Process::class)->create([
+        $process2 = Process::factory()->create([
             'PRO_CREATE_USER' => $user['USR_UID'],
             'PRO_CATEGORY' => $catUid2
         ]);
@@ -146,7 +146,7 @@ class ProcessTest extends TestCase
     public function it_should_return_empty_if_no_processes_where_found()
     {
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Create a Process object
         $process = new Process();
         //Call the getProcessList() method
@@ -165,17 +165,17 @@ class ProcessTest extends TestCase
     public function it_should_return_all_the_processes_in_status_active()
     {
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Create process
-        $process1 = factory(Process::class)->create([
+        $process1 = Process::factory()->create([
             'PRO_CREATE_USER' => $user['USR_UID'],
             'PRO_STATUS' => 'ACTIVE'
         ]);
-        $process2 = factory(Process::class)->create([
+        $process2 = Process::factory()->create([
             'PRO_CREATE_USER' => $user['USR_UID'],
             'PRO_STATUS' => 'INACTIVE'
         ]);
-        $process3 = factory(Process::class)->create([
+        $process3 = Process::factory()->create([
             'PRO_CREATE_USER' => $user['USR_UID'],
             'PRO_STATUS' => 'DISABLED'
         ]);
@@ -205,10 +205,10 @@ class ProcessTest extends TestCase
     public function it_should_test_the_get_process_private_list_by_user_method()
     {
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         //Create process
-        factory(Process::class)->create([
+        Process::factory()->create([
             'PRO_CREATE_USER' => $user['USR_UID'],
             'PRO_STATUS' => 'ACTIVE',
             'PRO_TYPE_PROCESS' => 'PRIVATE',
@@ -233,10 +233,10 @@ class ProcessTest extends TestCase
     public function it_should_test_the_convert_private_processes_to_public_method()
     {
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         //Create process
-        $pro = factory(Process::class)->create([
+        $pro = Process::factory()->create([
             'PRO_CREATE_USER' => $user['USR_UID'],
             'PRO_STATUS' => 'ACTIVE',
             'PRO_TYPE_PROCESS' => 'PRIVATE',
@@ -288,7 +288,7 @@ class ProcessTest extends TestCase
      */
     public function it_should_test_process_without_filter()
     {
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         $result = Process::getProcessesFilter(
             null,
             null,
@@ -311,16 +311,16 @@ class ProcessTest extends TestCase
      */
     public function it_should_test_process_with_category_filter()
     {
-        $process = factory(Process::class)->create([
+        $process = Process::factory()->create([
             'PRO_CATEGORY' => function () {
-                return factory(ProcessCategory::class)->create()->CATEGORY_UID;
+                return ProcessCategory::factory()->create()->CATEGORY_UID;
             }
         ]);
         $result = Process::getProcessesFilter($process->PRO_CATEGORY);
         // Assert with the specific category
         $this->assertEquals($process->PRO_CATEGORY, $result[0]['PRO_CATEGORY']);
 
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         $result = Process::getProcessesFilter('NONE');
         // Assert when the category is empty
         $this->assertEmpty($result);
@@ -338,7 +338,7 @@ class ProcessTest extends TestCase
      */
     public function it_should_test_process_with_process_filter()
     {
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         $result = Process::getProcessesFilter(
             null,
             $process->PRO_UID
@@ -358,7 +358,7 @@ class ProcessTest extends TestCase
      */
     public function it_should_test_process_with_title_filter()
     {
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         $result = Process::getProcessesFilter(
             null,
             null,
@@ -379,7 +379,7 @@ class ProcessTest extends TestCase
      */
     public function it_should_test_process_subprocess_filter()
     {
-        $process = factory(Process::class)->create([
+        $process = Process::factory()->create([
             'PRO_SUBPROCESS' => 1
         ]);
         $result = Process::getProcessesFilter(
@@ -406,7 +406,7 @@ class ProcessTest extends TestCase
      */
     public function it_should_test_count_process()
     {
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         $total = Process::getCounter($process->PRO_CREATE_USER);
         $this->assertEquals(1, $total);
     }
@@ -422,26 +422,26 @@ class ProcessTest extends TestCase
     public function it_should_test_get_processes_for_home()
     {
         // Create a process category
-        $processCategory = factory(ProcessCategory::class)->create();
+        $processCategory = ProcessCategory::factory()->create();
 
         // Create five processes (4 active, 1 inactive)
-        factory(Process::class)->create([
+        Process::factory()->create([
             'PRO_TITLE' => 'My Process 1',
             'PRO_CATEGORY' => $processCategory->CATEGORY_UID,
             'CATEGORY_ID' => $processCategory->CATEGORY_ID
         ]);
-        factory(Process::class)->create([
+        Process::factory()->create([
             'PRO_TITLE' => 'My Process 2',
             'PRO_CATEGORY' => $processCategory->CATEGORY_UID,
             'CATEGORY_ID' => $processCategory->CATEGORY_ID
         ]);
-        factory(Process::class)->create([
+        Process::factory()->create([
             'PRO_TITLE' => 'My Process 3',
         ]);
-        factory(Process::class)->create([
+        Process::factory()->create([
             'PRO_TITLE' => 'Another Process',
         ]);
-        factory(Process::class)->create([
+        Process::factory()->create([
             'PRO_TITLE' => 'Inactive Process',
             'PRO_STATUS' => 'INACTIVE'
         ]);
@@ -462,7 +462,7 @@ class ProcessTest extends TestCase
      */
     public function it_should_test_get_id()
     {
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         $result = Process::getIds($process->PRO_UID, 'PRO_UID');
         $this->assertEquals($process->PRO_ID, $result[0]['PRO_ID']);
     }
@@ -475,7 +475,7 @@ class ProcessTest extends TestCase
      */
     public function it_should_test_is_active()
     {
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         $total = Process::isActive($process->PRO_ID);
         $this->assertEquals(1, $total);
     }

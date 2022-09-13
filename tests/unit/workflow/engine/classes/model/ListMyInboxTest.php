@@ -15,7 +15,7 @@ class ListMyInboxTest extends TestCase
     /**
      * Set up method.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->faker = Factory::create();
@@ -25,7 +25,7 @@ class ListMyInboxTest extends TestCase
     /**
      * Tear down method,
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
     }
@@ -36,7 +36,7 @@ class ListMyInboxTest extends TestCase
      */
     public function it_should_test_loadFilters_method()
     {
-        $delegation = factory(Delegation::class)->create([
+        $delegation = Delegation::factory()->create([
             'DEL_THREAD_STATUS' => 'CLOSED',
         ]);
 
@@ -45,7 +45,7 @@ class ListMyInboxTest extends TestCase
             'filter' => '',
             'search' => $delegation->application->APP_UID,
             'process' => $delegation->process->PRO_UID,
-            'category' => $delegation->process->PRO_CATEGORY,
+            'category' => $this->faker->word,
             'dateFrom' => '',
             'dateTo' => ''
         ];

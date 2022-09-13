@@ -22,7 +22,7 @@ class PMFUserListTest extends TestCase
     public function it_return_list_of_users()
     {
         // Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $result = PMFUserList();
         $this->assertNotEmpty($result);
     }

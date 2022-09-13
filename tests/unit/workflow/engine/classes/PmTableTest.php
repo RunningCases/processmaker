@@ -2,7 +2,7 @@
 
 use Tests\TestCase;
 
-class PmTablesTest extends TestCase
+class PmTableTest extends TestCase
 {
     /**
      * Check if the "removePmtPropelFolder" is working correctly

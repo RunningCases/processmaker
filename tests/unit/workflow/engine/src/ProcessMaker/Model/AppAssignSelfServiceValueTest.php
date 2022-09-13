@@ -30,9 +30,9 @@ class AppAssignSelfServiceValueTest extends TestCase
      */
     public function it_belong_app_number()
     {
-        $table = factory(AppAssignSelfServiceValue::class)->create([
+        $table = AppAssignSelfServiceValue::factory()->create([
             'APP_NUMBER' => function () {
-                return factory(Delegation::class)->create()->APP_NUMBER;
+                return Delegation::factory()->create()->APP_NUMBER;
             }
         ]);
         $this->assertInstanceOf(Delegation::class, $table->appNumber);
@@ -46,9 +46,9 @@ class AppAssignSelfServiceValueTest extends TestCase
      */
     public function it_belong_index()
     {
-        $table = factory(AppAssignSelfServiceValue::class)->create([
+        $table = AppAssignSelfServiceValue::factory()->create([
             'DEL_INDEX' => function () {
-                return factory(Delegation::class)->create()->DEL_INDEX;
+                return Delegation::factory()->create()->DEL_INDEX;
             }
         ]);
         $this->assertInstanceOf(Delegation::class, $table->index);
@@ -62,9 +62,9 @@ class AppAssignSelfServiceValueTest extends TestCase
      */
     public function it_belong_task()
     {
-        $table = factory(AppAssignSelfServiceValue::class)->create([
+        $table = AppAssignSelfServiceValue::factory()->create([
             'TAS_ID' => function () {
-                return factory(Task::class)->create()->TAS_ID;
+                return Task::factory()->create()->TAS_ID;
             }
         ]);
         $this->assertInstanceOf(Task::class, $table->task);
@@ -79,22 +79,22 @@ class AppAssignSelfServiceValueTest extends TestCase
     public function it_should_self_service_by_value()
     {
         // Assign user in a group
-        $rbacUser = factory(RbacUsers::class)->create();
-        $user = factory(User::class)->create([
+        $rbacUser = RbacUsers::factory()->create();
+        $user = User::factory()->create([
             'USR_UID' => $rbacUser['USR_UID']
         ]);
-        $group = factory(Groupwf::class)->create();
-        $table = factory(GroupUser::class)->create([
+        $group = Groupwf::factory()->create();
+        $table = GroupUser::factory()->create([
             'GRP_UID' => $group['GRP_UID'],
             'GRP_ID' => $group['GRP_ID'],
             'USR_UID' => $user['USR_UID'],
             'USR_ID' => $user['USR_ID'],
         ]);
         // Create the selfservice
-        $self = factory(AppAssignSelfServiceValue::class)->create([
+        $self = AppAssignSelfServiceValue::factory()->create([
             'GRP_UID' => $group['GRP_UID'],
         ]);
-        $table = factory(AppAssignSelfServiceValueGroup::class)->create([
+        $table = AppAssignSelfServiceValueGroup::factory()->create([
             'ID' => $self['ID'],
             'GRP_UID' => $group['GRP_UID'],
             'ASSIGNEE_ID' => $group['GRP_ID'],

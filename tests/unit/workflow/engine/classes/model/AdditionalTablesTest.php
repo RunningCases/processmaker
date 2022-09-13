@@ -24,11 +24,8 @@ class AdditionalTablesTest extends TestCase
     /**
      * Set up method.
      */
-    public function setUp()
+    public function setUp(): void
     {
-        if (version_compare(phpversion(), 7.3, '>') ) {
-            $this->markTestSkipped('The changes in third party are not available');
-        }
         parent::setUp();
     }
 
@@ -62,7 +59,9 @@ class AdditionalTablesTest extends TestCase
         $actual = $additionalTablesModel->toArray();
         unset($data["ADD_TAB_UID"]);
 
-        $this->assertArraySubset($data, $actual);
+        foreach ($data as $key => $value) {
+            $this->assertEquals($value, $actual[$key]);
+        }
     }
 
     /**
@@ -86,7 +85,7 @@ class AdditionalTablesTest extends TestCase
      */
     public function it_should_update()
     {
-        $additionalTables = factory(AdditionalTablesModel::class)->create();
+        $additionalTables = AdditionalTablesModel::factory()->create();
 
         $expected = [
             "ADD_TAB_UID" => $additionalTables->ADD_TAB_UID,
@@ -135,11 +134,11 @@ class AdditionalTablesTest extends TestCase
      */
     public function it_should_get_all_registries()
     {
-        $proUid = factory(\ProcessMaker\Model\Process::class)->create()->PRO_UID;
+        $proUid = \ProcessMaker\Model\Process::factory()->create()->PRO_UID;
 
         //local connections
-        $additionalTables = factory(AdditionalTablesModel::class, 3);
-        $dbSource = factory(\ProcessMaker\Model\DbSource::class)->create([
+        $additionalTables = AdditionalTablesModel::factory(3);
+        $dbSource = \ProcessMaker\Model\DbSource::factory()->create([
             'PRO_UID' => $proUid,
             'DBS_SERVER' => env('DB_HOST'),
             'DBS_DATABASE_NAME' => env('DB_DATABASE'),
@@ -148,7 +147,7 @@ class AdditionalTablesTest extends TestCase
             'DBS_PORT' => '3306',
             'DBS_CONNECTION_TYPE' => 'NORMAL'
         ]);
-        $additionalTable = factory(AdditionalTablesModel::class)->create([
+        $additionalTable = AdditionalTablesModel::factory()->create([
             'PRO_UID' => $proUid,
             'DBS_UID' => $dbSource->DBS_UID,
         ]);
@@ -157,7 +156,7 @@ class AdditionalTablesTest extends TestCase
         $this->createSchema($dbSource->DBS_DATABASE_NAME, $tableName, $name, $dbSource->DBS_UID);
 
         //external connection
-        $dbSource = factory(\ProcessMaker\Model\DbSource::class)->create([
+        $dbSource = \ProcessMaker\Model\DbSource::factory()->create([
             'PRO_UID' => $proUid,
             'DBS_SERVER' => config('database.connections.testexternal.host'),
             'DBS_DATABASE_NAME' => config('database.connections.testexternal.database'),
@@ -166,7 +165,7 @@ class AdditionalTablesTest extends TestCase
             'DBS_PORT' => '3306',
             'DBS_CONNECTION_TYPE' => 'NORMAL'
         ]);
-        $additionalTable = factory(AdditionalTablesModel::class)->create([
+        $additionalTable = AdditionalTablesModel::factory()->create([
             'PRO_UID' => $proUid,
             'DBS_UID' => $dbSource->DBS_UID,
         ]);
@@ -223,14 +222,14 @@ class AdditionalTablesTest extends TestCase
      */
     public function it_should_test_populate_report_table()
     {
-        $proUid = factory(Process::class)->create()->PRO_UID;
+        $proUid = Process::factory()->create()->PRO_UID;
 
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'PRO_UID' => $proUid
         ]);
 
         //local connections
-        $dbSource = factory(DbSource::class)->create([
+        $dbSource = DbSource::factory()->create([
             'PRO_UID' => $proUid,
             'DBS_SERVER' => env('DB_HOST'),
             'DBS_DATABASE_NAME' => env('DB_DATABASE'),
@@ -239,7 +238,7 @@ class AdditionalTablesTest extends TestCase
             'DBS_PORT' => '3306',
             'DBS_CONNECTION_TYPE' => 'NORMAL'
         ]);
-        $additionalTable = factory(AdditionalTablesModel::class)->create([
+        $additionalTable = AdditionalTablesModel::factory()->create([
             'PRO_UID' => $proUid,
             'DBS_UID' => $dbSource->DBS_UID,
         ]);
@@ -248,7 +247,7 @@ class AdditionalTablesTest extends TestCase
         $this->createSchema($dbSource->DBS_DATABASE_NAME, $tableName, $name, $dbSource->DBS_UID);
 
         //external connection
-        $dbSource = factory(DbSource::class)->create([
+        $dbSource = DbSource::factory()->create([
             'PRO_UID' => $proUid,
             'DBS_SERVER' => config('database.connections.testexternal.host'),
             'DBS_DATABASE_NAME' => config('database.connections.testexternal.database'),
@@ -257,7 +256,7 @@ class AdditionalTablesTest extends TestCase
             'DBS_PORT' => '3306',
             'DBS_CONNECTION_TYPE' => 'NORMAL'
         ]);
-        $additionalTable = factory(AdditionalTablesModel::class)->create([
+        $additionalTable = AdditionalTablesModel::factory()->create([
             'PRO_UID' => $proUid,
             'DBS_UID' => $dbSource->DBS_UID,
         ]);
@@ -265,10 +264,10 @@ class AdditionalTablesTest extends TestCase
         $nameExternal = $additionalTable->ADD_TAB_CLASS_NAME;
         $this->createSchema($dbSource->DBS_DATABASE_NAME, $tableNameExternal, $nameExternal, $dbSource->DBS_UID);
 
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'PRO_UID' => $proUid
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'DEL_THREAD_STATUS' => 'CLOSED',
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_UID' => $task->TAS_UID,
@@ -356,7 +355,6 @@ class AdditionalTablesTest extends TestCase
      */
     private function createSchema(string $connection, string $tableName, string $className, string $dbsUid = 'workflow')
     {
-        $this->markTestIncomplete('Illegal mix of collations');
         $query = ""
                 . "CREATE TABLE IF NOT EXISTS `{$tableName}` ("
                 . "`APP_UID` varchar(32) NOT NULL,"
@@ -366,7 +364,8 @@ class AdditionalTablesTest extends TestCase
                 . "`VAR2` varchar(255) DEFAULT NULL,"
                 . "`VAR3` varchar(255) DEFAULT NULL,"
                 . "PRIMARY KEY (`APP_UID`),"
-                . "KEY `indexTable` (`APP_UID`))";
+                . "KEY `indexTable` (`APP_UID`)"
+                . ")ENGINE=InnoDB  DEFAULT CHARSET='utf8'";
         if (!empty(config("database.connections.{$connection}"))) {
             DB::connection($connection)->statement($query);
         } else {

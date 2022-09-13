@@ -766,6 +766,7 @@ try {
             //Take the first derivation rule as the task derivation rule type.
             $aFields['PROCESS']['ROU_TYPE'] = $aFields['TASK'][1]['ROU_TYPE'];
             $aFields['PROCESS']['ROU_FINISH_FLAG'] = false;
+            $aFields['PROCESS']['ERROR'] = '';
 
             foreach ($aFields['TASK'] as $sKey => &$aValues) {
                 $sPriority = ''; //set priority value
@@ -780,6 +781,9 @@ try {
                 $hiddenName = "form[TASKS][" . $sKey . "][TAS_UID]";
                 $hiddenField = '<input type="hidden" name="' . $hiddenName . '" id="' . $hiddenName . '" value="' . $aValues['NEXT_TASK']['TAS_UID'] . '">';
                 $aFields['TASK'][$sKey]['NEXT_TASK']['TAS_HIDDEN_FIELD'] = $hiddenField;
+                $aFields['TASK'][$sKey]['NEXT_TASK']['USR_HIDDEN_FIELD'] = '';
+                $aFields['TASK'][$sKey]['NEXT_TASK']['ROU_FINISH_FLAG'] = $aFields['TASK'][$sKey]['NEXT_TASK']['ROU_FINISH_FLAG'] ?? false;
+                $aFields['TASK'][$sKey]['NEXT_TASK']['TAS_NEXT'] = $aFields['TASK'][$sKey]['NEXT_TASK']['TAS_NEXT'] ?? '';
 
                 switch ($aValues['NEXT_TASK']['TAS_ASSIGN_TYPE']) {
                     case 'EVALUATE':
@@ -1008,6 +1012,8 @@ try {
                         $aFields['TASK'][$sKey]['NEXT_TASK']['SOURCE_UID'] = '<input type="hidden" name="' . $hiddenName . '[SOURCE_UID]"        id="' . $hiddenName . '[SOURCE_UID]"        value="' . $aValues['SOURCE_UID'] . '">';
                     }
                 }
+                $aFields['TASK'][$sKey]['NEXT_TASK']['ROU_PREVIOUS_TASK'] = $aFields['TASK'][$sKey]['NEXT_TASK']['ROU_PREVIOUS_TASK'] ?? '';
+                $aFields['TASK'][$sKey]['NEXT_TASK']['ROU_PREVIOUS_TYPE'] = $aFields['TASK'][$sKey]['NEXT_TASK']['ROU_PREVIOUS_TYPE'] ?? '';
             }
 
             $aFields['PROCESSING_MESSAGE'] = G::loadTranslation('ID_PROCESSING');
@@ -1069,6 +1075,9 @@ try {
                 }
             }
 
+            if (!isset($aFields['PROCESS']['DISABLED'])) {
+                $aFields['PROCESS']['DISABLED'] = '';
+            }
             $G_PUBLISH->AddContent('smarty', $tplFile, '', '', $aFields);
             break;
         case 'EXTERNAL':

@@ -1,6 +1,6 @@
 <?php
-namespace Tests\unit\workflow\engine\classes\PmFunctions;
 
+namespace Tests\unit\workflow\engine\classes\PmFunctions;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
@@ -13,14 +13,14 @@ use Tests\TestCase;
  *
  * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFCaseInformation.28.29
  */
-class PMFCaseInformation extends TestCase
+class PMFCaseInformationTest extends TestCase
 {
     use DatabaseTransactions;
 
     /**
      * Method set up.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
     }
@@ -32,7 +32,7 @@ class PMFCaseInformation extends TestCase
      */
     public function it_should_test_this_pmfunction_default_parameters()
     {
-        $table = factory(Application::class)->states('foreign_keys')->create();
+        $table = Application::factory()->foreign_keys()->create();
         // Force commit for propel
         DB::commit();
         // Call the funtion
@@ -74,8 +74,8 @@ class PMFCaseInformation extends TestCase
      */
     public function it_should_test_this_pmfunction_index_parameter()
     {
-        $application = factory(Application::class)->states('todo')->create();
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->todo()->create();
+        $table = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
         ]);
@@ -104,8 +104,8 @@ class PMFCaseInformation extends TestCase
      */
     public function it_should_test_this_pmfunction_app_data_parameter()
     {
-        $application = factory(Application::class)->states('todo')->create();
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->todo()->create();
+        $table = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
         ]);

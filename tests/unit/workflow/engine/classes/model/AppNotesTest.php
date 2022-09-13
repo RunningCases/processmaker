@@ -26,7 +26,7 @@ class AppNotesTest extends TestCase
     /**
      * Set up method
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->faker = Factory::create();
@@ -39,8 +39,8 @@ class AppNotesTest extends TestCase
      */
     public function it_test_case_notes_creation()
     {
-        $application = factory(Application::class)->create();
-        $user = factory(User::class)->create();
+        $application = Application::factory()->create();
+        $user = User::factory()->create();
         $reason = "The case was canceled due to:";
         $appNotes = new ModelAppNotes();
         $noteContent = addslashes($reason);
@@ -62,8 +62,8 @@ class AppNotesTest extends TestCase
      */
     public function it_test_case_notes_creation_and_send_email_to_user()
     {
-        $application = factory(Application::class)->create();
-        $user = factory(User::class)->create();
+        $application = Application::factory()->create();
+        $user = User::factory()->create();
         $reason = "The case was canceled due to:";
         $appNotes = new ModelAppNotes();
         $noteContent = addslashes($reason);
@@ -91,9 +91,9 @@ class AppNotesTest extends TestCase
      */
     public function it_test_case_notes_creation_and_send_email()
     {
-        $application = factory(Application::class)->create();
-        $user = factory(User::class)->create();
-        factory(Delegation::class)->create([
+        $application = Application::factory()->create();
+        $user = User::factory()->create();
+        Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'USR_UID' => $user->USR_UID
         ]);
@@ -140,8 +140,8 @@ class AppNotesTest extends TestCase
     {
         $user = User::where('USR_UID', '=', '00000000000000000000000000000001')
                 ->first();
-        $application = factory(Application::class)->create();
-        $delegation = factory(Delegation::class)->create([
+        $application = Application::factory()->create();
+        $delegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'USR_UID' => $user->USR_UID
         ]);
@@ -172,17 +172,17 @@ class AppNotesTest extends TestCase
     {
         $user = User::where('USR_UID', '=', '00000000000000000000000000000001')
                 ->first();
-        $application = factory(Application::class)->create();
-        $delegation = factory(Delegation::class)->create([
+        $application = Application::factory()->create();
+        $delegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'USR_UID' => $user->USR_UID
         ]);
-        $appNote = factory(AppNotes::class)->create();
-        $appDocument = factory(Documents::class)->create([
+        $appNote = AppNotes::factory()->create();
+        $appDocument = Documents::factory()->create([
             'APP_UID' => $application->APP_UID,
             'DOC_ID' => $appNote->NOTE_ID
         ]);
-        factory(EmailServerModel::class)->create([
+        EmailServerModel::factory()->create([
             'MESS_DEFAULT' => 1
         ]);
 
@@ -210,8 +210,8 @@ class AppNotesTest extends TestCase
      */
     public function it_should_test_get_attached_files_from_the_casenote()
     {
-        $appNote = factory(AppNotes::class)->create();
-        $appDocument = factory(Documents::class)->create([
+        $appNote = AppNotes::factory()->create();
+        $appDocument = Documents::factory()->create([
             'DOC_ID' => $appNote->NOTE_ID
         ]);
 

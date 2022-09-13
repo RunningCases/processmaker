@@ -21,7 +21,7 @@ class ReportingTest extends TestCase
     /**
      * Method setUp.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->reporting = new Reporting();
@@ -30,7 +30,7 @@ class ReportingTest extends TestCase
     /**
      * Method tearDown.
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
     }
@@ -45,7 +45,7 @@ class ReportingTest extends TestCase
         $dateInit = date("YYYY-MM-DD");
         $dateFinish = date("YYYY-MM-DD");
 
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'DEL_DELEGATE_DATE' => $dateInit
         ]);
 
@@ -81,7 +81,7 @@ class ReportingTest extends TestCase
         $dateInit = date("YYYY-MM-DD");
         $dateFinish = date("YYYY-MM-DD");
 
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'DEL_DELEGATE_DATE' => $dateInit
         ]);
 

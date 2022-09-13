@@ -25,8 +25,8 @@ class AppNotesTest extends TestCase
      */
     public function createCaseNotes($rows = 10)
     {
-        $application = factory(Application::class)->create();
-        $notes = factory(AppNotes::class, $rows)->states('foreign_keys')->create([
+        $application = Application::factory()->create();
+        $notes = AppNotes::factory($rows)->foreign_keys()->create([
             'APP_UID' => $application->APP_UID,
             'APP_NUMBER' => $application->APP_NUMBER
         ]);

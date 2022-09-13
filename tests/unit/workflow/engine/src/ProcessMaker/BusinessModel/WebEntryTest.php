@@ -29,7 +29,7 @@ class WebEntryTest extends TestCase
         $webEntryFilename = G::generateUniqueID();
 
         // Create a Web Entry
-        $webEntry = factory(WebEntry::class)->create(['WE_DATA' => $webEntryFilename . $phpExtension]);
+        $webEntry = WebEntry::factory()->create(['WE_DATA' => $webEntryFilename . $phpExtension]);
 
         // Post file is from a valid Web Entry?
         $isWebEntry = BmWebEntry::isWebEntry($webEntry->PRO_UID, $webEntryFilename . $postFileExtension);
@@ -55,7 +55,7 @@ class WebEntryTest extends TestCase
         $webEntryFilename = 'My_Custom_Form';
 
         // Create a Web Entry
-        $webEntry = factory(WebEntry::class)->create(['WE_DATA' => $webEntryFilename . $phpExtension]);
+        $webEntry = WebEntry::factory()->create(['WE_DATA' => $webEntryFilename . $phpExtension]);
 
         // Post file is from a valid Web Entry?
         $isWebEntry = BmWebEntry::isWebEntry($webEntry->PRO_UID, $webEntryFilename . $postFileExtension);

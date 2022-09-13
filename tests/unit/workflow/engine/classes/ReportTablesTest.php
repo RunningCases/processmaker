@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use ProcessMaker\Model\Application;
@@ -12,14 +11,12 @@ use Tests\TestCase;
 
 class ReportTablesTest extends TestCase
 {
-
     use CreateTestSite;
-    use DatabaseTransactions;
 
     /**
      * Sets up the unit tests.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $_SERVER["REQUEST_URI"] = "";
@@ -33,7 +30,7 @@ class ReportTablesTest extends TestCase
     /**
      * Tear down the unit tests.
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
     }
@@ -645,19 +642,19 @@ class ReportTablesTest extends TestCase
             $appData = array_merge($appData, $gridFields);
         }
 
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'USR_UID' => $userUid
         ]);
 
-        $process = factory(Process::class)->create([
+        $process = Process::factory()->create([
             'PRO_UID' => $processUid
         ]);
 
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
 
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'APP_UID' => $applicationUid,
             'APP_NUMBER' => $applicationNumber,
@@ -825,7 +822,7 @@ class ReportTablesTest extends TestCase
         $grid = 'var_Grid1';
 
         //assert exception
-        $this->expectException(Exception::class);
+        $this->expectException(TypeError::class);
 
         $reportTables = new ReportTables();
         $reportTables->populateTable($tableName, $connectionShortName, $type, null, $proUid, $grid);

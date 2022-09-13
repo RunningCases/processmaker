@@ -5,7 +5,6 @@ namespace Tests\unit\workflow\src\ProcessMaker\Model;
 use DateInterval;
 use Datetime;
 use G;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use ProcessMaker\Model\AppAssignSelfServiceValue;
 use ProcessMaker\Model\AppAssignSelfServiceValueGroup;
@@ -30,17 +29,22 @@ use Tests\TestCase;
  */
 class DelegationTest extends TestCase
 {
-    use DatabaseTransactions;
-
     /**
      * Set up function.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-        Delegation::truncate();
-        AppThread::truncate();
-        Application::truncate();
+        $this->truncateNonInitialModels();
+    }
+
+    /**
+     * Tear down function.
+     * @return void
+     */
+    public function tearDown(): void
+    {
+        parent::tearDown();
     }
 
     /**
@@ -51,9 +55,9 @@ class DelegationTest extends TestCase
      */
     public function it_has_an_application()
     {
-        $delegation = factory(Delegation::class)->create([
+        $delegation = Delegation::factory()->create([
             'APP_UID' => function () {
-                return factory(Application::class)->create()->APP_UID;
+                return Application::factory()->create()->APP_UID;
             }
         ]);
         $this->assertInstanceOf(Application::class, $delegation->application);
@@ -67,9 +71,9 @@ class DelegationTest extends TestCase
      */
     public function it_has_an_user()
     {
-        $delegation = factory(Delegation::class)->create([
+        $delegation = Delegation::factory()->create([
             'USR_ID' => function () {
-                return factory(User::class)->create()->USR_ID;
+                return User::factory()->create()->USR_ID;
             }
         ]);
         $this->assertInstanceOf(User::class, $delegation->user);
@@ -83,9 +87,9 @@ class DelegationTest extends TestCase
      */
     public function it_has_a_task()
     {
-        $delegation = factory(Delegation::class)->create([
+        $delegation = Delegation::factory()->create([
             'TAS_ID' => function () {
-                return factory(Task::class)->create()->TAS_ID;
+                return Task::factory()->create()->TAS_ID;
             }
         ]);
         $this->assertInstanceOf(Task::class, $delegation->task);
@@ -99,9 +103,9 @@ class DelegationTest extends TestCase
      */
     public function it_has_a_process()
     {
-        $delegation = factory(Delegation::class)->create([
+        $delegation = Delegation::factory()->create([
             'PRO_ID' => function () {
-                return factory(Process::class)->create()->PRO_ID;
+                return Process::factory()->create()->PRO_ID;
             }
         ]);
         $this->assertInstanceOf(Process::class, $delegation->process);
@@ -115,7 +119,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_priority()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(1, $table->priority($table->DEL_PRIORITY)->get());
     }
 
@@ -127,7 +131,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_priorities()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(1, $table->priorities([$table->DEL_PRIORITY])->get());
     }
 
@@ -139,7 +143,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_thread_open()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(1, $table->threadOpen()->get());
     }
 
@@ -163,7 +167,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_thread_pause()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(0, $table->threadPause()->get());
     }
     /**
@@ -174,7 +178,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_thread_open_and_pause()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(1, $table->openAndPause()->get());
     }
 
@@ -186,7 +190,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_case_started()
     {
-        $table = factory(Delegation::class)->states('first_thread')->create();
+        $table = Delegation::factory()->first_thread()->create();
         $this->assertCount(1, $table->caseStarted($table->DEL_INDEX)->get());
     }
 
@@ -198,7 +202,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_case_in_progress()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(1, $table->joinApplication()->casesInProgress([2])->get());
     }
 
@@ -210,7 +214,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_case_done()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(1, $table->joinApplication()->casesDone([2])->get());
     }
 
@@ -222,7 +226,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_index()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(1, $table->index($table->DEL_INDEX)->get());
     }
 
@@ -234,8 +238,8 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_case_to_do()
     {
-        $application = factory(Application::class)->states('todo')->create();
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->todo()->create();
+        $table = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
         ]);
@@ -250,8 +254,8 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_case_completed()
     {
-        $application = factory(Application::class)->states('completed')->create();
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->completed()->create();
+        $table = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
         ]);
@@ -266,8 +270,8 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_case_canceled()
     {
-        $application = factory(Application::class)->states('canceled')->create();
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->canceled()->create();
+        $table = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
         ]);
@@ -282,8 +286,8 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_status()
     {
-        $application = factory(Application::class)->states('todo')->create();
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->todo()->create();
+        $table = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
         ]);
@@ -298,8 +302,8 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_status_ids()
     {
-        $application = factory(Application::class)->states('todo')->create();
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->todo()->create();
+        $table = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
         ]);
@@ -314,8 +318,8 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_start_date_from()
     {
-        $application = factory(Application::class)->states('todo')->create();
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->todo()->create();
+        $table = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
         ]);
@@ -330,8 +334,8 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_start_date_to()
     {
-        $application = factory(Application::class)->states('todo')->create();
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->todo()->create();
+        $table = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
         ]);
@@ -346,8 +350,8 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_finish_case_date_from()
     {
-        $application = factory(Application::class)->states('todo')->create();
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->todo()->create();
+        $table = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
         ]);
@@ -362,8 +366,8 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_finish_case_date_to()
     {
-        $application = factory(Application::class)->states('todo')->create();
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->todo()->create();
+        $table = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
         ]);
@@ -378,7 +382,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_delegate_date_from()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(1, $table->delegateDateFrom($table->DEL_DELEGATE_DATE->format("Y-m-d H:i:s"))->get());
     }
 
@@ -390,7 +394,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_delegate_date_to()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(1, $table->delegateDateTo($table->DEL_DELEGATE_DATE->format("Y-m-d H:i:s"))->get());
     }
 
@@ -402,7 +406,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_finish_date_from()
     {
-        $table = factory(Delegation::class)->states('closed')->create();
+        $table = Delegation::factory()->closed()->create();
         $this->assertCount(1, $table->finishDateFrom($table->DEL_FINISH_DATE)->get());
     }
 
@@ -414,7 +418,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_finish_date_to()
     {
-        $table = factory(Delegation::class)->states('closed')->create();
+        $table = Delegation::factory()->closed()->create();
         $this->assertCount(1, $table->finishDateTo($table->DEL_FINISH_DATE)->get());
     }
 
@@ -426,7 +430,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_due_date_from()
     {
-        $table = factory(Delegation::class)->states('closed')->create();
+        $table = Delegation::factory()->closed()->create();
         $this->assertCount(1, $table->dueFrom($table->DEL_TASK_DUE_DATE)->get());
     }
 
@@ -438,7 +442,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_due_date_to()
     {
-        $table = factory(Delegation::class)->states('closed')->create();
+        $table = Delegation::factory()->closed()->create();
         $this->assertCount(1, $table->dueTo($table->DEL_TASK_DUE_DATE)->get());
     }
 
@@ -450,7 +454,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_on_time()
     {
-        $table = factory(Delegation::class)->states('closed')->create();
+        $table = Delegation::factory()->closed()->create();
         $this->assertCount(1, $table->onTime($table->DEL_DELEGATE_DATE)->get());
     }
 
@@ -466,7 +470,7 @@ class DelegationTest extends TestCase
         $currentDate = $date->format('Y-m-d H:i:s');
         $diff2Days = new DateInterval('P2D');
 
-        $table = factory(Delegation::class)->create([
+        $table = Delegation::factory()->create([
             'DEL_THREAD_STATUS' => 'CLOSED',
             'DEL_DELEGATE_DATE' => $currentDate,
             'DEL_RISK_DATE' => $currentDate,
@@ -487,7 +491,7 @@ class DelegationTest extends TestCase
         $currentDate = $date->format('Y-m-d H:i:s');
         $diff2Days = new DateInterval('P2D');
 
-        $table = factory(Delegation::class)->create([
+        $table = Delegation::factory()->create([
             'DEL_THREAD_STATUS' => 'CLOSED',
             'DEL_DELEGATE_DATE' => $currentDate,
             'DEL_RISK_DATE' => $currentDate,
@@ -504,7 +508,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_case()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(1, $table->case($table->APP_NUMBER)->get());
     }
 
@@ -516,7 +520,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_specific_cases()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(1, $table->specificCases([$table->APP_NUMBER])->get());
     }
 
@@ -528,7 +532,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_cases_from()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(1, $table->casesFrom($table->APP_NUMBER)->get());
     }
 
@@ -540,7 +544,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_cases_to()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(1, $table->casesTo($table->APP_NUMBER)->get());
     }
 
@@ -552,7 +556,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_positive_cases()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(1, $table->positiveCases()->get());
     }
 
@@ -564,7 +568,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_cases_and_range_of_cases()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $cases = [$table->APP_NUMBER];
         $rangeCases = [$table->APP_NUMBER . '-' . $table->APP_NUMBER];
         $this->assertCount(1, $table->casesOrRangeOfCases($cases, $rangeCases)->get());
@@ -578,7 +582,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_range_of_cases()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(1, $table->rangeOfCases([$table->APP_NUMBER . '-' . $table->APP_NUMBER])->get());
     }
 
@@ -590,7 +594,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_app_uid()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(1, $table->appUid($table->APP_UID)->get());
     }
 
@@ -602,7 +606,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_last_thread()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(1, $table->lastThread()->get());
     }
 
@@ -614,7 +618,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_specific_cases_uid()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(1, $table->specificCasesByUid([$table->APP_UID])->get());
     }
 
@@ -626,7 +630,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_user_id()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(1, $table->userId($table->USR_ID)->get());
     }
 
@@ -638,7 +642,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_without_user_id()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $table = Delegation::factory()->foreign_keys()->create([
             'USR_ID' => 0
         ]);
         $this->assertCount(1, $table->withoutUserId($table->TAS_ID)->get());
@@ -652,7 +656,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_process_id()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(1, $table->processId($table->PRO_ID)->get());
     }
 
@@ -664,7 +668,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_task_id()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(1, $table->task($table->TAS_ID)->get());
     }
 
@@ -676,7 +680,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_task()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(1, $table->task($table->TAS_ID)->get());
     }
 
@@ -688,7 +692,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_specific_tasks()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(1, $table->specificTasks([$table->TAS_ID])->get());
     }
 
@@ -700,7 +704,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_assign_type()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(1, $table->taskAssignType('NORMAL')->get());
     }
 
@@ -712,7 +716,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_exclude_tas_types()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertNotEmpty($table->excludeTaskTypes(['ADHOC'])->get());
     }
 
@@ -724,7 +728,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_specific_tas_types()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(1, $table->specificTaskTypes(['NORMAL'])->get());
     }
 
@@ -736,11 +740,11 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_status_id()
     {
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'APP_STATUS_ID' => 2,
             'APP_STATUS' => 'TO_DO'
         ]);
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $table = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER
         ]);
         $this->assertCount(1, $table->appStatusId()->get());
@@ -754,8 +758,8 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_process_in_list()
     {
-        $process = factory(Process::class)->create();
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $process = Process::factory()->create();
+        $table = Delegation::factory()->foreign_keys()->create([
             'PRO_ID' => $process->PRO_ID
         ]);
         $this->assertCount(1, $table->joinProcess()->processInList([$table->PRO_ID])->get());
@@ -769,7 +773,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_participated()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(1, $table->participated($table->USR_ID)->get());
     }
 
@@ -781,8 +785,8 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_category()
     {
-        $process = factory(Process::class)->create();
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $process = Process::factory()->create();
+        $table = Delegation::factory()->foreign_keys()->create([
             'PRO_ID' => $process->PRO_ID
         ]);
         $this->assertCount(1, $table->joinProcess()->categoryId($process->CATEGORY_ID)->get());
@@ -796,11 +800,11 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_join_category_process()
     {
-        $category = factory(ProcessCategory::class)->create();
-        $process = factory(Process::class)->create([
+        $category = ProcessCategory::factory()->create();
+        $process = Process::factory()->create([
             'PRO_CATEGORY' => $category->CATEGORY_UID
         ]);
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $table = Delegation::factory()->foreign_keys()->create([
             'PRO_ID' => $process->PRO_ID
         ]);
         $this->assertCount(1, $table->joinCategoryProcess($category->CATEGORY_UID)->get());
@@ -814,8 +818,8 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_join_previous_index()
     {
-        $previous = factory(Delegation::class)->states('foreign_keys')->create();
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $previous = Delegation::factory()->foreign_keys()->create();
+        $table = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $previous->APP_NUMBER,
             'DEL_INDEX' => $previous->DEL_INDEX + 1,
             'DEL_PREVIOUS' => $previous->DEL_INDEX
@@ -831,8 +835,8 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_join_process()
     {
-        $process = factory(Process::class)->create();
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $process = Process::factory()->create();
+        $table = Delegation::factory()->foreign_keys()->create([
             'PRO_ID' => $process->PRO_ID
         ]);
         $this->assertCount(1, $table->joinProcess()->get());
@@ -846,8 +850,8 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_join_task()
     {
-        $task = factory(Task::class)->create();
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $task = Task::factory()->create();
+        $table = Delegation::factory()->foreign_keys()->create([
             'TAS_ID' => $task->TAS_ID
         ]);
         $this->assertCount(1, $table->joinTask()->get());
@@ -861,8 +865,8 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_join_user()
     {
-        $user = factory(User::class)->create();
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $user = User::factory()->create();
+        $table = Delegation::factory()->foreign_keys()->create([
             'USR_ID' => $user->USR_ID
         ]);
         $this->assertCount(1, $table->joinUser()->get());
@@ -876,8 +880,8 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_join_application()
     {
-        $application = factory(Application::class)->create();
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->create();
+        $table = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER
         ]);
         $this->assertCount(1, $table->joinApplication()->get());
@@ -892,13 +896,13 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_join_app_delay_pause()
     {
-        $user = factory(User::class)->create();
-        $delay = factory(AppDelay::class)->create([
+        $user = User::factory()->create();
+        $delay = AppDelay::factory()->create([
             'APP_TYPE' => 'PAUSE',
             'APP_DISABLE_ACTION_USER' => '0',
             'APP_DELEGATION_USER' => $user->USR_UID,
         ]);
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $table = Delegation::factory()->foreign_keys()->create([
             'USR_ID' => $user->USR_ID,
             'USR_UID' => $user->USR_UID,
             'APP_NUMBER' => $delay->APP_NUMBER,
@@ -915,7 +919,7 @@ class DelegationTest extends TestCase
      */
     public function it_should_return_pages_of_data()
     {
-        factory(Delegation::class, 51)->states('foreign_keys')->create();
+        Delegation::factory(51)->foreign_keys()->create();
         // Get first page, which is 25
         $results = Delegation::search(null, 0, 25, null, null, null, null, null, null, null, null, 'APP_NUMBER');
         $this->assertCount(25, $results['data']);
@@ -935,8 +939,8 @@ class DelegationTest extends TestCase
      */
     public function it_should_return_pages_of_data_unassigned()
     {
-        factory(Delegation::class, 50)->states('foreign_keys')->create();
-        factory(Delegation::class, 1)->states('foreign_keys')->create([
+        Delegation::factory(50)->foreign_keys()->create();
+        Delegation::factory(1)->foreign_keys()->create([
             'USR_ID' => 0 // A self service delegation
         ]);
         // Get first page, which is 25
@@ -959,8 +963,8 @@ class DelegationTest extends TestCase
     public function it_should_return_process_of_data()
     {
 
-        $process = factory(Process::class)->create();
-        factory(Delegation::class, 51)->states('foreign_keys')->create([
+        $process = Process::factory()->create();
+        Delegation::factory(51)->foreign_keys()->create([
             'PRO_ID' => $process->PRO_ID
         ]);
         // Get first page, which is 25
@@ -983,11 +987,11 @@ class DelegationTest extends TestCase
      */
     public function it_should_return_status_draft_of_data()
     {
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'APP_STATUS_ID' => 1,
             'APP_STATUS' => 'DRAFT'
         ]);
-        factory(Delegation::class, 51)->states('foreign_keys')->create([
+        Delegation::factory(51)->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER
         ]);
         // Review the filter by status DRAFT
@@ -1011,11 +1015,11 @@ class DelegationTest extends TestCase
      */
     public function it_should_return_status_todo_of_data()
     {
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'APP_STATUS_ID' => 2,
             'APP_STATUS' => 'TO_DO'
         ]);
-        factory(Delegation::class, 51)->states('foreign_keys')->create([
+        Delegation::factory(51)->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER
         ]);
         // Review the filter by status TO_DO
@@ -1039,11 +1043,11 @@ class DelegationTest extends TestCase
      */
     public function it_should_return_status_completed_of_data()
     {
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'APP_STATUS_ID' => 3,
             'APP_STATUS' => 'COMPLETED',
         ]);
-        factory(Delegation::class, 51)->states('foreign_keys')->create([
+        Delegation::factory(51)->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_LAST_INDEX' => 1
         ]);
@@ -1068,11 +1072,11 @@ class DelegationTest extends TestCase
      */
     public function it_should_return_status_cancelled_of_data()
     {
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'APP_STATUS_ID' => 4,
             'APP_STATUS' => 'CANCELLED'
         ]);
-        factory(Delegation::class, 51)->states('foreign_keys')->create([
+        Delegation::factory(51)->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_LAST_INDEX' => 1
         ]);
@@ -1097,9 +1101,9 @@ class DelegationTest extends TestCase
     public function it_should_return_one_result_for_specified_user()
     {
         // Create our unique user, with a unique username
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         // Create a new delegation, but for this specific user
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'USR_UID' => $user->USR_UID,
             'USR_ID' => $user->USR_ID
         ]);
@@ -1118,8 +1122,8 @@ class DelegationTest extends TestCase
     public function it_should_search_and_filter_by_app_number()
     {
         for ($x = 1; $x <= 10; $x++) {
-            $application = factory(Application::class)->create();
-            factory(Delegation::class)->states('foreign_keys')->create([
+            $application = Application::factory()->create();
+            Delegation::factory()->foreign_keys()->create([
                 'APP_NUMBER' => $application->APP_NUMBER,
                 'DEL_THREAD_STATUS' => 'OPEN'
             ]);
@@ -1168,9 +1172,9 @@ class DelegationTest extends TestCase
      */
     public function it_should_search_and_filter_by_app_title()
     {
-        $delegations = factory(Delegation::class, 1)->states('foreign_keys')->create([
+        $delegations = Delegation::factory(1)->foreign_keys()->create([
             'APP_NUMBER' => function () {
-                return factory(Application::class)->create()->APP_NUMBER;
+                return Application::factory()->create()->APP_NUMBER;
             }
         ]);
         $title = $delegations->last()->DEL_TITLE;
@@ -1221,13 +1225,13 @@ class DelegationTest extends TestCase
      */
     public function it_should_search_and_order_by_task_title()
     {
-        factory(Delegation::class, 5)->states('foreign_keys')->create([
+        Delegation::factory(5)->foreign_keys()->create([
             'TAS_ID' => function () {
-                return factory(Task::class)->create()->TAS_ID;
+                return Task::factory()->create()->TAS_ID;
             }
         ]);
-        $task = factory(Task::class)->create();
-        factory(Delegation::class)->states('foreign_keys')->create([
+        $task = Task::factory()->create();
+        Delegation::factory()->foreign_keys()->create([
             'TAS_ID' => $task->TAS_ID
         ]);
         // Get the order taskTitle in ASC mode
@@ -1305,7 +1309,7 @@ class DelegationTest extends TestCase
      */
     public function it_should_sort_by_case_id()
     {
-        factory(Delegation::class, 2)->states('foreign_keys')->create();
+        Delegation::factory(2)->foreign_keys()->create();
         // Get first page, the minor case id
         $results = Delegation::search(null, 0, 2, null, null, null, 'ASC', 'APP_NUMBER');
         $this->assertCount(2, $results['data']);
@@ -1324,7 +1328,7 @@ class DelegationTest extends TestCase
      */
     public function it_should_sort_by_case_title()
     {
-        factory(Delegation::class, 2)->states('foreign_keys')->create();
+        Delegation::factory(2)->foreign_keys()->create();
         // Get first page, the minor case title
         $results = Delegation::search(null, 0, 2, null, null, null, 'ASC', 'APP_TITLE');
         $this->assertCount(2, $results['data']);
@@ -1343,9 +1347,9 @@ class DelegationTest extends TestCase
      */
     public function it_should_sort_by_process()
     {
-        factory(Delegation::class, 3)->states('foreign_keys')->create([
+        Delegation::factory(3)->foreign_keys()->create([
             'PRO_ID' => function () {
-                return factory(Process::class)->create()->PRO_ID;
+                return Process::factory()->create()->PRO_ID;
             }
         ]);
         // Get first page, all process ordering ASC
@@ -1366,9 +1370,9 @@ class DelegationTest extends TestCase
      */
     public function it_should_sort_by_task_title()
     {
-        factory(Delegation::class, 2)->states('foreign_keys')->create([
+        Delegation::factory(2)->foreign_keys()->create([
             'TAS_ID' => function () {
-                return factory(Task::class)->create()->TAS_ID;
+                return Task::factory()->create()->TAS_ID;
             }
         ]);
         // Get first page, all titles ordering ASC
@@ -1389,9 +1393,9 @@ class DelegationTest extends TestCase
      */
     public function it_should_sort_by_user()
     {
-        factory(Delegation::class, 2)->states('foreign_keys')->create([
+        Delegation::factory(2)->foreign_keys()->create([
             'USR_ID' => function () {
-                return factory(User::class)->create()->USR_ID;
+                return User::factory()->create()->USR_ID;
             }
         ]);
         // Get first page, order by User ordering ASC
@@ -1412,9 +1416,9 @@ class DelegationTest extends TestCase
      */
     public function it_should_sort_by_last_modified()
     {
-        factory(Delegation::class, 2)->states('foreign_keys')->create([
+        Delegation::factory(2)->foreign_keys()->create([
             'APP_NUMBER' => function () {
-                return factory(Application::class)->create()->APP_NUMBER;
+                return Application::factory()->create()->APP_NUMBER;
             }
         ]);
         // Get first page, the minor last modified
@@ -1435,7 +1439,7 @@ class DelegationTest extends TestCase
      */
     public function it_should_sort_by_due_date()
     {
-        factory(Delegation::class, 10)->states('foreign_keys')->create();
+        Delegation::factory(10)->foreign_keys()->create();
         // Get first page, the minor due date
         $results = Delegation::search(null, 0, 10, null, null, null, 'ASC', 'DEL_TASK_DUE_DATE');
         $this->assertCount(10, $results['data']);
@@ -1454,27 +1458,27 @@ class DelegationTest extends TestCase
      */
     public function it_should_sort_by_status()
     {
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => function () {
-                return factory(Application::class)->create(['APP_STATUS' => 'DRAFT', 'APP_STATUS_ID' => 1])->APP_NUMBER;
+                return Application::factory()->create(['APP_STATUS' => 'DRAFT', 'APP_STATUS_ID' => 1])->APP_NUMBER;
             }
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => function () {
-                return factory(Application::class)->create(['APP_STATUS' => 'TO_DO', 'APP_STATUS_ID' => 2])->APP_NUMBER;
+                return Application::factory()->create(['APP_STATUS' => 'TO_DO', 'APP_STATUS_ID' => 2])->APP_NUMBER;
             }
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => function () {
-                return factory(Application::class)->create([
+                return Application::factory()->create([
                     'APP_STATUS' => 'COMPLETED',
                     'APP_STATUS_ID' => 3
                 ])->APP_NUMBER;
             }
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => function () {
-                return factory(Application::class)->create([
+                return Application::factory()->create([
                     'APP_STATUS' => 'CANCELLED',
                     'APP_STATUS_ID' => 4
                 ])->APP_NUMBER;
@@ -1497,21 +1501,21 @@ class DelegationTest extends TestCase
     public function it_should_return_data_filtered_by_process_category()
     {
         // Dummy Processes
-        factory(ProcessCategory::class, 4)->create();
-        factory(Process::class, 4)->create([
+        ProcessCategory::factory(4)->create();
+        Process::factory(4)->create([
             'PRO_CATEGORY' => ProcessCategory::all()->random()->CATEGORY_UID
         ]);
         // Dummy Delegations
-        factory(Delegation::class, 100)->create([
+        Delegation::factory(100)->create([
             'PRO_ID' => Process::all()->random()->PRO_ID
         ]);
         // Process with the category to search
-        $category = factory(ProcessCategory::class)->create();
-        $processSearch = factory(Process::class)->create([
+        $category = ProcessCategory::factory()->create();
+        $processSearch = Process::factory()->create([
             'PRO_CATEGORY' => $category->CATEGORY_UID
         ]);
         // Delegations to found
-        factory(Delegation::class, 51)->states('foreign_keys')->create([
+        Delegation::factory(51)->foreign_keys()->create([
             'PRO_ID' => $processSearch->PRO_ID
         ]);
         // Get first page, which is 25
@@ -1533,16 +1537,16 @@ class DelegationTest extends TestCase
      */
     public function it_should_return_right_data_between_two_dates()
     {
-        factory(Delegation::class, 10)->states('foreign_keys')->create([
+        Delegation::factory(10)->foreign_keys()->create([
             'DEL_DELEGATE_DATE' => '2019-01-02 00:00:00'
         ]);
-        factory(Delegation::class, 10)->states('foreign_keys')->create([
+        Delegation::factory(10)->foreign_keys()->create([
             'DEL_DELEGATE_DATE' => '2019-01-03 00:00:00'
         ]);
-        factory(Delegation::class, 10)->states('foreign_keys')->create([
+        Delegation::factory(10)->foreign_keys()->create([
             'DEL_DELEGATE_DATE' => '2019-01-04 00:00:00'
         ]);
-        factory(Delegation::class, 10)->states('foreign_keys')->create([
+        Delegation::factory(10)->foreign_keys()->create([
             'DEL_DELEGATE_DATE' => '2019-01-05 00:00:00'
         ]);
         $results = Delegation::search(
@@ -1562,7 +1566,7 @@ class DelegationTest extends TestCase
         foreach ($results['data'] as $value) {
             $this->assertGreaterThanOrEqual('2019-01-02 00:00:00', $value['DEL_DELEGATE_DATE']);
             $this->assertLessThanOrEqual('2019-01-03 00:00:00', $value['DEL_DELEGATE_DATE']);
-            $this->assertRegExp('(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) ', $value['DEL_DELEGATE_DATE']);
+            $this->assertMatchesRegularExpression('(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) ', $value['DEL_DELEGATE_DATE']);
         }
     }
 
@@ -1574,16 +1578,16 @@ class DelegationTest extends TestCase
      */
     public function it_should_return_right_data_with_filters_dates_parameter()
     {
-        factory(Delegation::class, 10)->states('foreign_keys')->create([
+        Delegation::factory(10)->foreign_keys()->create([
             'DEL_DELEGATE_DATE' => '2019-01-02 00:00:00'
         ]);
-        factory(Delegation::class, 10)->states('foreign_keys')->create([
+        Delegation::factory(10)->foreign_keys()->create([
             'DEL_DELEGATE_DATE' => '2019-01-03 00:00:00'
         ]);
-        factory(Delegation::class, 10)->states('foreign_keys')->create([
+        Delegation::factory(10)->foreign_keys()->create([
             'DEL_DELEGATE_DATE' => '2019-01-04 00:00:00'
         ]);
-        factory(Delegation::class, 10)->states('foreign_keys')->create([
+        Delegation::factory(10)->foreign_keys()->create([
             'DEL_DELEGATE_DATE' => '2019-01-05 00:00:00'
         ]);
         // Search setting only from
@@ -1602,7 +1606,7 @@ class DelegationTest extends TestCase
         $this->assertCount(40, $results['data']);
         foreach ($results['data'] as $value) {
             $this->assertGreaterThanOrEqual('2019-01-02 00:00:00', $value['DEL_DELEGATE_DATE']);
-            $this->assertRegExp('(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) ', $value['DEL_DELEGATE_DATE']);
+            $this->assertMatchesRegularExpression('(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) ', $value['DEL_DELEGATE_DATE']);
         }
         // Search setting only to
         $results = Delegation::search(
@@ -1620,7 +1624,7 @@ class DelegationTest extends TestCase
         );
         foreach ($results['data'] as $value) {
             $this->assertLessThanOrEqual('2019-01-04 00:00:00', $value['DEL_DELEGATE_DATE']);
-            $this->assertRegExp('(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) ', $value['DEL_DELEGATE_DATE']);
+            $this->assertMatchesRegularExpression('(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) ', $value['DEL_DELEGATE_DATE']);
         }
     }
 
@@ -1633,13 +1637,13 @@ class DelegationTest extends TestCase
     public function it_should_return_empty_when_parallel_tasks_has_threads_closed()
     {
         // Create a process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         // Create a task
-        $parallelTask = factory(Task::class)->create();
+        $parallelTask = Task::factory()->create();
         // Create a case
-        $application = factory(Application::class)->create();
+        $application = Application::factory()->create();
         // Create the threads for a parallel process
-        factory(Delegation::class, 5)->states('foreign_keys')->create([
+        Delegation::factory(5)->foreign_keys()->create([
             'PRO_ID' => $process->PRO_ID,
             'TAS_ID' => $parallelTask->TAS_ID,
             'APP_NUMBER' => $application->APP_NUMBER,
@@ -1653,7 +1657,7 @@ class DelegationTest extends TestCase
             $application->APP_NUMBER,
             null,
             null,
-            null,
+            'asc',
             'TAS_TITLE',
             null,
             null,
@@ -1672,13 +1676,13 @@ class DelegationTest extends TestCase
     public function it_should_return_data_when_parallel_tasks_has_threads_open()
     {
         // Create a process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         // Create a task
-        $parallelTask = factory(Task::class)->create();
+        $parallelTask = Task::factory()->create();
         // Create a case
-        $application = factory(Application::class)->create();
+        $application = Application::factory()->create();
         // Create the threads for a parallel process
-        factory(Delegation::class, 5)->states('foreign_keys')->create([
+        Delegation::factory(5)->foreign_keys()->create([
             'PRO_ID' => $process->PRO_ID,
             'TAS_ID' => $parallelTask->TAS_ID,
             'APP_NUMBER' => $application->APP_NUMBER,
@@ -1699,13 +1703,13 @@ class DelegationTest extends TestCase
     public function it_should_return_data_in_sequential_tasks_with_intermediate_dummy_task()
     {
         // Create a process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         // Create a task
-        $parallelTask = factory(Task::class)->create();
+        $parallelTask = Task::factory()->create();
         // Create a case
-        $application = factory(Application::class)->create(['APP_STATUS_ID' => 2]);
+        $application = Application::factory()->create(['APP_STATUS_ID' => 2]);
         // Create the threads for a parallel process closed
-        factory(Delegation::class)->states('closed')->create([
+        Delegation::factory()->closed()->create([
             'PRO_ID' => $process->PRO_ID,
             'PRO_UID' => $process->PRO_UID,
             'TAS_ID' => $parallelTask->TAS_ID,
@@ -1713,7 +1717,7 @@ class DelegationTest extends TestCase
             'DEL_INDEX' => 1
         ]);
         // Create the threads for a parallel process closed
-        factory(Delegation::class)->states('open')->create([
+        Delegation::factory()->open()->create([
             'PRO_ID' => $process->PRO_ID,
             'PRO_UID' => $process->PRO_UID,
             'TAS_ID' => $parallelTask->TAS_ID,
@@ -1747,9 +1751,9 @@ class DelegationTest extends TestCase
      */
     public function it_should_return_status_empty()
     {
-        factory(Delegation::class, 5)->states('foreign_keys')->create([
+        Delegation::factory(5)->foreign_keys()->create([
             'APP_NUMBER' => function () {
-                return factory(Application::class)->create(['APP_STATUS' => ''])->APP_NUMBER;
+                return Application::factory()->create(['APP_STATUS' => ''])->APP_NUMBER;
             }
         ]);
         // Review the filter by status empty
@@ -1766,15 +1770,15 @@ class DelegationTest extends TestCase
     public function it_should_return_empty_when_process_and_category_does_not_have_a_relation()
     {
         // Create a categories
-        $category = factory(ProcessCategory::class, 2)->create();
+        $category = ProcessCategory::factory(2)->create();
         //Create a process with category
-        $processWithCat = factory(Process::class)->create(['PRO_CATEGORY' => $category[0]->CATEGORY_UID]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        $processWithCat = Process::factory()->create(['PRO_CATEGORY' => $category[0]->CATEGORY_UID]);
+        Delegation::factory()->foreign_keys()->create([
             'PRO_ID' => $processWithCat->PRO_ID
         ]);
         // Create a process without category
-        $processWithoutCat = factory(Process::class)->create(['PRO_CATEGORY' => '']);
-        factory(Delegation::class, 5)->states('foreign_keys')->create([
+        $processWithoutCat = Process::factory()->create(['PRO_CATEGORY' => '']);
+        Delegation::factory(5)->foreign_keys()->create([
             'PRO_ID' => $processWithoutCat->PRO_ID
         ]);
         // Search the cases when the process has related to the category and search by another category
@@ -1840,23 +1844,25 @@ class DelegationTest extends TestCase
     public function it_should_return_data_when_process_and_category_does_have_a_relation()
     {
         //Create a category
-        $category = factory(ProcessCategory::class)->create();
+        $category = ProcessCategory::factory()->create();
         //Define a process related with he previous category
-        $processWithCat = factory(Process::class)->create([
+        $processWithCat = Process::factory()->create([
             'PRO_CATEGORY' => $category->CATEGORY_UID
         ]);
         //Create a delegation related to this process
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'PRO_ID' => $processWithCat->PRO_ID
         ]);
         //Define a process related with he previous category
-        $process = factory(Process::class)->create([
+        $process = Process::factory()->create([
             'PRO_CATEGORY' => ''
         ]);
         //Create a delegation related to other process
-        factory(Delegation::class, 5)->create([
+        $delegation = Delegation::factory(5)->create([
             'PRO_ID' => $process->PRO_ID,
         ]);
+
+        $this->assertEquals($process->PRO_ID, $delegation[0]->PRO_ID);
     }
 
     /**
@@ -1868,17 +1874,17 @@ class DelegationTest extends TestCase
     public function it_should_return_participation_info()
     {
         // Creating one application with two delegations
-        factory(User::class, 100)->create();
-        $process = factory(Process::class)->create();
-        $application = factory(Application::class)->create([
+        User::factory(100)->create();
+        $process = Process::factory()->create();
+        $application = Application::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'APP_UID' => G::generateUniqueID()
         ]);
-        factory(Delegation::class)->states('closed')->create([
+        Delegation::factory()->closed()->create([
             'PRO_UID' => $process->PRO_UID,
             'APP_UID' => $application->APP_UID
         ]);
-        factory(Delegation::class)->states('open')->create([
+        Delegation::factory()->open()->create([
             'PRO_UID' => $process->PRO_UID,
             'APP_UID' => $application->APP_UID,
             'DEL_INDEX' => 2
@@ -1915,24 +1921,24 @@ class DelegationTest extends TestCase
     public function it_should_get_query_cases_by_user_with_self_service_user_assigned()
     {
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Create a task self service
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1, //Related to the user
             'TU_TYPE' => 1
         ]);
         //Create the register in delegation relate to self-service
-        factory(Delegation::class, 25)->create([
+        Delegation::factory(25)->create([
             'TAS_ID' => $task->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
@@ -1952,31 +1958,31 @@ class DelegationTest extends TestCase
     public function it_should_get_query_cases_by_user_with_self_service_value_based_usr_uid()
     {
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create a case
-        $application = factory(Application::class)->create();
+        $application = Application::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Create a task self service value based
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '@@ARRAY_OF_USERS',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
-        $appSelfValue = factory(AppAssignSelfServiceValue::class)->create([
+        $appSelfValue = AppAssignSelfServiceValue::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_INDEX' => 2,
             'TAS_ID' => $task->TAS_ID
         ]);
-        factory(AppAssignSelfServiceValueGroup::class)->create([
+        AppAssignSelfServiceValueGroup::factory()->create([
             'ID' => $appSelfValue->ID,
             'GRP_UID' => $user->USR_UID,
             'ASSIGNEE_ID' => $user->USR_ID, //The usrId or grpId
             'ASSIGNEE_TYPE' => 1 //Related to the user=1 related to the group=2
         ]);
         //Create the register in self-service
-        factory(Delegation::class, 25)->create([
+        Delegation::factory(25)->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_INDEX' => $appSelfValue->DEL_INDEX,
             'TAS_ID' => $task->TAS_ID,
@@ -1997,32 +2003,32 @@ class DelegationTest extends TestCase
     public function it_should_get_query_cases_by_user_with_self_service_group_assigned()
     {
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create group
-        $group = factory(Groupwf::class)->create();
+        $group = Groupwf::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Assign a user in the group
-        factory(GroupUser::class)->create([
+        GroupUser::factory()->create([
             'GRP_UID' => $group->GRP_UID,
             'GRP_ID' => $group->GRP_ID,
             'USR_UID' => $user->USR_UID
         ]);
         //Create a task self service
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 2, //Related to the group
             'TU_TYPE' => 1
         ]);
         //Create the register in self-service
-        factory(Delegation::class, 25)->create([
+        Delegation::factory(25)->create([
             'TAS_ID' => $task->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
@@ -2042,44 +2048,44 @@ class DelegationTest extends TestCase
     public function it_should_get_query_cases_by_user_with_self_service_value_based_grp_uid()
     {
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create a task self service value based
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '@@ARRAY_OF_USERS',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Create a case
-        $application = factory(Application::class)->create();
+        $application = Application::factory()->create();
         //Create group
-        $group = factory(Groupwf::class)->create();
+        $group = Groupwf::factory()->create();
         //Create user
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'USR_USERNAME' => 'gary',
             'USR_LASTNAME' => 'Gary',
             'USR_FIRSTNAME' => 'Bailey',
         ]);
         //Assign a user in the group
-        factory(GroupUser::class)->create([
+        GroupUser::factory()->create([
             'GRP_UID' => $group->GRP_UID,
             'GRP_ID' => $group->GRP_ID,
             'USR_UID' => $user->USR_UID,
         ]);
         //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
-        $appSelfValue = factory(AppAssignSelfServiceValue::class)->create([
+        $appSelfValue = AppAssignSelfServiceValue::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
             'DEL_INDEX' => 2,
             'TAS_ID' => $task->TAS_ID
         ]);
-        factory(AppAssignSelfServiceValueGroup::class)->create([
+        AppAssignSelfServiceValueGroup::factory()->create([
             'ID' => $appSelfValue->ID,
             'GRP_UID' => $group->GRP_UID,
             'ASSIGNEE_ID' => $group->GRP_ID, //The usrId or grpId
             'ASSIGNEE_TYPE' => 2 //Related to the user=1 related to the group=2
         ]);
         //Create the register in self-service
-        factory(Delegation::class, 25)->create([
+        Delegation::factory(25)->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_INDEX' => 2,
             'TAS_ID' => $task->TAS_ID,
@@ -2100,62 +2106,62 @@ class DelegationTest extends TestCase
     public function it_should_get_query_cases_by_user_with_self_service_and_self_service_value_based()
     {
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create group
-        $group = factory(Groupwf::class)->create();
+        $group = Groupwf::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Assign a user in the group
-        factory(GroupUser::class)->create([
+        GroupUser::factory()->create([
             'GRP_UID' => $group->GRP_UID,
             'GRP_ID' => $group->GRP_ID,
             'USR_UID' => $user->USR_UID
         ]);
         //Create a task self service
-        $taskSelfService = factory(Task::class)->create([
+        $taskSelfService = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $taskSelfService->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1, //Related to the user
             'TU_TYPE' => 1
         ]);
         //Create the register in self service
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'TAS_ID' => $taskSelfService->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
         ]);
 
         //Create a task self service value based
-        $taskSelfServiceByVariable = factory(Task::class)->create([
+        $taskSelfServiceByVariable = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $taskSelfServiceByVariable->TAS_UID,
             'USR_UID' => $group->GRP_UID,
             'TU_RELATION' => 2, //Related to the group
             'TU_TYPE' => 1
         ]);
         //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
-        $appAssignSelfService = factory(AppAssignSelfServiceValue::class)->create([
+        $appAssignSelfService = AppAssignSelfServiceValue::factory()->create([
             'TAS_ID' => $taskSelfServiceByVariable->TAS_ID
         ]);
-        factory(AppAssignSelfServiceValueGroup::class)->create([
+        AppAssignSelfServiceValueGroup::factory()->create([
             'ID' => $appAssignSelfService->ID,
             'GRP_UID' => $group->GRP_UID,
             'ASSIGNEE_ID' => $group->GRP_ID, //The usrId or grpId
             'ASSIGNEE_TYPE' => 2 //Related to the user=1 related to the group=2
         ]);
         //Create the register in self service value based
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_NUMBER' => $appAssignSelfService->APP_NUMBER,
             'DEL_INDEX' => $appAssignSelfService->DEL_INDEX,
             'TAS_ID' => $taskSelfServiceByVariable->TAS_ID,
@@ -2177,89 +2183,89 @@ class DelegationTest extends TestCase
     public function it_should_get_query_cases_by_user_with_self_service_user_and_group_assigned_parallel_task()
     {
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create group
-        $group = factory(Groupwf::class)->create();
+        $group = Groupwf::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Assign a user in the group
-        factory(GroupUser::class)->create([
+        GroupUser::factory()->create([
             'GRP_UID' => $group->GRP_UID,
             'GRP_ID' => $group->GRP_ID,
             'USR_UID' => $user->USR_UID
         ]);
         //Create a task self service
-        $task1 = factory(Task::class)->create([
+        $task1 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task1
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task1->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1, //Related to the user
             'TU_TYPE' => 1
         ]);
         //Create a task self service
-        $task2 = factory(Task::class)->create([
+        $task2 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task2
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task2->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1, //Related to the user
             'TU_TYPE' => 1
         ]);
         //Create a task self service
-        $task3 = factory(Task::class)->create([
+        $task3 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task3->TAS_UID,
             'USR_UID' => $group->GRP_UID,
             'TU_RELATION' => 2, //Related to the group
             'TU_TYPE' => 1
         ]);
         //Create a task self service
-        $task4 = factory(Task::class)->create([
+        $task4 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task4->TAS_UID,
             'USR_UID' => $group->GRP_UID,
             'TU_RELATION' => 2, //Related to the group
             'TU_TYPE' => 1
         ]);
         //Create the register in self-service related to the task1
-        factory(Delegation::class, 10)->create([
+        Delegation::factory(10)->create([
             'TAS_ID' => $task1->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
         ]);
         //Create the register in self-service related to the task2
-        factory(Delegation::class, 10)->create([
+        Delegation::factory(10)->create([
             'TAS_ID' => $task2->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
         ]);
         //Create the register in self-service related to the task3
-        factory(Delegation::class, 10)->create([
+        Delegation::factory(10)->create([
             'TAS_ID' => $task3->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
         ]);
         //Create the register in self-service related to the task4
-        factory(Delegation::class, 10)->create([
+        Delegation::factory(10)->create([
             'TAS_ID' => $task4->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
@@ -2279,30 +2285,30 @@ class DelegationTest extends TestCase
     public function it_should_get_query_cases_by_user_with_self_service_value_based_usr_uid_and_grp_uid()
     {
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create a case
-        $application = factory(Application::class)->create();
+        $application = Application::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Create a task1 self service value based
-        $task1 = factory(Task::class)->create([
+        $task1 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '@@ARRAY_OF_USERS',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
-        $appSelfValue = factory(AppAssignSelfServiceValue::class)->create([
+        $appSelfValue = AppAssignSelfServiceValue::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_ID' => $task1->TAS_ID
         ]);
-        factory(AppAssignSelfServiceValueGroup::class)->create([
+        AppAssignSelfServiceValueGroup::factory()->create([
             'ID' => $appSelfValue->ID,
             'GRP_UID' => $user->USR_UID,
             'ASSIGNEE_ID' => $user->USR_ID, //The usrId or grpId
             'ASSIGNEE_TYPE' => 1 //Related to the user=1 related to the group=2
         ]);
         //Create the register in self-service
-        factory(Delegation::class, 10)->create([
+        Delegation::factory(10)->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_INDEX' => $appSelfValue->DEL_INDEX,
             'TAS_ID' => $task1->TAS_ID,
@@ -2310,24 +2316,24 @@ class DelegationTest extends TestCase
             'USR_ID' => 0,
         ]);
         //Create a task2 self service value based
-        $task2 = factory(Task::class)->create([
+        $task2 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '@@ARRAY_OF_USERS',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
-        $appSelfValue = factory(AppAssignSelfServiceValue::class)->create([
+        $appSelfValue = AppAssignSelfServiceValue::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_ID' => $task2->TAS_ID
         ]);
-        factory(AppAssignSelfServiceValueGroup::class)->create([
+        AppAssignSelfServiceValueGroup::factory()->create([
             'ID' => $appSelfValue->ID,
             'GRP_UID' => $user->USR_UID,
             'ASSIGNEE_ID' => $user->USR_ID, //The usrId or grpId
             'ASSIGNEE_TYPE' => 1 //Related to the user=1 related to the group=2
         ]);
         //Create the register in self-service
-        factory(Delegation::class, 15)->create([
+        Delegation::factory(15)->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_INDEX' => $appSelfValue->DEL_INDEX,
             'TAS_ID' => $task2->TAS_ID,
@@ -2348,24 +2354,24 @@ class DelegationTest extends TestCase
     public function it_should_get_cases_by_user_with_self_service_user_assigned()
     {
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Create a task self service
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1, //Related to the user
             'TU_TYPE' => 1
         ]);
         //Create the register in delegation relate to self-service
-        factory(Delegation::class, 25)->create([
+        Delegation::factory(25)->create([
             'TAS_ID' => $task->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
@@ -2387,31 +2393,31 @@ class DelegationTest extends TestCase
     public function it_should_get_cases_by_user_with_self_service_value_based_usr_uid()
     {
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create a case
-        $application = factory(Application::class)->create();
+        $application = Application::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Create a task self service value based
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '@@ARRAY_OF_USERS',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
-        $appSelfValue = factory(AppAssignSelfServiceValue::class)->create([
+        $appSelfValue = AppAssignSelfServiceValue::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_INDEX' => 2,
             'TAS_ID' => $task->TAS_ID
         ]);
-        factory(AppAssignSelfServiceValueGroup::class)->create([
+        AppAssignSelfServiceValueGroup::factory()->create([
             'ID' => $appSelfValue->ID,
             'GRP_UID' => $user->USR_UID,
             'ASSIGNEE_ID' => $user->USR_ID, //The usrId or grpId
             'ASSIGNEE_TYPE' => 1 //Related to the user=1 related to the group=2
         ]);
         //Create the register in self-service
-        factory(Delegation::class, 25)->create([
+        Delegation::factory(25)->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_INDEX' => $appSelfValue->DEL_INDEX,
             'TAS_ID' => $task->TAS_ID,
@@ -2432,32 +2438,32 @@ class DelegationTest extends TestCase
     public function it_should_get_cases_by_user_with_self_service_group_assigned()
     {
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create group
-        $group = factory(Groupwf::class)->create();
+        $group = Groupwf::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Assign a user in the group
-        factory(GroupUser::class)->create([
+        GroupUser::factory()->create([
             'GRP_UID' => $group->GRP_UID,
             'GRP_ID' => $group->GRP_ID,
             'USR_UID' => $user->USR_UID
         ]);
         //Create a task self service
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 2, //Related to the group
             'TU_TYPE' => 1
         ]);
         //Create the register in self-service
-        factory(Delegation::class, 25)->create([
+        Delegation::factory(25)->create([
             'TAS_ID' => $task->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
@@ -2477,44 +2483,44 @@ class DelegationTest extends TestCase
     public function it_should_get_cases_by_user_with_self_service_value_based_grp_uid()
     {
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create a task self service value based
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '@@ARRAY_OF_USERS',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Create a case
-        $application = factory(Application::class)->create();
+        $application = Application::factory()->create();
         //Create group
-        $group = factory(Groupwf::class)->create();
+        $group = Groupwf::factory()->create();
         //Create user
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'USR_USERNAME' => 'gary',
             'USR_LASTNAME' => 'Gary',
             'USR_FIRSTNAME' => 'Bailey',
         ]);
         //Assign a user in the group
-        factory(GroupUser::class)->create([
+        GroupUser::factory()->create([
             'GRP_UID' => $group->GRP_UID,
             'GRP_ID' => $group->GRP_ID,
             'USR_UID' => $user->USR_UID,
         ]);
         //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
-        $appSelfValue = factory(AppAssignSelfServiceValue::class)->create([
+        $appSelfValue = AppAssignSelfServiceValue::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
             'DEL_INDEX' => 2,
             'TAS_ID' => $task->TAS_ID
         ]);
-        factory(AppAssignSelfServiceValueGroup::class)->create([
+        AppAssignSelfServiceValueGroup::factory()->create([
             'ID' => $appSelfValue->ID,
             'GRP_UID' => $group->GRP_UID,
             'ASSIGNEE_ID' => $group->GRP_ID, //The usrId or grpId
             'ASSIGNEE_TYPE' => 2 //Related to the user=1 related to the group=2
         ]);
         //Create the register in self-service
-        factory(Delegation::class, 25)->create([
+        Delegation::factory(25)->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_INDEX' => 2,
             'TAS_ID' => $task->TAS_ID,
@@ -2535,62 +2541,62 @@ class DelegationTest extends TestCase
     public function it_should_get_cases_by_user_with_self_service_and_self_service_value_based()
     {
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create group
-        $group = factory(Groupwf::class)->create();
+        $group = Groupwf::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Assign a user in the group
-        factory(GroupUser::class)->create([
+        GroupUser::factory()->create([
             'GRP_UID' => $group->GRP_UID,
             'GRP_ID' => $group->GRP_ID,
             'USR_UID' => $user->USR_UID
         ]);
         //Create a task self service
-        $taskSelfService = factory(Task::class)->create([
+        $taskSelfService = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $taskSelfService->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1, //Related to the user
             'TU_TYPE' => 1
         ]);
         //Create the register in self service
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'TAS_ID' => $taskSelfService->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
         ]);
 
         //Create a task self service value based
-        $taskSelfServiceByVariable = factory(Task::class)->create([
+        $taskSelfServiceByVariable = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $taskSelfServiceByVariable->TAS_UID,
             'USR_UID' => $group->GRP_UID,
             'TU_RELATION' => 2, //Related to the group
             'TU_TYPE' => 1
         ]);
         //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
-        $appAssignSelfService = factory(AppAssignSelfServiceValue::class)->create([
+        $appAssignSelfService = AppAssignSelfServiceValue::factory()->create([
             'TAS_ID' => $taskSelfServiceByVariable->TAS_ID
         ]);
-        factory(AppAssignSelfServiceValueGroup::class)->create([
+        AppAssignSelfServiceValueGroup::factory()->create([
             'ID' => $appAssignSelfService->ID,
             'GRP_UID' => $group->GRP_UID,
             'ASSIGNEE_ID' => $group->GRP_ID, //The usrId or grpId
             'ASSIGNEE_TYPE' => 2 //Related to the user=1 related to the group=2
         ]);
         //Create the register in self service value based
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_NUMBER' => $appAssignSelfService->APP_NUMBER,
             'DEL_INDEX' => $appAssignSelfService->DEL_INDEX,
             'TAS_ID' => $taskSelfServiceByVariable->TAS_ID,
@@ -2612,89 +2618,89 @@ class DelegationTest extends TestCase
     public function it_should_get_cases_by_user_with_self_service_user_and_group_assigned_parallel_task()
     {
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create group
-        $group = factory(Groupwf::class)->create();
+        $group = Groupwf::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Assign a user in the group
-        factory(GroupUser::class)->create([
+        GroupUser::factory()->create([
             'GRP_UID' => $group->GRP_UID,
             'GRP_ID' => $group->GRP_ID,
             'USR_UID' => $user->USR_UID
         ]);
         //Create a task self service
-        $task1 = factory(Task::class)->create([
+        $task1 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task1
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task1->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1, //Related to the user
             'TU_TYPE' => 1
         ]);
         //Create a task self service
-        $task2 = factory(Task::class)->create([
+        $task2 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task2
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task2->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1, //Related to the user
             'TU_TYPE' => 1
         ]);
         //Create a task self service
-        $task3 = factory(Task::class)->create([
+        $task3 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task3->TAS_UID,
             'USR_UID' => $group->GRP_UID,
             'TU_RELATION' => 2, //Related to the group
             'TU_TYPE' => 1
         ]);
         //Create a task self service
-        $task4 = factory(Task::class)->create([
+        $task4 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task4->TAS_UID,
             'USR_UID' => $group->GRP_UID,
             'TU_RELATION' => 2, //Related to the group
             'TU_TYPE' => 1
         ]);
         //Create the register in self-service related to the task1
-        factory(Delegation::class, 10)->create([
+        Delegation::factory(10)->create([
             'TAS_ID' => $task1->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
         ]);
         //Create the register in self-service related to the task2
-        factory(Delegation::class, 10)->create([
+        Delegation::factory(10)->create([
             'TAS_ID' => $task2->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
         ]);
         //Create the register in self-service related to the task3
-        factory(Delegation::class, 10)->create([
+        Delegation::factory(10)->create([
             'TAS_ID' => $task3->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
         ]);
         //Create the register in self-service related to the task4
-        factory(Delegation::class, 10)->create([
+        Delegation::factory(10)->create([
             'TAS_ID' => $task4->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
@@ -2714,30 +2720,30 @@ class DelegationTest extends TestCase
     public function it_should_get_cases_by_user_with_self_service_value_based_usr_uid_and_grp_uid()
     {
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create a case
-        $application = factory(Application::class)->create();
+        $application = Application::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Create a task1 self service value based
-        $task1 = factory(Task::class)->create([
+        $task1 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '@@ARRAY_OF_USERS',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
-        $appSelfValue = factory(AppAssignSelfServiceValue::class)->create([
+        $appSelfValue = AppAssignSelfServiceValue::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_ID' => $task1->TAS_ID
         ]);
-        factory(AppAssignSelfServiceValueGroup::class)->create([
+        AppAssignSelfServiceValueGroup::factory()->create([
             'ID' => $appSelfValue->ID,
             'GRP_UID' => $user->USR_UID,
             'ASSIGNEE_ID' => $user->USR_ID, //The usrId or grpId
             'ASSIGNEE_TYPE' => 1 //Related to the user=1 related to the group=2
         ]);
         //Create the register in self-service
-        factory(Delegation::class, 10)->create([
+        Delegation::factory(10)->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_INDEX' => $appSelfValue->DEL_INDEX,
             'TAS_ID' => $task1->TAS_ID,
@@ -2745,24 +2751,24 @@ class DelegationTest extends TestCase
             'USR_ID' => 0,
         ]);
         //Create a task2 self service value based
-        $task2 = factory(Task::class)->create([
+        $task2 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '@@ARRAY_OF_USERS',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
-        $appSelfValue = factory(AppAssignSelfServiceValue::class)->create([
+        $appSelfValue = AppAssignSelfServiceValue::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_ID' => $task2->TAS_ID
         ]);
-        factory(AppAssignSelfServiceValueGroup::class)->create([
+        AppAssignSelfServiceValueGroup::factory()->create([
             'ID' => $appSelfValue->ID,
             'GRP_UID' => $user->USR_UID,
             'ASSIGNEE_ID' => $user->USR_ID, //The usrId or grpId
             'ASSIGNEE_TYPE' => 1 //Related to the user=1 related to the group=2
         ]);
         //Create the register in self-service
-        factory(Delegation::class, 15)->create([
+        Delegation::factory(15)->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_INDEX' => $appSelfValue->DEL_INDEX,
             'TAS_ID' => $task2->TAS_ID,
@@ -2783,24 +2789,24 @@ class DelegationTest extends TestCase
     public function it_should_count_cases_by_user_with_self_service_user_assigned()
     {
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Create a task self service
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1, //Related to the user
             'TU_TYPE' => 1
         ]);
         //Create the register in delegation relate to self-service
-        factory(Delegation::class, 25)->create([
+        Delegation::factory(25)->create([
             'TAS_ID' => $task->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
@@ -2820,31 +2826,31 @@ class DelegationTest extends TestCase
     public function it_should_count_cases_by_user_with_self_service_value_based_usr_uid()
     {
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create a case
-        $application = factory(Application::class)->create();
+        $application = Application::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Create a task self service value based
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '@@ARRAY_OF_USERS',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
-        $appSelfValue = factory(AppAssignSelfServiceValue::class)->create([
+        $appSelfValue = AppAssignSelfServiceValue::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_INDEX' => 2,
             'TAS_ID' => $task->TAS_ID
         ]);
-        factory(AppAssignSelfServiceValueGroup::class)->create([
+        AppAssignSelfServiceValueGroup::factory()->create([
             'ID' => $appSelfValue->ID,
             'GRP_UID' => $user->USR_UID,
             'ASSIGNEE_ID' => $user->USR_ID, //The usrId or grpId
             'ASSIGNEE_TYPE' => 1 //Related to the user=1 related to the group=2
         ]);
         //Create the register in self-service
-        factory(Delegation::class, 25)->create([
+        Delegation::factory(25)->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_INDEX' => $appSelfValue->DEL_INDEX,
             'TAS_ID' => $task->TAS_ID,
@@ -2865,32 +2871,32 @@ class DelegationTest extends TestCase
     public function it_should_count_cases_by_user_with_self_service_group_assigned()
     {
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create group
-        $group = factory(Groupwf::class)->create();
+        $group = Groupwf::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Assign a user in the group
-        factory(GroupUser::class)->create([
+        GroupUser::factory()->create([
             'GRP_UID' => $group->GRP_UID,
             'GRP_ID' => $group->GRP_ID,
             'USR_UID' => $user->USR_UID
         ]);
         //Create a task self service
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 2, //Related to the group
             'TU_TYPE' => 1
         ]);
         //Create the register in self-service
-        factory(Delegation::class, 25)->create([
+        Delegation::factory(25)->create([
             'TAS_ID' => $task->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
@@ -2910,44 +2916,44 @@ class DelegationTest extends TestCase
     public function it_should_count_cases_by_user_with_self_service_value_based_grp_uid()
     {
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create a task self service value based
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '@@ARRAY_OF_USERS',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Create a case
-        $application = factory(Application::class)->create();
+        $application = Application::factory()->create();
         //Create group
-        $group = factory(Groupwf::class)->create();
+        $group = Groupwf::factory()->create();
         //Create user
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'USR_USERNAME' => 'gary',
             'USR_LASTNAME' => 'Gary',
             'USR_FIRSTNAME' => 'Bailey',
         ]);
         //Assign a user in the group
-        factory(GroupUser::class)->create([
+        GroupUser::factory()->create([
             'GRP_UID' => $group->GRP_UID,
             'GRP_ID' => $group->GRP_ID,
             'USR_UID' => $user->USR_UID,
         ]);
         //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
-        $appSelfValue = factory(AppAssignSelfServiceValue::class)->create([
+        $appSelfValue = AppAssignSelfServiceValue::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
             'DEL_INDEX' => 2,
             'TAS_ID' => $task->TAS_ID
         ]);
-        factory(AppAssignSelfServiceValueGroup::class)->create([
+        AppAssignSelfServiceValueGroup::factory()->create([
             'ID' => $appSelfValue->ID,
             'GRP_UID' => $group->GRP_UID,
             'ASSIGNEE_ID' => $group->GRP_ID, //The usrId or grpId
             'ASSIGNEE_TYPE' => 2 //Related to the user=1 related to the group=2
         ]);
         //Create the register in self-service
-        factory(Delegation::class, 25)->create([
+        Delegation::factory(25)->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_INDEX' => 2,
             'TAS_ID' => $task->TAS_ID,
@@ -2968,62 +2974,62 @@ class DelegationTest extends TestCase
     public function it_should_count_cases_by_user_with_self_service_and_self_service_value_based()
     {
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create group
-        $group = factory(Groupwf::class)->create();
+        $group = Groupwf::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Assign a user in the group
-        factory(GroupUser::class)->create([
+        GroupUser::factory()->create([
             'GRP_UID' => $group->GRP_UID,
             'GRP_ID' => $group->GRP_ID,
             'USR_UID' => $user->USR_UID
         ]);
         //Create a task self service
-        $taskSelfService = factory(Task::class)->create([
+        $taskSelfService = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $taskSelfService->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1, //Related to the user
             'TU_TYPE' => 1
         ]);
         //Create the register in self service
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'TAS_ID' => $taskSelfService->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
         ]);
 
         //Create a task self service value based
-        $taskSelfServiceByVariable = factory(Task::class)->create([
+        $taskSelfServiceByVariable = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $taskSelfServiceByVariable->TAS_UID,
             'USR_UID' => $group->GRP_UID,
             'TU_RELATION' => 2, //Related to the group
             'TU_TYPE' => 1
         ]);
         //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
-        $appAssignSelfService = factory(AppAssignSelfServiceValue::class)->create([
+        $appAssignSelfService = AppAssignSelfServiceValue::factory()->create([
             'TAS_ID' => $taskSelfServiceByVariable->TAS_ID
         ]);
-        factory(AppAssignSelfServiceValueGroup::class)->create([
+        AppAssignSelfServiceValueGroup::factory()->create([
             'ID' => $appAssignSelfService->ID,
             'GRP_UID' => $group->GRP_UID,
             'ASSIGNEE_ID' => $group->GRP_ID, //The usrId or grpId
             'ASSIGNEE_TYPE' => 2 //Related to the user=1 related to the group=2
         ]);
         //Create the register in self service value based
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_NUMBER' => $appAssignSelfService->APP_NUMBER,
             'DEL_INDEX' => $appAssignSelfService->DEL_INDEX,
             'TAS_ID' => $taskSelfServiceByVariable->TAS_ID,
@@ -3045,89 +3051,89 @@ class DelegationTest extends TestCase
     public function it_should_count_cases_by_user_with_self_service_user_and_group_assigned_parallel_task()
     {
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create group
-        $group = factory(Groupwf::class)->create();
+        $group = Groupwf::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Assign a user in the group
-        factory(GroupUser::class)->create([
+        GroupUser::factory()->create([
             'GRP_UID' => $group->GRP_UID,
             'GRP_ID' => $group->GRP_ID,
             'USR_UID' => $user->USR_UID
         ]);
         //Create a task self service
-        $task1 = factory(Task::class)->create([
+        $task1 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task1
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task1->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1, //Related to the user
             'TU_TYPE' => 1
         ]);
         //Create a task self service
-        $task2 = factory(Task::class)->create([
+        $task2 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task2
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task2->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1, //Related to the user
             'TU_TYPE' => 1
         ]);
         //Create a task self service
-        $task3 = factory(Task::class)->create([
+        $task3 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task3->TAS_UID,
             'USR_UID' => $group->GRP_UID,
             'TU_RELATION' => 2, //Related to the group
             'TU_TYPE' => 1
         ]);
         //Create a task self service
-        $task4 = factory(Task::class)->create([
+        $task4 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Assign a user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task4->TAS_UID,
             'USR_UID' => $group->GRP_UID,
             'TU_RELATION' => 2, //Related to the group
             'TU_TYPE' => 1
         ]);
         //Create the register in self-service related to the task1
-        factory(Delegation::class, 10)->create([
+        Delegation::factory(10)->create([
             'TAS_ID' => $task1->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
         ]);
         //Create the register in self-service related to the task2
-        factory(Delegation::class, 10)->create([
+        Delegation::factory(10)->create([
             'TAS_ID' => $task2->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
         ]);
         //Create the register in self-service related to the task3
-        factory(Delegation::class, 10)->create([
+        Delegation::factory(10)->create([
             'TAS_ID' => $task3->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
         ]);
         //Create the register in self-service related to the task4
-        factory(Delegation::class, 10)->create([
+        Delegation::factory(10)->create([
             'TAS_ID' => $task4->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
@@ -3147,30 +3153,30 @@ class DelegationTest extends TestCase
     public function it_should_count_cases_by_user_with_self_service_value_based_usr_uid_and_grp_uid()
     {
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create a case
-        $application = factory(Application::class)->create();
+        $application = Application::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Create a task1 self service value based
-        $task1 = factory(Task::class)->create([
+        $task1 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '@@ARRAY_OF_USERS',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
-        $appSelfValue = factory(AppAssignSelfServiceValue::class)->create([
+        $appSelfValue = AppAssignSelfServiceValue::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_ID' => $task1->TAS_ID
         ]);
-        factory(AppAssignSelfServiceValueGroup::class)->create([
+        AppAssignSelfServiceValueGroup::factory()->create([
             'ID' => $appSelfValue->ID,
             'GRP_UID' => $user->USR_UID,
             'ASSIGNEE_ID' => $user->USR_ID, //The usrId or grpId
             'ASSIGNEE_TYPE' => 1 //Related to the user=1 related to the group=2
         ]);
         //Create the register in self-service
-        factory(Delegation::class, 10)->create([
+        Delegation::factory(10)->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_INDEX' => $appSelfValue->DEL_INDEX,
             'TAS_ID' => $task1->TAS_ID,
@@ -3178,24 +3184,24 @@ class DelegationTest extends TestCase
             'USR_ID' => 0,
         ]);
         //Create a task2 self service value based
-        $task2 = factory(Task::class)->create([
+        $task2 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '@@ARRAY_OF_USERS',
             'PRO_UID' => $process->PRO_UID
         ]);
         //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
-        $appSelfValue = factory(AppAssignSelfServiceValue::class)->create([
+        $appSelfValue = AppAssignSelfServiceValue::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_ID' => $task2->TAS_ID
         ]);
-        factory(AppAssignSelfServiceValueGroup::class)->create([
+        AppAssignSelfServiceValueGroup::factory()->create([
             'ID' => $appSelfValue->ID,
             'GRP_UID' => $user->USR_UID,
             'ASSIGNEE_ID' => $user->USR_ID, //The usrId or grpId
             'ASSIGNEE_TYPE' => 1 //Related to the user=1 related to the group=2
         ]);
         //Create the register in self-service
-        factory(Delegation::class, 15)->create([
+        Delegation::factory(15)->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_INDEX' => $appSelfValue->DEL_INDEX,
             'TAS_ID' => $task2->TAS_ID,
@@ -3216,19 +3222,19 @@ class DelegationTest extends TestCase
     public function it_should_return_current_user_for_thread_open()
     {
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create a case
-        $application = factory(Application::class)->create();
+        $application = Application::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Create a delegation
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_THREAD_STATUS' => 'CLOSED',
             'DEL_INDEX' => 1,
@@ -3249,19 +3255,19 @@ class DelegationTest extends TestCase
     public function it_should_return_current_user_for_thread_closed()
     {
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create a case
-        $application = factory(Application::class)->create();
+        $application = Application::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Create a delegation
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_THREAD_STATUS' => 'CLOSED',
             'DEL_INDEX' => 1,
             'USR_UID' => $user->USR_UID,
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
@@ -3282,19 +3288,19 @@ class DelegationTest extends TestCase
     public function it_should_return_empty_when_row_does_not_exist()
     {
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create a case
-        $application = factory(Application::class)->create();
+        $application = Application::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Create a delegation
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_THREAD_STATUS' => 'CLOSED',
             'DEL_INDEX' => 1,
             'USR_UID' => $user->USR_UID,
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
@@ -3318,15 +3324,15 @@ class DelegationTest extends TestCase
     public function it_should_return_thread_open()
     {
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create a case
-        $application = factory(Application::class)->create();
+        $application = Application::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Create task
-        $task = factory(Task::class)->create();
+        $task = Task::factory()->create();
         //Create a delegation
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_FINISH_DATE' => null,
             'APP_NUMBER' => $application->APP_NUMBER,
@@ -3345,13 +3351,13 @@ class DelegationTest extends TestCase
     public function it_should_return_empty_when_thread_is_closed()
     {
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create a case
-        $application = factory(Application::class)->create();
+        $application = Application::factory()->create();
         //Create task
-        $task = factory(Task::class)->create();
+        $task = Task::factory()->create();
         //Create a delegation
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'DEL_THREAD_STATUS' => 'CLOSED',
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_UID' => $task->TAS_UID,
@@ -3369,15 +3375,15 @@ class DelegationTest extends TestCase
     public function it_should_return_empty_when_thread_finish_date_is_not_null()
     {
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         //Create a case
-        $application = factory(Application::class)->create();
+        $application = Application::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Create task
-        $task = factory(Task::class)->create();
+        $task = Task::factory()->create();
         //Create a delegation
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'DEL_THREAD_STATUS' => 'CLOSED',
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_UID' => $task->TAS_UID,
@@ -3394,12 +3400,12 @@ class DelegationTest extends TestCase
      */
     public function it_when_the_user_does_have_participation()
     {
-        factory(Process::class)->create();
+        Process::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
-        $application = factory(Application::class)->create();
+        $user = User::factory()->create();
+        $application = Application::factory()->create();
         //Create a delegation
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
             'USR_ID' => $user->USR_ID,
@@ -3417,12 +3423,12 @@ class DelegationTest extends TestCase
      */
     public function it_when_the_user_does_not_have_participation()
     {
-        factory(Process::class)->create();
+        Process::factory()->create();
         //Create user
-        $user = factory(User::class)->create();
-        $application = factory(Application::class)->create();
+        $user = User::factory()->create();
+        $application = Application::factory()->create();
         //Create a delegation
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID
         ]);
@@ -3438,7 +3444,7 @@ class DelegationTest extends TestCase
      */
     public function it_get_thread_title()
     {
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create();
+        $delegation = Delegation::factory()->foreign_keys()->create();
         $result = Delegation::getThreadTitle($delegation->TAS_UID, $delegation->APP_NUMBER, $delegation->DEL_PREVIOUS, []);
         $this->assertNotEmpty($result);
     }
@@ -3451,7 +3457,7 @@ class DelegationTest extends TestCase
      */
     public function it_get_thread_info()
     {
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create();
+        $delegation = Delegation::factory()->foreign_keys()->create();
         $result = Delegation::getThreadInfo($delegation->APP_NUMBER, $delegation->DEL_INDEX);
         $this->assertNotEmpty($result);
     }
@@ -3464,7 +3470,7 @@ class DelegationTest extends TestCase
      */
     public function it_get_thread_dates()
     {
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create();
+        $delegation = Delegation::factory()->foreign_keys()->create();
         $task = new Task();
         $taskInfo = $task->load($delegation->TAS_UID);
         $taskInfo = head($taskInfo);
@@ -3486,7 +3492,7 @@ class DelegationTest extends TestCase
      */
     public function it_get_threads_pending()
     {
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create();
+        $delegation = Delegation::factory()->foreign_keys()->create();
         $result = Delegation::getPendingThreads($delegation->APP_NUMBER);
         $this->assertNotEmpty($result);
         $result = Delegation::getPendingThreads($delegation->APP_NUMBER, false);
@@ -3501,7 +3507,7 @@ class DelegationTest extends TestCase
      */
     public function it_get_task_pending()
     {
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create();
+        $delegation = Delegation::factory()->foreign_keys()->create();
         $result = Delegation::getPendingTask($delegation->APP_NUMBER);
         $this->assertNotEmpty($result);
     }
@@ -3514,7 +3520,7 @@ class DelegationTest extends TestCase
      */
     public function it_get_last_thread()
     {
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create();
+        $delegation = Delegation::factory()->foreign_keys()->create();
         $result = Delegation::getLastThread($delegation->APP_NUMBER);
         $this->assertNotEmpty($result);
     }
@@ -3527,7 +3533,7 @@ class DelegationTest extends TestCase
      */
     public function it_should_test_the_get_del_title_method()
     {
-        $delegation = factory(Delegation::class)->create([
+        $delegation = Delegation::factory()->create([
             'DEL_TITLE' => "test"
         ]);
         $result = Delegation::getDeltitle($delegation->APP_NUMBER, $delegation->DEL_INDEX);
@@ -3543,24 +3549,24 @@ class DelegationTest extends TestCase
      */
     public function it_should_test_the_has_active_parents_cases_method()
     {
-        $process = factory(Process::class)->create();
-        $processParent = factory(Process::class, 3)->create();
-        factory(SubProcess::class)->create([
+        $process = Process::factory()->create();
+        $processParent = Process::factory(3)->create();
+        SubProcess::factory()->create([
             'PRO_UID' => $process['PRO_UID'],
             'PRO_PARENT' => $processParent[0]['PRO_UID']
         ]);
-        factory(SubProcess::class)->create([
+        SubProcess::factory()->create([
             'PRO_UID' => $process['PRO_UID'],
             'PRO_PARENT' => $processParent[1]['PRO_UID']
         ]);
-        factory(SubProcess::class)->create([
+        SubProcess::factory()->create([
             'PRO_UID' => $process['PRO_UID'],
             'PRO_PARENT' => $processParent[2]['PRO_UID']
         ]);
 
         $parents = SubProcess::getProParents($process['PRO_UID']);
 
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'PRO_UID' => $parents[0]['PRO_PARENT'],
             'TAS_UID' => $parents[0]['TAS_PARENT'],
             'DEL_THREAD_STATUS' => 'OPEN'
@@ -3580,7 +3586,7 @@ class DelegationTest extends TestCase
      */
     public function it_get_cases_completed_by_specific_user()
     {
-        $delegation = factory(Delegation::class)->states('last_thread')->create();
+        $delegation = Delegation::factory()->last_thread()->create();
         $result = Delegation::casesCompletedBy($delegation->USR_ID);
         $this->assertNotEmpty($result);
     }
@@ -3593,7 +3599,7 @@ class DelegationTest extends TestCase
      */
     public function it_get_cases_started_by_specific_user()
     {
-        $delegation = factory(Delegation::class)->states('first_thread')->create();
+        $delegation = Delegation::factory()->first_thread()->create();
         $result = Delegation::casesStartedBy($delegation->USR_ID);
         $this->assertNotEmpty($result);
     }
@@ -3606,9 +3612,9 @@ class DelegationTest extends TestCase
      */
     public function it_get_cases_thread_title()
     {
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create();
+        $delegation = Delegation::factory()->foreign_keys()->create();
         $result = Delegation::casesThreadTitle($delegation->DEL_TITLE);
-        $this->assertNotEmpty($result);
+        $this->assertTrue(isset($result[0]));
     }
 
     /**
@@ -3619,8 +3625,8 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_participated_user()
     {
-        $application = factory(Application::class)->states('completed')->create();
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->completed()->create();
+        $table = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
         ]);
@@ -3636,8 +3642,8 @@ class DelegationTest extends TestCase
      */
     public function it_tests_scope_inbox_metrics()
     {
-        $application = factory(Application::class)->states('todo')->create();
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->todo()->create();
+        $table = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
         ]);
@@ -3653,8 +3659,8 @@ class DelegationTest extends TestCase
      */
     public function it_tests_scope_draft_metrics()
     {
-        $application = factory(Application::class)->states('draft')->create();
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->draft()->create();
+        $table = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
         ]);
@@ -3670,12 +3676,12 @@ class DelegationTest extends TestCase
      */
     public function it_tests_scope_paused_metrics()
     {
-        $application = factory(Application::class)->states('paused')->create();
-        $appDelay = factory(AppDelay::class)->states('paused_foreign_keys')->create([
+        $application = Application::factory()->paused()->create();
+        $appDelay = AppDelay::factory()->paused_foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
         ]);
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $table = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
             'DEL_INDEX' => $appDelay->APP_DEL_INDEX,
@@ -3692,11 +3698,11 @@ class DelegationTest extends TestCase
      */
     public function it_tests_scope_self_service_metrics()
     {
-        $application = factory(Application::class)->states('paused')->create();
-        $task = factory(Task::class)->create([
+        $application = Application::factory()->paused()->create();
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
         ]);
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+        $delegation = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
             'TAS_ID' => $task->TAS_ID,

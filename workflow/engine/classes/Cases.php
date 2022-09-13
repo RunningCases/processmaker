@@ -2558,7 +2558,7 @@ class Cases
      *
      * @return object
      */
-    public function getTransferHistoryCriteria($appNumber)
+    public static function getTransferHistoryCriteria($appNumber)
     {
         $c = new Criteria('workflow');
         $c->addSelectColumn(UsersPeer::USR_FIRSTNAME);

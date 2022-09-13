@@ -367,13 +367,13 @@ class Users extends BaseUsers
             $arrayData["birthday"] = $fields["USR_BIRTHDAY"];
             $arrayData["position"] = $fields["USR_POSITION"];
             $arrayData["replacedby"] = $fields["USR_REPLACED_BY"];
-            if(strlen($arrayData["replacedby"] != 0)) {
+            if(strlen($arrayData["replacedby"]) != 0) {
                 $oUser = UsersPeer::retrieveByPK($arrayData["replacedby"]);
                 $arrayData["replacedbyfullname"] = $oUser->getUsrFirstname() . ' ' . $oUser->getUsrLastname();
             }
             $arrayData["duedate"] = $fields["USR_DUE_DATE"];
             $arrayData["calendar"] = $fields["USR_CALENDAR"];
-            if(strlen($fields["USR_CALENDAR"] != 0)) {
+            if(strlen($fields["USR_CALENDAR"]) != 0) {
                 $arrayData["calendarname"] = $calendar->calendarName($fields["USR_CALENDAR"]);
             }
             $arrayData["status"] = $fields["USR_STATUS"];

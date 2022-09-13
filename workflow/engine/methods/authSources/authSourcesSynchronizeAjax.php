@@ -34,7 +34,6 @@ class treeNode extends stdclass
 }
 
 try {
-    $json = new Services_JSON();
     header("Content-Type: application/json;");
 
     switch ($_REQUEST["m"]) {
@@ -51,7 +50,7 @@ try {
             $departments = $ldapAdvanced->searchDepartments();
             $terminatedOu = $ldapAdvanced->getTerminatedOu();
             $nodes = lookForChildrenDeps("");
-            die($json->encode($nodes));
+            die(json_encode($nodes));
             break;
         case "saveDepartments":
             $depsToCheck = ($_REQUEST['departmentsDN'] != '') ? explode('|', $_REQUEST['departmentsDN']) : [];
@@ -87,7 +86,7 @@ try {
                                 [$parentDn, $departmentTitle]
                             );
 
-                            echo $json->encode($response);
+                            echo json_encode($response);
                             exit(0);
                         }
                     }
@@ -106,7 +105,7 @@ try {
                         $response->status = 'ERROR';
                         $response->message = G::LoadTranslation('ID_DEPARTMENT_ERROR_CREATE');
 
-                        echo $json->encode($response);
+                        echo json_encode($response);
                         exit(0);
                     }
                 }
@@ -144,7 +143,7 @@ try {
 
             $response = new stdclass();
             $response->status = "OK";
-            die($json->encode($response));
+            die(json_encode($response));
             break;
         case "loadGroups":
             global $ldapAdvanced;
@@ -153,7 +152,7 @@ try {
             $ldapAdvanced = getLDAPAdvanceInstance($_REQUEST["authUid"]);
             $groups = $ldapAdvanced->searchGroups();
             $nodes = lookForChildrenGroups();
-            die($json->encode($nodes));
+            die(json_encode($nodes));
             break;
         case "saveGroups":
             $groupsToCheck = explode("|", $_REQUEST["groupsDN"]);
@@ -216,7 +215,7 @@ try {
             if ($ldapAdvanced->checkDuplicateTitles()) {
                 $response->warning = G::LoadTranslation("ID_IT_WAS_IDENTIFIED_DUPLICATED_GROUPS_PLEASE_REMOVE_THESE_GROUPS");
             }
-            die($json->encode($response));
+            die(json_encode($response));
             break;
     }
 } catch (Exception $error) {
@@ -224,7 +223,7 @@ try {
     $response->status = "ERROR";
     $response->message = $error->getMessage();
 
-    die($json->encode($response));
+    die(json_encode($response));
 }
 
 function getLDAPAdvanceInstance($authUid)

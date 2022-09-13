@@ -40,7 +40,7 @@ class GroupTest extends TestCase
     /**
      * Sets up the unit tests.
      */
-    protected function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->setInstanceGroup(new Group());
@@ -51,7 +51,7 @@ class GroupTest extends TestCase
      *
      * @return array Definition Data Group
      */
-    public function testDataGroup()
+    public function dataGroup()
     {
         $response = [
             'GRP_TITLE' => 'Group Test Unit',
@@ -63,14 +63,13 @@ class GroupTest extends TestCase
     /**
      * Create group
      *
-     * @depends testDataGroup
-     *
      * @param array $dataGroup Information Group
-     *
+     * 
      * @return string group Uid
      */
-    public function testCreate($dataGroup)
+    public function testCreate(): string
     {
+        $dataGroup = $this->dataGroup();
         $response = $this->getInstanceGroup()->create($dataGroup);
 
         $this->assertArrayHasKey('GRP_UID', $response);
@@ -86,7 +85,7 @@ class GroupTest extends TestCase
      */
     public function testGetUsersOfGroup($groupUid)
     {
-        $response = $this->getInstanceGroup()->getUsers('USERS', $groupUid);
+        $response = $this->group->getUsers('USERS', $groupUid);
         $this->assertCount(0, $response);
     }
 
@@ -99,12 +98,12 @@ class GroupTest extends TestCase
     public function testGetUsersAvailable($groupUid)
     {
         $result = \ProcessMaker\Model\User::where('USERS.USR_STATUS', '<>', 'CLOSED')
-        ->whereNotIn('USERS.USR_UID', ['00000000000000000000000000000002'])
-        ->leftJoin('GROUP_USER', function($query) { 
-            $query->on('GROUP_USER.USR_UID', '=', 'USERS.USR_UID');
-        })
-        ->get()
-        ->toArray();
+            ->whereNotIn('USERS.USR_UID', ['00000000000000000000000000000002'])
+            ->leftJoin('GROUP_USER', function ($query) {
+                $query->on('GROUP_USER.USR_UID', '=', 'USERS.USR_UID');
+            })
+            ->get()
+            ->toArray();
 
         $response = $this->getInstanceGroup()->getUsers('AVAILABLE-USERS', $groupUid);
         $this->assertCount(count($result), $response);
@@ -127,12 +126,13 @@ class GroupTest extends TestCase
      *
      * @depends  testCreate
      * @expectedException Exception
-     *
      * @param string $groupUid Uid Group
      */
     public function testDelete($groupUid)
     {
+        $this->expectException('Exception');
         $this->getInstanceGroup()->delete($groupUid);
         $this->getInstanceGroup()->getGroup($groupUid);
     }
+
 }

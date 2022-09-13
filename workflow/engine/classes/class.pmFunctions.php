@@ -1785,12 +1785,12 @@ function PMFAddInputDocument(
     $appDocUid,
     $docVersion,
     $appDocType = "INPUT",
-    $appDocComment,
-    $inputDocumentAction,
-    $caseUid,
-    $delIndex,
-    $taskUid,
-    $userUid,
+    $appDocComment = "",
+    $inputDocumentAction = "",
+    $caseUid = "",
+    $delIndex = 0,
+    $taskUid = "",
+    $userUid = "",
     $option = "file",
     $file = "path_to_file/myfile.txt"
 ) {

@@ -12,7 +12,7 @@ class WorkflowToolsTest extends TestCase
     /**
      * Method set up.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->workspaceTools = new WorkspaceTools('workflow');
@@ -21,7 +21,7 @@ class WorkflowToolsTest extends TestCase
     /**
      * Method tear down.
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
     }
@@ -34,8 +34,7 @@ class WorkflowToolsTest extends TestCase
     public function it_should_test_addAsyncOptionToSchedulerCommands_method()
     {
         //method "WorkspaceTools::initPropel(true)" crashes all connections
-        $message = "WorkspaceTools::initPropel(true) crashes all connections";
-        $this->markTestIncomplete($message);
+        $this->markTestSkipped("WorkspaceTools::initPropel(true) crashes all connections");
 
         ob_start();
         $this->workspaceTools->addAsyncOptionToSchedulerCommands(false);

@@ -378,7 +378,6 @@ $virtualURITable['/(sys*)'] = false;
 $virtualURITable["/errors/(*)"] = ($skinPathErrors != "") ? $skinPathErrors : PATH_GULLIVER_HOME . "methods" . PATH_SEP . "errors" . PATH_SEP;
 $virtualURITable['/gulliver/(*)'] = PATH_GULLIVER_HOME . 'methods/';
 $virtualURITable['/controls/(*)'] = PATH_GULLIVER_HOME . 'methods/controls/';
-$virtualURITable['/html2ps_pdf/(*)'] = PATH_THIRDPARTY . 'html2ps_pdf/';
 //$virtualURITable['/images/'] = 'errorFile';
 //$virtualURITable['/skins/'] = 'errorFile';
 //$virtualURITable['/files/'] = 'errorFile';
@@ -550,7 +549,7 @@ if (!defined('PATH_DATA') || !file_exists(PATH_DATA)) {
     $controllerAction = ($controllerAction != '' && $controllerAction != 'login') ? $controllerAction : 'index';
 
     // create the installer controller and call its method
-    if (is_callable([InstallerModule::class, $controllerAction])) {
+    if (method_exists(InstallerModule::class, $controllerAction)) {
         $installer = new $controller();
         $installer->setHttpRequestData($_REQUEST);
         //NewRelic Snippet - By JHL
@@ -637,10 +636,10 @@ if (defined('SYS_TEMP') && SYS_TEMP != '') {
                 $controllerClass = 'Main';
                 $controllerAction = SYS_TARGET == 'sysLoginVerify' ? SYS_TARGET : 'sysLogin';
                 //if the method exists
-                if (is_callable(array(
+                if (method_exists(
                     $controllerClass,
                     $controllerAction
-                ))) {
+                )) {
                     $controller = new $controllerClass();
                     $controller->setHttpRequestData($_REQUEST);
                     $controller->call($controllerAction);
@@ -860,7 +859,7 @@ if (substr(SYS_COLLECTION, 0, 8) === 'gulliver') {
         //if the method name is empty set default to index method
         $controllerAction = SYS_TARGET != '' ? SYS_TARGET : 'index';
         //if the method exists
-        if (is_callable(array($controllerClass, $controllerAction))) {
+        if (method_exists($controllerClass, $controllerAction)) {
             $isControllerCall = true;
         }
 
@@ -898,7 +897,7 @@ if (substr(SYS_COLLECTION, 0, 8) === 'gulliver') {
         }
 
         //if the method exists
-        if (is_callable(array($controllerClass, $controllerAction))) {
+        if (method_exists($controllerClass, $controllerAction)) {
             $isControllerCall = true;
         }
     }

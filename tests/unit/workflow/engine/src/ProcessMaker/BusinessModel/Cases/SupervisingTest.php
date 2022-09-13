@@ -2,7 +2,6 @@
 
 namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Cases\Supervising;
 use ProcessMaker\Model\Application;
@@ -21,14 +20,13 @@ use Tests\TestCase;
  */
 class SupervisingTest extends TestCase
 {
-    use DatabaseTransactions;
-
     /**
      * Method set up.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
+        $this->truncateNonInitialModels();
     }
 
     /**
@@ -42,11 +40,11 @@ class SupervisingTest extends TestCase
     public function createSupervising(int $cases = 2)
     {
         // Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         // Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         // Define this user like process supervisor
-        factory(ProcessUser::class)->create(
+        ProcessUser::factory()->create(
             [
                 'PRO_UID' => $process->PRO_UID,
                 'USR_UID' => $user->USR_UID,
@@ -54,12 +52,12 @@ class SupervisingTest extends TestCase
             ]
         );
         // Create a task
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'NORMAL',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID,
         ]);
-        $task2 = factory(Task::class)->create([
+        $task2 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'NORMAL',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID,
@@ -68,13 +66,13 @@ class SupervisingTest extends TestCase
         $delegation = [];
         for ($i = 0; $i < $cases; $i = $i + 1) {
             // Create case
-            $app = factory(Application::class)->states('todo')->create([
+            $app = Application::factory()->todo()->create([
                 'PRO_UID' => $process->PRO_UID,
                 'APP_INIT_USER' => $user->USR_UID,
                 'APP_CUR_USER' => $user->USR_UID,
             ]);
             // Create two threads
-            $delegation = factory(Delegation::class)->create([
+            $delegation = Delegation::factory()->create([
                 'APP_UID' => $app['APP_UID'],
                 'TAS_ID' => $task->TAS_ID,
                 'TAS_UID' => $task->TAS_UID,
@@ -88,7 +86,7 @@ class SupervisingTest extends TestCase
                 'DEL_PREVIOUS' => 0,
                 'DEL_LAST_INDEX' => 0
             ]);
-            $delegation = factory(Delegation::class)->create([
+            $delegation = Delegation::factory()->create([
                 'APP_UID' => $app['APP_UID'],
                 'TAS_ID' => $task2->TAS_ID,
                 'TAS_UID' => $task2->TAS_UID,
@@ -118,15 +116,15 @@ class SupervisingTest extends TestCase
     public function createGroupSupervising(int $cases = 2)
     {
         // Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
         // Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         // Create group
-        $group = factory(GroupUser::class)->create([
+        $group = GroupUser::factory()->create([
             'USR_UID' => $user->USR_UID,
         ]);
         // Define this group like process supervisor
-        factory(ProcessUser::class)->create(
+        ProcessUser::factory()->create(
             [
                 'PRO_UID' => $process->PRO_UID,
                 'USR_UID' => $group->GRP_UID,
@@ -134,12 +132,12 @@ class SupervisingTest extends TestCase
             ]
         );
         // Create a task
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'NORMAL',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID,
         ]);
-        $task2 = factory(Task::class)->create([
+        $task2 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'NORMAL',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID,
@@ -148,13 +146,13 @@ class SupervisingTest extends TestCase
         $delegation = [];
         for ($i = 0; $i < $cases; $i = $i + 1) {
             // Create case
-            $app = factory(Application::class)->states('todo')->create([
+            $app = Application::factory()->todo()->create([
                 'PRO_UID' => $process->PRO_UID,
                 'APP_INIT_USER' => $user->USR_UID,
                 'APP_CUR_USER' => $user->USR_UID,
             ]);
             // Create two threads
-            $delegation = factory(Delegation::class)->create([
+            $delegation = Delegation::factory()->create([
                 'APP_UID' => $app['APP_UID'],
                 'TAS_ID' => $task->TAS_ID,
                 'TAS_UID' => $task->TAS_UID,
@@ -168,7 +166,7 @@ class SupervisingTest extends TestCase
                 'DEL_PREVIOUS' => 0,
                 'DEL_LAST_INDEX' => 0
             ]);
-            $delegation = factory(Delegation::class)->create([
+            $delegation = Delegation::factory()->create([
                 'APP_UID' => $app['APP_UID'],
                 'TAS_ID' => $task2->TAS_ID,
                 'TAS_UID' => $task2->TAS_UID,
@@ -243,7 +241,7 @@ class SupervisingTest extends TestCase
      */
     public function it_should_test_the_get_data_method_when_the_user_is_not_supervisor()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $cases = $this->createSupervising();
         // Instance the Supervising object
         $supervising = new Supervising();

@@ -23,7 +23,7 @@ class PMFGroupListTest extends TestCase
     public function it_return_list_of_groups()
     {
         // Create group
-        factory(Groupwf::class)->create();
+        Groupwf::factory()->create();
         DB::commit();
         $result = PMFGroupList();
         $this->assertNotEmpty($result);

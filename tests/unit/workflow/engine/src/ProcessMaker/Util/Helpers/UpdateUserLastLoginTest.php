@@ -14,7 +14,7 @@ class UpdateUserLastLoginTest extends TestCase
      */
     public function it_should_test_the_update_last_login_date_function_when_it_does_not_fail()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $userLog = ['USR_UID' => $user['USR_UID'], 'LOG_INIT_DATE' => date('Y-m-d H:i:s')];
 
@@ -32,12 +32,12 @@ class UpdateUserLastLoginTest extends TestCase
      */
     public function it_should_test_the_update_last_login_date_function_when_it_fails()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $userLog = ['USR_UID' => $user['USR_UID']];
 
         // Assert the expected exception
-        $this->expectExceptionMessage("Undefined index: LOG_INIT_DATE");
+        $this->expectExceptionMessage('Undefined array key "LOG_INIT_DATE"');
 
         // Call the updateUserLastLogin function
         updateUserLastLogin($userLog);

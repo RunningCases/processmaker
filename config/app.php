@@ -27,12 +27,10 @@ return [
         Illuminate\Bus\BusServiceProvider::class,
         Illuminate\Redis\RedisServiceProvider::class,
         App\Providers\AppServiceProvider::class,
-        App\Providers\ViewServiceProvider::class,
-        Eusebiu\JavaScript\JavaScriptServiceProvider::class
+        App\Providers\ViewServiceProvider::class
     ],
     'aliases' => [
         'Crypt' => Illuminate\Support\Facades\Crypt::class,
-        'ScriptVariables' => Eusebiu\JavaScript\Facades\ScriptVariables::class,
         'View' => Illuminate\Support\Facades\View::class
     ],
 ];

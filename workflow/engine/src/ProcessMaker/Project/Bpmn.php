@@ -288,7 +288,14 @@ class Bpmn extends Handler
         return $response;
     }
 
-    public function exists($projectUid)
+    /**
+     * This method verifies if a project exists
+     * 
+     * @param string $projectUid Unique id of Project
+     * 
+     * return boolean  
+     */
+    public static function exists($projectUid)
     {
         try {
             $obj = ProjectPeer::retrieveByPK($projectUid);
@@ -715,14 +722,6 @@ class Bpmn extends Handler
 
     public function updateEvent($evnUid, array $data)
     {
-        /*if (array_key_exists("EVN_CANCEL_ACTIVITY", $data)) {
-            $data["EVN_CANCEL_ACTIVITY"] = $data["EVN_CANCEL_ACTIVITY"] ? 1 : 0;
-        }
-
-        if (array_key_exists("EVN_WAIT_FOR_COMPLETION", $data)) {
-            $data["EVN_WAIT_FOR_COMPLETION"] = $data["EVN_WAIT_FOR_COMPLETION"] ? 1 : 0;
-        }*/
-
         try {
             self::log("Update Event: $evnUid", "With data: ", $data);
 

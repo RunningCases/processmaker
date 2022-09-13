@@ -2,10 +2,13 @@
 
 namespace ProcessMaker\Model;
 
+use App\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class BpmnProject extends Model
 {
+    use HasFactory;
+
     // Set our table name
     protected $table = 'BPMN_PROJECT';
     protected $primaryKey = 'PRJ_UID';

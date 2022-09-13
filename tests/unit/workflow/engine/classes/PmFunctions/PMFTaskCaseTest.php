@@ -23,8 +23,8 @@ class PMFTaskCaseTest extends TestCase
      */
     public function it_return_pending_tasks()
     {
-        $task = factory(Task::class)->create();
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $task = Task::factory()->create();
+        $table = Delegation::factory()->foreign_keys()->create([
             'TAS_ID' => $task->TAS_ID,
             'TAS_UID' => $task->TAS_UID
         ]);

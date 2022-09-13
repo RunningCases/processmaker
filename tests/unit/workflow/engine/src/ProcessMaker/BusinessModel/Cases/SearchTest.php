@@ -2,7 +2,6 @@
 
 namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Cases\Search;
 use ProcessMaker\Model\Application;
@@ -16,16 +15,13 @@ use Tests\TestCase;
  */
 class SearchTest extends TestCase
 {
-    use DatabaseTransactions;
-
     /**
      * Set up function.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-        Application::truncate();
-        Delegation::truncate();
+        $this->truncateNonInitialModels();
     }
 
     /**
@@ -37,7 +33,7 @@ class SearchTest extends TestCase
      */
     public function createSearch($rows = 10)
     {
-        $delegation = factory(Delegation::class, $rows)->states('foreign_keys')->create();
+        $delegation = Delegation::factory($rows)->foreign_keys()->create();
 
         return $delegation;
     }
@@ -213,7 +209,7 @@ class SearchTest extends TestCase
         // Get the data
         $res = $search->getData();
         // Asserts
-        $this->assertNotEmpty($res);
+        $this->assertTrue(!empty($res));
     }
 
     /**
@@ -379,7 +375,7 @@ class SearchTest extends TestCase
     {
         // Create factories related to the delegation cases
         $cases = $this->createSearch();
-        $casesNotSubmitted = factory(Delegation::class, 5)->states('web_entry')->create();
+        $casesNotSubmitted = Delegation::factory(5)->web_entry()->create();
         // Create new Search object
         $search = new Search();
         $result = $search->getData();

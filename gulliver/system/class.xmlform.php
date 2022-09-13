@@ -425,14 +425,7 @@ class XmlFormField
         $fields = [];
         if (isset($this->formula)) {
             preg_match_all("/\b[a-zA-Z][a-zA-Z_0-9]*\b/", $this->formula, $matches, PREG_PATTERN_ORDER);
-            /*      if ($this->formula!=''){
-            var_dump($this->formula);
-            var_dump($matches);
-            var_dump(array_keys($this->owner->fields));
-            die;
-            }*/
             foreach ($matches[0] as $field) {
-                //if (array_key_exists( $this->owner->fields, $field ))
                 $fields[] = $field;
             }
         }

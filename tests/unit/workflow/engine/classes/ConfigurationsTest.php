@@ -19,7 +19,7 @@ class ConfigurationsTest extends TestCase
     public function it_should_return_empty_preferences()
     {
         //Define a user preferences empty
-        $configuration = factory(Configuration::class)->states('userPreferencesEmpty')->create();
+        $configuration = Configuration::factory()->userPreferencesEmpty()->create();
 
         //Get the user preferences
         $conf = new Configurations();

@@ -20,7 +20,7 @@ class ConsolidatedTest extends TestCase
     /**
      * Method set up.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
     }
@@ -33,9 +33,9 @@ class ConsolidatedTest extends TestCase
      */
     public function it_has_a_task()
     {
-        $table = factory(Consolidated::class)->create([
+        $table = Consolidated::factory()->create([
             'TAS_UID' => function () {
-                return factory(Task::class)->create()->TAS_UID;
+                return Task::factory()->create()->TAS_UID;
             }
         ]);
         $this->assertInstanceOf(Task::class, $table->task);
@@ -48,8 +48,8 @@ class ConsolidatedTest extends TestCase
      */
     public function createConsolidated()
     {
-        $consolidated = factory(Consolidated::class)->states('foreign_keys')->create();
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+        $consolidated = Consolidated::factory()->foreign_keys()->create();
+        $delegation = Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'TAS_UID' => $consolidated->TAS_UID,
         ]);
@@ -102,7 +102,7 @@ class ConsolidatedTest extends TestCase
      */
     public function it_should_test_scope_join_process()
     {
-        $query = factory(Consolidated::class)->states('foreign_keys')->create();
+        $query = Consolidated::factory()->foreign_keys()->create();
         $consolidated = new Consolidated();
         $this->assertCount(1, $consolidated->scopeJoinProcess($query)->get());
     }
@@ -115,7 +115,7 @@ class ConsolidatedTest extends TestCase
      */
     public function it_should_test_scope_join_task()
     {
-        $query = factory(Consolidated::class)->states('foreign_keys')->create();
+        $query = Consolidated::factory()->foreign_keys()->create();
         $consolidated = new Consolidated();
         $this->assertCount(1, $consolidated->scopeJoinTask($query)->get());
     }

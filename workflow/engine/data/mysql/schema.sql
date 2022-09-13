@@ -2318,7 +2318,7 @@ CREATE TABLE `PROCESS_VARIABLES`
 	UNIQUE KEY `VAR_ID` (`VAR_ID`),
 	KEY `indexPrjUidVarName`(`PRJ_UID`, `VAR_NAME`),
 	KEY `INDEX_PRO_ID`(`PRO_ID`)
-)ENGINE=InnoDB ;
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- APP_TIMEOUT_ACTION_EXECUTED
 #-----------------------------------------------------------------------------

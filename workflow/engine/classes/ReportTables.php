@@ -324,7 +324,7 @@ class ReportTables
      * @param array $fields
      * @return string
      */
-    private function buildFieldsSection(string $fieldsSection = "", array $fields): string
+    private function buildFieldsSection(string $fieldsSection = "", array $fields = []): string
     {
         foreach ($fields as $field) {
             $fieldsSection = $fieldsSection . ", `{$field['sFieldName']}`";
@@ -341,7 +341,7 @@ class ReportTables
      * @param MySQLiConnection $connection
      * @return string
      */
-    private function buildValuesSection(string $valuesSection = "", array $fields, array $appData, MySQLiConnection $connection): string
+    private function buildValuesSection(string $valuesSection = "", array $fields = [], array $appData = [], MySQLiConnection $connection = null): string
     {
         foreach ($fields as $field) {
             switch ($field['sType']) {
@@ -775,7 +775,7 @@ class ReportTables
      * @access public
      * @return boolean
      */
-    public function tableExist()
+    public static function tableExist()
     {
         $bExists = true;
 

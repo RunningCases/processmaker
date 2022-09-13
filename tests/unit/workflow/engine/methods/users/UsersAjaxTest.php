@@ -13,7 +13,7 @@ class UsersAjaxTest extends TestCase
     /**
      * Set up the deprecated errors
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
@@ -28,10 +28,10 @@ class UsersAjaxTest extends TestCase
         //Declare the global variable
         global $RBAC;
         //Creates the user factory
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $usrUid = $user['USR_UID'];
         //Creates the configuration factory
-        factory(Configuration::class)->create([
+        Configuration::factory()->create([
             'CFG_UID' => 'USER_PREFERENCES',
             'OBJ_UID' => '',
             'CFG_VALUE' => 'a:3:{s:12:"DEFAULT_LANG";s:0:"";s:12:"DEFAULT_MENU";s:8:"PM_SETUP";s:18:"DEFAULT_CASES_MENU";s:0:"";}',
@@ -88,7 +88,7 @@ class UsersAjaxTest extends TestCase
         //Declare the global variable
         global $RBAC;
         //Creates the user factory
-        $user2 = factory(User::class)->create(
+        $user2 = User::factory()->create(
             [
                 'USR_ROLE' => 'PROCESSMAKER_ADMIN',
                 'USR_EMAIL' => 'test@processmaker.com'
@@ -96,7 +96,7 @@ class UsersAjaxTest extends TestCase
         );
         $usrUid = $user2['USR_UID'];
         //Creates the configuration factory
-        factory(Configuration::class)->create([
+        Configuration::factory()->create([
             'CFG_UID' => 'USER_PREFERENCES',
             'OBJ_UID' => '',
             'CFG_VALUE' => 'a:3:{s:12:"DEFAULT_LANG";s:0:"";s:12:"DEFAULT_MENU";s:8:"PM_SETUP";s:18:"DEFAULT_CASES_MENU";s:0:"";}',
@@ -106,7 +106,7 @@ class UsersAjaxTest extends TestCase
         ]);
 
         //Creates the UsersRoles factory
-        factory(RbacUsersRoles::class)->create(
+        RbacUsersRoles::factory()->create(
             [
                 'USR_UID' => $usrUid,
                 'ROL_UID' => '00000000000000000000000000000002'

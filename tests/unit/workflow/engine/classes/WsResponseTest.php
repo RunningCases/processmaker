@@ -9,7 +9,7 @@ class WsResponseTest extends TestCase
     /**
      * Set up method.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
     }
@@ -66,7 +66,7 @@ class WsResponseTest extends TestCase
 
         //assert
         $actual = $this->wsResponse->getPayloadString('test');
-        $this->assertContains('test', $actual);
+        $this->assertStringContainsString('test', $actual);
     }
 
     /**

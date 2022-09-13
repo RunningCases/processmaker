@@ -2,10 +2,13 @@
 
 namespace ProcessMaker\Model;
 
+use App\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Groupwf extends Model
 {
+    use HasFactory;
+
     protected $table = 'GROUPWF';
     protected $primaryKey = 'GRP_ID';
     // We do not have create/update timestamps for this table

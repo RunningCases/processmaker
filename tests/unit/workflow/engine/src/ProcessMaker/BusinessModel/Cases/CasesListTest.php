@@ -2,7 +2,6 @@
 
 namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use ProcessMaker\BusinessModel\Cases\CasesList;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
@@ -15,14 +14,13 @@ use Tests\TestCase;
  */
 class CasesListTest extends TestCase
 {
-    use DatabaseTransactions;
-
     /**
      * Method set up.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
+        $this->truncateNonInitialModels();
     }
 
     /**
@@ -32,8 +30,8 @@ class CasesListTest extends TestCase
      */
     public function createCases()
     {
-        $application = factory(Application::class)->states('completed')->create();
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->completed()->create();
+        $delegation = Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'CLOSED',
             'DEL_INDEX' => 1,
             'USR_UID' => $application->APP_INIT_USER,
@@ -64,7 +62,7 @@ class CasesListTest extends TestCase
      */
     public function it_return_all_counters()
     {
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create();
+        $delegation = Delegation::factory()->foreign_keys()->create();
         $count = new CasesList();
         $result = $count->getAllCounters($delegation->USR_UID);
         $this->assertNotEmpty($result);
@@ -88,7 +86,7 @@ class CasesListTest extends TestCase
      */
     public function it_return_at_least_one()
     {
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create();
+        $delegation = Delegation::factory()->foreign_keys()->create();
         $count = new CasesList();
         $result = $count->atLeastOne($delegation->USR_UID);
         $this->assertNotEmpty($result);

@@ -14,7 +14,7 @@ class InstallerModule extends Controller
 {
     const MYSQL_VERSION_MAXIMUM_SUPPORTED = "5.7";
     const PHP_VERSION_MINIMUM_SUPPORTED = "7.3";
-    const PHP_VERSION_NOT_SUPPORTED = "8";
+    const PHP_VERSION_NOT_SUPPORTED = "8.2";
     public $path_config;
     public $path_languages;
     public $path_plugins;
@@ -992,7 +992,13 @@ class InstallerModule extends Controller
                 $info->wfDatabaseExists = count($response) > 0;
                 break;
             case 'sqlsrv':
-                $arguments = array("UID" => $db_username, "PWD" => $db_password);
+                $arguments = [
+                    'UID' => $db_username,
+                    'PWD' => $db_password,
+                    'CharacterSet' => 'UTF-8',
+                    'Encrypt' => true,
+                    'TrustServerCertificate' => true
+                ];
                 $link = @sqlsrv_connect($db_hostname, $arguments);
                 $wfDatabase = $filter->validateInput($_REQUEST['wfDatabase'], 'nosql');
                 $query = "select * from sys.databases where name = '%s' ";

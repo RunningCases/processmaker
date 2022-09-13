@@ -21,9 +21,9 @@ class AdditionalTablesTest extends TestCase
      */
     public function it_has_a_columns_defined()
     {
-        $table = factory(AdditionalTables::class)->create([
+        $table = AdditionalTables::factory()->create([
             'ADD_TAB_UID' => function () {
-                return factory(Fields::class)->create()->ADD_TAB_UID;
+                return Fields::factory()->create()->ADD_TAB_UID;
             }
         ]);
         $this->assertInstanceOf(Fields::class, $table->columns);
@@ -37,8 +37,8 @@ class AdditionalTablesTest extends TestCase
      */
     public function it_filter_offline_table()
     {
-        factory(AdditionalTables::class)->create(['ADD_TAB_OFFLINE' => 0]);
-        $table = factory(AdditionalTables::class)->create([
+        AdditionalTables::factory()->create(['ADD_TAB_OFFLINE' => 0]);
+        $table = AdditionalTables::factory()->create([
             'ADD_TAB_OFFLINE' => 1
         ]);
         $this->assertCount(1, $table->offline([$table->ADD_TAB_OFFLINE])->get());
@@ -52,7 +52,7 @@ class AdditionalTablesTest extends TestCase
      */
     public function it_filter_process()
     {
-        $table = factory(AdditionalTables::class)->create();
+        $table = AdditionalTables::factory()->create();
         $this->assertCount(1, $table->process($table->PRO_UID)->get());
     }
 
@@ -64,7 +64,7 @@ class AdditionalTablesTest extends TestCase
      */
     public function it_get_tables_related_to_process()
     {
-        $table = factory(AdditionalTables::class)->create();
+        $table = AdditionalTables::factory()->create();
         $result = AdditionalTables::getTables($table->PRO_UID);
         $this->assertNotEmpty($result);
     }
@@ -77,7 +77,7 @@ class AdditionalTablesTest extends TestCase
      */
     public function it_get_structure_from_offline_tables()
     {
-        factory(Fields::class)->states('foreign_keys')->create();
+        Fields::factory()->foreign_keys()->create();
         $results = AdditionalTables::getTablesOfflineStructure();
         $this->assertNotEmpty($results);
         foreach ($results as $row) {
@@ -97,7 +97,7 @@ class AdditionalTablesTest extends TestCase
      */
     public function it_get_data_from_offline_tables()
     {
-        factory(Fields::class)->states('foreign_keys')->create();
+        Fields::factory()->foreign_keys()->create();
         $results = AdditionalTables::getTablesOfflineData();
         $this->assertNotEmpty($results);
         foreach ($results as $row) {
@@ -117,7 +117,7 @@ class AdditionalTablesTest extends TestCase
      */
     public function it_update_property_offline()
     {
-        $pmTable = factory(AdditionalTables::class)->create(['ADD_TAB_OFFLINE' => 0]);
+        $pmTable = AdditionalTables::factory()->create(['ADD_TAB_OFFLINE' => 0]);
         $results = AdditionalTables::updatePropertyOffline([$pmTable->ADD_TAB_UID], 1);
         // Check the update
         $pmTableQuery = AdditionalTables::query()->select(['ADD_TAB_OFFLINE']);

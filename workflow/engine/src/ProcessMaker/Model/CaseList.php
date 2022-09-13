@@ -2,6 +2,7 @@
 
 namespace ProcessMaker\Model;
 
+use App\Factories\HasFactory;
 use Exception;
 use G;
 use ProcessMaker\BusinessModel\Table;
@@ -13,6 +14,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class CaseList extends Model
 {
+    use HasFactory;
+
     /**
      * The table associated with the model.
      * @var string

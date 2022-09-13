@@ -2,6 +2,7 @@
 
 namespace ProcessMaker\Model;
 
+use App\Factories\HasFactory;
 use Cases;
 use DateTime;
 use G;
@@ -13,6 +14,8 @@ use ProcessMaker\Model\Task;
 
 class Delegation extends Model
 {
+    use HasFactory;
+
     // Class constants
     const PRIORITIES_MAP = [1 => 'VL', 2 => 'L', 3 => 'N', 4 => 'H', 5 => 'VH'];
 

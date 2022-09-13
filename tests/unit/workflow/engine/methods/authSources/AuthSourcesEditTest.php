@@ -14,10 +14,13 @@ class AuthSourcesEditTest extends TestCase
     /**
      * This set initial parameters for each test.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->settingUserLogged();
+        if (!defined('SYS_COLLECTION')) {
+            define('SYS_COLLECTION', 'case');
+        }
     }
 
     /**
@@ -59,7 +62,7 @@ class AuthSourcesEditTest extends TestCase
         $fileName = PATH_METHODS . 'authSources/authSources_Edit.php';
         $_REQUEST['AUTH_SOURCE_PROVIDER'] = 'ldapAdvanced';
 
-        $authenticationSource = factory(RbacAuthenticationSource::class)
+        $authenticationSource = RbacAuthenticationSource::factory()
                 ->create();
 
         $_GET['sUID'] = $authenticationSource->AUTH_SOURCE_UID;

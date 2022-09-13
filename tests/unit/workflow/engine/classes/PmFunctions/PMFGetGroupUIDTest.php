@@ -22,7 +22,7 @@ class PMFGetGroupUIDTest extends TestCase
     public function it_group_uid()
     {
         // Create group
-        $group = factory(Groupwf::class)->create();
+        $group = Groupwf::factory()->create();
         $result = PMFGetGroupUID($group->GRP_UID);
         $this->assertFalse($result);
     }

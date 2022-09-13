@@ -2,10 +2,13 @@
 
 namespace ProcessMaker\Model;
 
+use App\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Triggers extends Model
 {
+    use HasFactory;
+
     // Set our table name
     protected $table = 'TRIGGERS';
     // No timestamps

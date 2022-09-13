@@ -4,20 +4,23 @@ namespace App\Console\Commands;
 
 use Bootstrap;
 use Illuminate\Support\Carbon;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Console\Scheduling\ScheduleRunCommand as BaseCommand;
+use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Maveriks\WebApplication;
 use ProcessMaker\Model\TaskScheduler;
 
 class ScheduleRunCommand extends BaseCommand
 {
     use AddParametersTrait;
+
     /**
      * Create a new command instance.
-     *
-     * @param \Illuminate\Console\Scheduling\Schedule $schedule
+     * 
      * @return void
      */
-    public function __construct(\Illuminate\Console\Scheduling\Schedule $schedule)
+    public function __construct()
     {
         $this->startedAt = Carbon::now();
         $this->signature = "schedule:run";
@@ -27,24 +30,27 @@ class ScheduleRunCommand extends BaseCommand
         {--processmakerPath=./ : ProcessMaker path.}
         ";
         $this->description .= ' (ProcessMaker has extended this command)';
-        parent::__construct($schedule);
+        parent::__construct();
     }
+
     /**
      * Execute the console command.
-     *
+     * 
+     * @param Schedule $schedule
+     * @param Dispatcher $dispatcher
+     * @param ExceptionHandler $handler
      * @return void
      */
-    public function handle()
+    public function handle(Schedule $schedule, Dispatcher $dispatcher, ExceptionHandler $handler)
     {
-        $that = $this;
         $workspace = $this->option('workspace');
-        $user =  $this->option('user');
+        $user = $this->option('user');
         if (!empty($workspace)) {
             $webApplication = new WebApplication();
             $webApplication->setRootDir($this->option('processmakerPath'));
             $webApplication->loadEnvironment($workspace, false);
         }
-        TaskScheduler::all()->each(function ($p) use ($that, $user) {
+        TaskScheduler::all()->each(function ($p) use ($schedule, $user) {
             $win = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
             if ($p->enable == 1) {
                 $starting = isset($p->startingTime) ? $p->startingTime : "0:00";
@@ -52,7 +58,7 @@ class ScheduleRunCommand extends BaseCommand
                 $timezone = isset($p->timezone) && $p->timezone != "" ? $p->timezone : date_default_timezone_get();
                 $body = $p->body;
                 if (!$win) {
-                    $body = str_replace(" -c"," " . $user . " -c", $p->body);
+                    $body = str_replace(" -c", " " . $user . " -c", $p->body);
                 }
 
                 //for init date and finish date parameters
@@ -71,7 +77,7 @@ class ScheduleRunCommand extends BaseCommand
                     $body = str_replace("report_by_process", "report_by_process +init-date'{$oneMonthAgo}' +finish-date'{$currentDate}'", $body);
                 }
 
-                $schedule = $that->schedule->exec($body)->cron($p->expression)->between($starting, $ending)->timezone($timezone)->when(function () use ($p) {
+                $schedule->exec($body)->cron($p->expression)->between($starting, $ending)->timezone($timezone)->when(function () use ($p) {
                     $now = Carbon::now();
                     $result = false;
                     $datework = Carbon::createFromFormat('Y-m-d H:i:s', $p->last_update);
@@ -116,6 +122,6 @@ class ScheduleRunCommand extends BaseCommand
                 }
             }
         });
-        parent::handle();
+        parent::handle($schedule, $dispatcher, $handler);
     }
 }

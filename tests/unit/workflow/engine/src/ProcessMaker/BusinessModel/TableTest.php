@@ -11,16 +11,16 @@ class TableTest extends TestCase
     /**
      * Method setUp.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-        AdditionalTables::truncate();
+        $this->truncateNonInitialModels();
     }
 
     /**
      * Method tearDown.
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
     }
@@ -32,7 +32,7 @@ class TableTest extends TestCase
      */
     public function it_should_test_getTables_method()
     {
-        $additionalTables = factory(AdditionalTables::class)
+        $additionalTables = AdditionalTables::factory()
             ->create();
 
         $proUid = $additionalTables->PRO_UID;

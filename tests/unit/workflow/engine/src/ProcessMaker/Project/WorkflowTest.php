@@ -21,7 +21,7 @@ class WorkflowTest extends TestCase
     /**
      * This method sets the values before starting any test.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->workflow = new Workflow();
@@ -33,7 +33,7 @@ class WorkflowTest extends TestCase
     /**
      * This method is executed after each test.
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         foreach ($this->files as $value) {
@@ -51,11 +51,11 @@ class WorkflowTest extends TestCase
      */
     public function it_should_return_the_data_when_the_project_id_is_valid()
     {
-        $process = factory(Process::class)->create();
-        $dynaforms = factory(Dynaform::class, 5)->create([
+        $process = Process::factory()->create();
+        $dynaforms = Dynaform::factory(5)->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        factory(WebEntry::class, 5)->create([
+        WebEntry::factory(5)->create([
             'PRO_UID' => $process->PRO_UID
         ]);
 

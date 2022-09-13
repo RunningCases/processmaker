@@ -2,6 +2,7 @@
 
 namespace ProcessMaker\Model;
 
+use App\Factories\HasFactory;
 use Configurations;
 use Exception;
 use G;
@@ -10,6 +11,8 @@ use RBAC;
 
 class Process extends Model
 {
+    use HasFactory;
+
     // Set our table name
     protected $table = 'PROCESS';
     protected $primaryKey = 'PRO_ID';

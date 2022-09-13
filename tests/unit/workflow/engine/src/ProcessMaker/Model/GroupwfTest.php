@@ -2,7 +2,6 @@
 
 namespace Tests\unit\workflow\engine\src\ProcessMaker\Model;
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use ProcessMaker\Model\GroupUser;
 use ProcessMaker\Model\Groupwf;
 use Tests\TestCase;
@@ -14,15 +13,13 @@ use Tests\TestCase;
  */
 class GroupwfTest extends TestCase
 {
-    use DatabaseTransactions;
-
     /**
      * Method set up.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-        Groupwf::truncate();
+        $this->truncateNonInitialModels();
     }
 
     /**
@@ -33,9 +30,9 @@ class GroupwfTest extends TestCase
      */
     public function it_belong_group()
     {
-        $table = factory(Groupwf::class)->create([
+        $table = Groupwf::factory()->create([
             'GRP_ID' => function () {
-                return factory(GroupUser::class)->create()->GRP_ID;
+                return GroupUser::factory()->create()->GRP_ID;
             }
         ]);
         $this->assertInstanceOf(GroupUser::class, $table->groupUsers);
@@ -49,7 +46,7 @@ class GroupwfTest extends TestCase
      */
     public function it_return_scope_active()
     {
-        $table = factory(Groupwf::class)->create();
+        $table = Groupwf::factory()->create();
         $this->assertNotEmpty($table->active()->get());
     }
 
@@ -60,7 +57,7 @@ class GroupwfTest extends TestCase
      */
     public function it_should_test_the_verify_group_exists_method()
     {
-        $groupWf = factory(Groupwf::class)->create();
+        $groupWf = Groupwf::factory()->create();
 
         $res = Groupwf::verifyGroupExists($groupWf['GRP_UID']);
         $this->assertTrue($res);
@@ -76,7 +73,7 @@ class GroupwfTest extends TestCase
      */
     public function it_should_test_the_get_group_id_method()
     {
-        $groupWf = factory(Groupwf::class)->create();
+        $groupWf = Groupwf::factory()->create();
 
         $res = Groupwf::getGroupId($groupWf['GRP_UID']);
         $this->assertNotEmpty($res);

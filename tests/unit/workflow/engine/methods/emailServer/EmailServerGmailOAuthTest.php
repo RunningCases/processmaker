@@ -15,7 +15,7 @@ class EmailServerGmailOAuthTest extends TestCase
     /**
      * This method calls the parent setUp
      */
-    public function setUp()
+    public function setUp(): void
     {
         if (version_compare(phpversion(), 7.3, '>') ) {
             $this->markTestSkipped('The changes in third party are not available');

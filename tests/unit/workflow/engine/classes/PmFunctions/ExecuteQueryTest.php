@@ -4,7 +4,6 @@ namespace Tests\unit\workflow\engine\classes\PmFunctions;
 
 use Faker\Factory;
 use G;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use ProcessMaker\Model\DbSource;
 use ProcessMaker\Model\ProcessCategory;
 use ProcessMaker\Model\User;
@@ -22,10 +21,10 @@ class ExecuteQueryTest extends TestCase
     protected $contentSystemTables = "tables =  'APPLICATION|APP_SEQUENCE|APP_DELEGATION|APP_DOCUMENT|APP_MESSAGE|APP_OWNER|CONFIGURATION|CONTENT|DEPARTMENT|DYNAFORM|GROUPWF|GROUP_USER|HOLIDAY|INPUT_DOCUMENT|ISO_COUNTRY|ISO_LOCATION|ISO_SUBDIVISION|LANGUAGE|LEXICO|OUTPUT_DOCUMENT|PROCESS|PROCESS_OWNER|REPORT_TABLE|REPORT_VAR|ROUTE|STEP|STEP_TRIGGER|SWIMLANES_ELEMENTS|TASK|TASK_USER|TRANSLATION|TRIGGERS|USERS|APP_THREAD|APP_DELAY|PROCESS_USER|SESSION|DB_SOURCE|STEP_SUPERVISOR|OBJECT_PERMISSION|CASE_TRACKER|CASE_TRACKER_OBJECT|CASE_CONSOLIDATED|STAGE|SUB_PROCESS|SUB_APPLICATION|LOGIN_LOG|USERS_PROPERTIES|ADDITIONAL_TABLES|FIELDS|SHADOW_TABLE|EVENT|GATEWAY|APP_EVENT|APP_CACHE_VIEW|DIM_TIME_DELEGATE|DIM_TIME_COMPLETE|APP_HISTORY|APP_FOLDER|FIELD_CONDITION|LOG_CASES_SCHEDULER|CASE_SCHEDULER|CALENDAR_DEFINITION|CALENDAR_BUSINESS_HOURS|CALENDAR_HOLIDAYS|CALENDAR_ASSIGNMENTS|PROCESS_CATEGORY|APP_NOTES|DASHLET|DASHLET_INSTANCE|APP_SOLR_QUEUE|SEQUENCES|SESSION_STORAGE|PROCESS_FILES|WEB_ENTRY|OAUTH_ACCESS_TOKENS|OAUTH_AUTHORIZATION_CODES|OAUTH_CLIENTS|OAUTH_REFRESH_TOKENS|OAUTH_SCOPES|PMOAUTH_USER_ACCESS_TOKENS|BPMN_PROJECT|BPMN_PROCESS|BPMN_ACTIVITY|BPMN_ARTIFACT|BPMN_DIAGRAM|BPMN_BOUND|BPMN_DATA|BPMN_EVENT|BPMN_FLOW|BPMN_GATEWAY|BPMN_LANESET|BPMN_LANE|BPMN_PARTICIPANT|BPMN_EXTENSION|BPMN_DOCUMENTATION|PROCESS_VARIABLES|APP_TIMEOUT_ACTION_EXECUTED|ADDONS_STORE|ADDONS_MANAGER|LICENSE_MANAGER|APP_ASSIGN_SELF_SERVICE_VALUE|APP_ASSIGN_SELF_SERVICE_VALUE_GROUP|LIST_INBOX|LIST_PARTICIPATED_HISTORY|LIST_PARTICIPATED_LAST|LIST_COMPLETED|LIST_PAUSED|LIST_CANCELED|LIST_MY_INBOX|LIST_UNASSIGNED|LIST_UNASSIGNED_GROUP|MESSAGE_TYPE|MESSAGE_TYPE_VARIABLE|EMAIL_SERVER|WEB_ENTRY_EVENT|MESSAGE_EVENT_DEFINITION|MESSAGE_EVENT_RELATION|MESSAGE_APPLICATION|ELEMENT_TASK_RELATION|ABE_CONFIGURATION|ABE_REQUESTS|ABE_RESPONSES|USR_REPORTING|PRO_REPORTING|DASHBOARD|DASHBOARD_INDICATOR|DASHBOARD_DAS_IND|CATALOG|SCRIPT_TASK|TIMER_EVENT|EMAIL_EVENT|NOTIFICATION_DEVICE|GMAIL_RELABELING|NOTIFICATION_QUEUE|PLUGINS_REGISTRY|APP_DATA_CHANGE_LOG|JOBS_PENDING|JOBS_FAILED|RBAC_PERMISSIONS|RBAC_ROLES|RBAC_ROLES_PERMISSIONS|RBAC_SYSTEMS|RBAC_USERS|RBAC_USERS_ROLES|RBAC_AUTHENTICATION_SOURCE|'";
     protected $oldContentSystemTables = "";
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-        ProcessCategory::truncate();
+        $this->truncateNonInitialModels();
         $this->oldContentSystemTables = "";
         $path = PATH_CONFIG . $this->nameSystemTables;
         if (file_exists($path)) {
@@ -34,7 +33,7 @@ class ExecuteQueryTest extends TestCase
         file_put_contents($path, $this->contentSystemTables);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $path = PATH_CONFIG . $this->nameSystemTables;
@@ -47,7 +46,7 @@ class ExecuteQueryTest extends TestCase
      */
     public function it_must_return_the_result_of_execute_query_method()
     {
-        $user = factory(User::class, 5)->create();
+        $user = User::factory(5)->create();
 
         $user = $user->sortByDesc('USR_UID')->values()->map(function($item) {
             $result = [
@@ -139,7 +138,7 @@ class ExecuteQueryTest extends TestCase
         $id = $faker->unique()->numberBetween(1, 10000000);
         $newName = str_replace("'", " ", $faker->name);
 
-        $category = factory(ProcessCategory::class)->create([
+        $category = ProcessCategory::factory()->create([
             'CATEGORY_ID' => $id
         ]);
         $expected = $category->toArray();
@@ -176,7 +175,7 @@ class ExecuteQueryTest extends TestCase
         $id = $faker->unique()->numberBetween(1, 10000000);
         $newName = str_replace("'", " ", $faker->name);
 
-        $category = factory(ProcessCategory::class)->create([
+        $category = ProcessCategory::factory()->create([
             'CATEGORY_ID' => $id
         ]);
         $expected = $category->toArray();
@@ -205,7 +204,7 @@ class ExecuteQueryTest extends TestCase
     {
         $this->expectException(SQLException::class);
         $database = env('DB_DATABASE');
-        $category = factory(ProcessCategory::class)->create();
+        $category = ProcessCategory::factory()->create();
 
         $sql = ""
                 . "DELETE FROM {$database}.PROCESS_CATEGORY "
@@ -228,7 +227,7 @@ class ExecuteQueryTest extends TestCase
     public function this_connects_to_an_external_database_using_the_execute_query_method()
     {
         $dbName = env('DB_DATABASE');
-        $dbSource = factory(DbSource::class)->create([
+        $dbSource = DbSource::factory()->create([
             'DBS_TYPE' => 'mysql',
             'DBS_SERVER' => env('DB_HOST'),
             'DBS_DATABASE_NAME' => $dbName,
@@ -253,10 +252,10 @@ class ExecuteQueryTest extends TestCase
      */
     public function this_connects_to_an_external_oracle_database_using_the_execute_query_method()
     {
-        $this->markTestIncomplete('This test has not been implemented yet.');
+        $this->markTestSkipped('This test has not been implemented yet.');
 
         $dbName = "XE";
-        $dbSource = factory(DbSource::class)->create([
+        $dbSource = DbSource::factory()->create([
             'DBS_TYPE' => 'oracle',
             'DBS_CONNECTION_TYPE' => 'NORMAL',
             'DBS_SERVER' => 'localhost',
@@ -322,7 +321,7 @@ class ExecuteQueryTest extends TestCase
         $id = $faker->unique()->numberBetween(1, 10000000);
         $newName = str_replace("'", " ", $faker->name);
 
-        $category = factory(ProcessCategory::class)->create([
+        $category = ProcessCategory::factory()->create([
             'CATEGORY_ID' => $id
         ]);
         $expected = $category->toArray();

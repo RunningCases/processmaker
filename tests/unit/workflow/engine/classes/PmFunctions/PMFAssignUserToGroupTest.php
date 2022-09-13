@@ -26,15 +26,15 @@ class PMFAssignUserToGroupTest extends TestCase
     {
         // Create user
         global $RBAC;
-        $user = factory(User::class)->create();
-        factory(RbacUsers::class)->create([
+        $user = User::factory()->create();
+        RbacUsers::factory()->create([
             'USR_UID' => $user->USR_UID,
             'USR_USERNAME' => $user->USR_USERNAME,
             'USR_FIRSTNAME' => $user->USR_FIRSTNAME,
             'USR_LASTNAME' => $user->USR_LASTNAME
         ]);
         // Create group
-        $group = factory(Groupwf::class)->create();
+        $group = Groupwf::factory()->create();
         DB::commit();
         $result = PMFAssignUserToGroup($user->USR_UID, $group->GRP_UID);
         $this->assertNotEmpty($result);

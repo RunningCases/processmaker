@@ -24,7 +24,7 @@ class RbacUsersTest extends TestCase
      */
     public function it_should_test_the_verify_username_exists_method()
     {
-        $rbacUser = factory(RbacUsers::class)->create([
+        $rbacUser = RbacUsers::factory()->create([
             'USR_USERNAME' => 'test'
         ]);
 
@@ -42,7 +42,7 @@ class RbacUsersTest extends TestCase
      */
     public function it_should_test_the_create_user_method()
     {
-        $roles = factory(RbacRoles::class)->create();
+        $roles = RbacRoles::factory()->create();
         $data = [
             'USR_UID' => G::generateUniqueID(),
             'USR_USERNAME' => 'test',
@@ -71,7 +71,7 @@ class RbacUsersTest extends TestCase
      */
     public function it_should_test_the_verify_user_exists_method()
     {
-        $rbacUser = factory(RbacUsers::class)->create();
+        $rbacUser = RbacUsers::factory()->create();
 
         $res = RbacUsers::verifyUserExists($rbacUser['USR_UID']);
         $this->assertTrue($res);

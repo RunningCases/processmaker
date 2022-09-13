@@ -24,7 +24,7 @@ class PMFRoleListTest extends TestCase
     {
         // Create roles
         global $RBAC;
-        factory(RbacRoles::class)->create();
+        RbacRoles::factory()->create();
         DB::commit();
         $result = PMFRoleList();
         $this->assertNotEmpty($result);

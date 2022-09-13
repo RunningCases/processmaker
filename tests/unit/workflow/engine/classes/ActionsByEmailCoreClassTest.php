@@ -16,7 +16,7 @@ class ActionsByEmailCoreClassTest extends TestCase
     /**
      * Method set up.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         if (!defined('PATH_IMAGES_ENVIRONMENT_USERS')) {
@@ -52,14 +52,14 @@ class ActionsByEmailCoreClassTest extends TestCase
         $user = User::where('USR_UID', '=', '00000000000000000000000000000001')
                 ->get()
                 ->first();
-        $process = factory(Process::class)->create();
-        $task = factory(Task::class)->create([
+        $process = Process::factory()->create();
+        $task = Task::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $delegation = factory(Delegation::class)->create([
+        $delegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $task->TAS_UID,
@@ -91,17 +91,17 @@ class ActionsByEmailCoreClassTest extends TestCase
         $user = User::where('USR_UID', '=', '00000000000000000000000000000001')
                 ->get()
                 ->first();
-        $process = factory(Process::class)->create();
-        $task = factory(Task::class)->create([
+        $process = Process::factory()->create();
+        $task = Task::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
         $abeConfiguration = [
             'ABE_EMAIL_SERVER_UID' => ''
         ];
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $delegation = factory(Delegation::class)->create([
+        $delegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $task->TAS_UID,
@@ -133,15 +133,15 @@ class ActionsByEmailCoreClassTest extends TestCase
         $user = User::where('USR_UID', '=', '00000000000000000000000000000001')
                 ->get()
                 ->first();
-        $process = factory(Process::class)->create();
-        $task = factory(Task::class)->create([
+        $process = Process::factory()->create();
+        $task = Task::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $dynaform = factory(Dynaform::class)->create([
+        $dynaform = Dynaform::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $emailServer = factory(ProcessMaker\Model\EmailServerModel::class)->create();
-        $abeConfiguration = factory(AbeConfiguration::class)->create([
+        $emailServer = ProcessMaker\Model\EmailServerModel::factory()->create();
+        $abeConfiguration = AbeConfiguration::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => '',
             'DYN_UID' => $dynaform->DYN_UID,
@@ -151,10 +151,10 @@ class ActionsByEmailCoreClassTest extends TestCase
         ]);
         $abeConfiguration = $abeConfiguration->toArray();
 
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $delegation = factory(Delegation::class)->create([
+        $delegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $task->TAS_UID,
@@ -186,19 +186,19 @@ class ActionsByEmailCoreClassTest extends TestCase
      */
     public function it_should_test_sendActionsByEmail_method_with_exception_if_email_to_is_empty()
     {
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'USR_EMAIL' => ''
         ]);
 
-        $process = factory(Process::class)->create();
-        $task = factory(Task::class)->create([
+        $process = Process::factory()->create();
+        $task = Task::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $dynaform = factory(Dynaform::class)->create([
+        $dynaform = Dynaform::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $emailServer = factory(ProcessMaker\Model\EmailServerModel::class)->create();
-        $abeConfiguration = factory(AbeConfiguration::class)->create([
+        $emailServer = ProcessMaker\Model\EmailServerModel::factory()->create();
+        $abeConfiguration = AbeConfiguration::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $task->TAS_UID,
             'DYN_UID' => $dynaform->DYN_UID,
@@ -209,10 +209,10 @@ class ActionsByEmailCoreClassTest extends TestCase
         ]);
         $abeConfiguration = $abeConfiguration->toArray();
 
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $delegation = factory(Delegation::class)->create([
+        $delegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $task->TAS_UID,
@@ -245,17 +245,17 @@ class ActionsByEmailCoreClassTest extends TestCase
      */
     public function it_should_test_sendActionsByEmail_method_with_exception_if_email_type_is_empty()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
-        $process = factory(Process::class)->create();
-        $task = factory(Task::class)->create([
+        $process = Process::factory()->create();
+        $task = Task::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $dynaform = factory(Dynaform::class)->create([
+        $dynaform = Dynaform::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $emailServer = factory(ProcessMaker\Model\EmailServerModel::class)->create();
-        $abeConfiguration = factory(AbeConfiguration::class)->create([
+        $emailServer = ProcessMaker\Model\EmailServerModel::factory()->create();
+        $abeConfiguration = AbeConfiguration::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $task->TAS_UID,
             'DYN_UID' => $dynaform->DYN_UID,
@@ -266,10 +266,10 @@ class ActionsByEmailCoreClassTest extends TestCase
         ]);
         $abeConfiguration = $abeConfiguration->toArray();
 
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $delegation = factory(Delegation::class)->create([
+        $delegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $task->TAS_UID,
@@ -304,15 +304,15 @@ class ActionsByEmailCoreClassTest extends TestCase
         $user = User::where('USR_UID', '=', '00000000000000000000000000000001')
                 ->get()
                 ->first();
-        $process = factory(Process::class)->create();
-        $task = factory(Task::class)->create([
+        $process = Process::factory()->create();
+        $task = Task::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $dynaform = factory(Dynaform::class)->create([
+        $dynaform = Dynaform::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $emailServer = factory(ProcessMaker\Model\EmailServerModel::class)->create();
-        $abeConfiguration = factory(AbeConfiguration::class)->create([
+        $emailServer = ProcessMaker\Model\EmailServerModel::factory()->create();
+        $abeConfiguration = AbeConfiguration::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $task->TAS_UID,
             'DYN_UID' => $dynaform->DYN_UID,
@@ -322,11 +322,11 @@ class ActionsByEmailCoreClassTest extends TestCase
         ]);
         $abeConfiguration = $abeConfiguration->toArray();
 
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
 
-        $delegation = factory(Delegation::class)->create([
+        $delegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $task->TAS_UID,
@@ -363,15 +363,15 @@ class ActionsByEmailCoreClassTest extends TestCase
         $user = User::where('USR_UID', '=', '00000000000000000000000000000001')
                 ->get()
                 ->first();
-        $process = factory(Process::class)->create();
-        $task = factory(Task::class)->create([
+        $process = Process::factory()->create();
+        $task = Task::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $dynaform = factory(Dynaform::class)->create([
+        $dynaform = Dynaform::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $emailServer = factory(ProcessMaker\Model\EmailServerModel::class)->create();
-        $abeConfiguration = factory(AbeConfiguration::class)->create([
+        $emailServer = ProcessMaker\Model\EmailServerModel::factory()->create();
+        $abeConfiguration = AbeConfiguration::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $task->TAS_UID,
             'DYN_UID' => $dynaform->DYN_UID,
@@ -382,11 +382,11 @@ class ActionsByEmailCoreClassTest extends TestCase
         ]);
         $abeConfiguration = $abeConfiguration->toArray();
 
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
 
-        $delegation = factory(Delegation::class)->create([
+        $delegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $task->TAS_UID,
@@ -423,15 +423,15 @@ class ActionsByEmailCoreClassTest extends TestCase
         $user = User::where('USR_UID', '=', '00000000000000000000000000000001')
                 ->get()
                 ->first();
-        $process = factory(Process::class)->create();
-        $task = factory(Task::class)->create([
+        $process = Process::factory()->create();
+        $task = Task::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $dynaform = factory(Dynaform::class)->create([
+        $dynaform = Dynaform::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $emailServer = factory(ProcessMaker\Model\EmailServerModel::class)->create();
-        $abeConfiguration = factory(AbeConfiguration::class)->create([
+        $emailServer = ProcessMaker\Model\EmailServerModel::factory()->create();
+        $abeConfiguration = AbeConfiguration::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $task->TAS_UID,
             'DYN_UID' => $dynaform->DYN_UID,
@@ -442,11 +442,11 @@ class ActionsByEmailCoreClassTest extends TestCase
         ]);
         $abeConfiguration = $abeConfiguration->toArray();
 
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
 
-        $delegation = factory(Delegation::class)->create([
+        $delegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $task->TAS_UID,
@@ -483,16 +483,16 @@ class ActionsByEmailCoreClassTest extends TestCase
         $user = User::where('USR_UID', '=', '00000000000000000000000000000001')
                 ->get()
                 ->first();
-        $process = factory(Process::class)->create();
-        $task = factory(Task::class)->create([
+        $process = Process::factory()->create();
+        $task = Task::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $dynaform = factory(Dynaform::class)->create([
+        $dynaform = Dynaform::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'DYN_CONTENT' => file_get_contents(PATH_TRUNK . "/tests/resources/dynaform2.json")
         ]);
-        $emailServer = factory(ProcessMaker\Model\EmailServerModel::class)->create();
-        $abeConfiguration = factory(AbeConfiguration::class)->create([
+        $emailServer = ProcessMaker\Model\EmailServerModel::factory()->create();
+        $abeConfiguration = AbeConfiguration::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $task->TAS_UID,
             'DYN_UID' => $dynaform->DYN_UID,
@@ -503,11 +503,11 @@ class ActionsByEmailCoreClassTest extends TestCase
         ]);
         $abeConfiguration = $abeConfiguration->toArray();
 
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
 
-        $delegation = factory(Delegation::class)->create([
+        $delegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $task->TAS_UID,
@@ -544,16 +544,16 @@ class ActionsByEmailCoreClassTest extends TestCase
         $user = User::where('USR_UID', '=', '00000000000000000000000000000001')
                 ->get()
                 ->first();
-        $process = factory(Process::class)->create();
-        $task = factory(Task::class)->create([
+        $process = Process::factory()->create();
+        $task = Task::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $dynaform = factory(Dynaform::class)->create([
+        $dynaform = Dynaform::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'DYN_CONTENT' => file_get_contents(PATH_TRUNK . "/tests/resources/dynaform3.json")
         ]);
-        $emailServer = factory(ProcessMaker\Model\EmailServerModel::class)->create();
-        $abeConfiguration = factory(AbeConfiguration::class)->create([
+        $emailServer = ProcessMaker\Model\EmailServerModel::factory()->create();
+        $abeConfiguration = AbeConfiguration::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $task->TAS_UID,
             'DYN_UID' => $dynaform->DYN_UID,
@@ -565,11 +565,11 @@ class ActionsByEmailCoreClassTest extends TestCase
         ]);
         $abeConfiguration = $abeConfiguration->toArray();
 
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
 
-        $delegation = factory(Delegation::class)->create([
+        $delegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $task->TAS_UID,
@@ -598,11 +598,11 @@ class ActionsByEmailCoreClassTest extends TestCase
 
         $result = $reflectionMethod->invokeArgs($this->actionsByEmailCoreClass, []);
 
-        $this->assertContains('jsondata', $result);
-        $this->assertContains('httpServerHostname', $result);
-        $this->assertContains('pm_run_outside_main_app', $result);
-        $this->assertContains('pathRTLCss', $result);
-        $this->assertContains('fieldsRequired', $result);
+        $this->assertStringContainsString('jsondata', $result);
+        $this->assertStringContainsString('httpServerHostname', $result);
+        $this->assertStringContainsString('pm_run_outside_main_app', $result);
+        $this->assertStringContainsString('pathRTLCss', $result);
+        $this->assertStringContainsString('fieldsRequired', $result);
     }
 
     /**
@@ -615,16 +615,16 @@ class ActionsByEmailCoreClassTest extends TestCase
         $user = User::where('USR_UID', '=', '00000000000000000000000000000001')
                 ->get()
                 ->first();
-        $process = factory(Process::class)->create();
-        $task = factory(Task::class)->create([
+        $process = Process::factory()->create();
+        $task = Task::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $dynaform = factory(Dynaform::class)->create([
+        $dynaform = Dynaform::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'DYN_CONTENT' => file_get_contents(PATH_TRUNK . "/tests/resources/dynaform3.json")
         ]);
-        $emailServer = factory(ProcessMaker\Model\EmailServerModel::class)->create();
-        $abeConfiguration = factory(AbeConfiguration::class)->create([
+        $emailServer = ProcessMaker\Model\EmailServerModel::factory()->create();
+        $abeConfiguration = AbeConfiguration::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $task->TAS_UID,
             'DYN_UID' => $dynaform->DYN_UID,
@@ -636,11 +636,11 @@ class ActionsByEmailCoreClassTest extends TestCase
         ]);
         $abeConfiguration = $abeConfiguration->toArray();
 
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
 
-        $delegation = factory(Delegation::class)->create([
+        $delegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $task->TAS_UID,
@@ -669,11 +669,11 @@ class ActionsByEmailCoreClassTest extends TestCase
 
         $result = $reflectionMethod->invokeArgs($this->actionsByEmailCoreClass, []);
 
-        $this->assertContains('jsondata', $result);
-        $this->assertContains('httpServerHostname', $result);
-        $this->assertContains('pm_run_outside_main_app', $result);
-        $this->assertContains('pathRTLCss', $result);
-        $this->assertContains('fieldsRequired', $result);
+        $this->assertStringContainsString('jsondata', $result);
+        $this->assertStringContainsString('httpServerHostname', $result);
+        $this->assertStringContainsString('pm_run_outside_main_app', $result);
+        $this->assertStringContainsString('pathRTLCss', $result);
+        $this->assertStringContainsString('fieldsRequired', $result);
     }
 
     /**
@@ -687,16 +687,16 @@ class ActionsByEmailCoreClassTest extends TestCase
         $user = User::where('USR_UID', '=', '00000000000000000000000000000001')
                 ->get()
                 ->first();
-        $process = factory(Process::class)->create();
-        $task = factory(Task::class)->create([
+        $process = Process::factory()->create();
+        $task = Task::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
-        $dynaform = factory(Dynaform::class)->create([
+        $dynaform = Dynaform::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'DYN_CONTENT' => file_get_contents(PATH_TRUNK . "/tests/resources/dynaform3.json")
         ]);
-        $emailServer = factory(ProcessMaker\Model\EmailServerModel::class)->create();
-        $abeConfiguration = factory(AbeConfiguration::class)->create([
+        $emailServer = ProcessMaker\Model\EmailServerModel::factory()->create();
+        $abeConfiguration = AbeConfiguration::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $task->TAS_UID,
             'DYN_UID' => $dynaform->DYN_UID,
@@ -708,11 +708,11 @@ class ActionsByEmailCoreClassTest extends TestCase
         ]);
         $abeConfiguration = $abeConfiguration->toArray();
 
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
 
-        $delegation = factory(Delegation::class)->create([
+        $delegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID,
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $task->TAS_UID,
@@ -741,10 +741,10 @@ class ActionsByEmailCoreClassTest extends TestCase
 
         $result = $reflectionMethod->invokeArgs($this->actionsByEmailCoreClass, []);
 
-        $this->assertContains('jsondata', $result);
-        $this->assertContains('httpServerHostname', $result);
-        $this->assertContains('pm_run_outside_main_app', $result);
-        $this->assertContains('pathRTLCss', $result);
-        $this->assertContains('fieldsRequired', $result);
+        $this->assertStringContainsString('jsondata', $result);
+        $this->assertStringContainsString('httpServerHostname', $result);
+        $this->assertStringContainsString('pm_run_outside_main_app', $result);
+        $this->assertStringContainsString('pathRTLCss', $result);
+        $this->assertStringContainsString('fieldsRequired', $result);
     }
 }

@@ -4,15 +4,12 @@ namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 
 use DateInterval;
 use Datetime;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Cases\Inbox;
 use ProcessMaker\Model\AdditionalTables;
-use ProcessMaker\Model\Application;
 use ProcessMaker\Model\CaseList;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Process;
-use ProcessMaker\Model\Task;
 use ProcessMaker\Model\User;
 use Tests\TestCase;
 
@@ -23,21 +20,20 @@ use Tests\TestCase;
  */
 class InboxTest extends TestCase
 {
-    use DatabaseTransactions;
-
     /**
      * Method set up.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-        Delegation::truncate();
+        $this->truncateNonInitialModels();
     }
 
     /**
      * Method tearDown
      */
-    public function tearDown() {
+    public function tearDown(): void
+    {
         parent::tearDown();
     }
 
@@ -50,7 +46,7 @@ class InboxTest extends TestCase
      */
     public function createInbox()
     {
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+        $delegation = Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_PREVIOUS' => 1,
             'DEL_INDEX' => 2,
@@ -67,10 +63,10 @@ class InboxTest extends TestCase
      */
     public function createMultipleInbox($cases)
     {
-        $user = factory(\ProcessMaker\Model\User::class)->create();
+        $user = \ProcessMaker\Model\User::factory()->create();
 
         for ($i = 0; $i < $cases; $i = $i + 1) {
-            $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+            $delegation = Delegation::factory()->foreign_keys()->create([
                 'DEL_THREAD_STATUS' => 'OPEN',
                 'DEL_INDEX' => 2,
                 'USR_UID' => $user->USR_UID,
@@ -304,7 +300,7 @@ class InboxTest extends TestCase
     {
 
         // Create factories related to the to_do cases
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+        $delegation = Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_PREVIOUS' => 1,
             'DEL_INDEX' => 2,
@@ -339,7 +335,7 @@ class InboxTest extends TestCase
         // Create factories related to the to_do cases
         $cases = $this->createInbox();
         // Create the previous thread with the same user
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+        $delegation = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $cases->APP_NUMBER,
             'APP_UID' => $cases->APP_UID,
             'USR_ID' => $cases->USR_ID,
@@ -420,10 +416,10 @@ class InboxTest extends TestCase
      */
     public function it_should_test_get_counters_by_processes_method_no_filter()
     {
-        $user = factory(User::class)->create();
-        $process = factory(Process::class)->create();
-        $process2 = factory(Process::class)->create();
-        factory(Delegation::class)->states('foreign_keys')->create([
+        $user = User::factory()->create();
+        $process = Process::factory()->create();
+        $process2 = Process::factory()->create();
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
@@ -431,7 +427,7 @@ class InboxTest extends TestCase
             'PRO_ID' => $process->PRO_ID,
             'PRO_UID' => $process->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
@@ -454,14 +450,14 @@ class InboxTest extends TestCase
      */
     public function it_should_test_get_counters_by_processes_method_category()
     {
-        $user = factory(User::class)->create();
-        $process = factory(Process::class)->create([
+        $user = User::factory()->create();
+        $process = Process::factory()->create([
             'CATEGORY_ID' => 1
         ]);
-        $process2 = factory(Process::class)->create([
+        $process2 = Process::factory()->create([
             'CATEGORY_ID' => 2
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
@@ -469,7 +465,7 @@ class InboxTest extends TestCase
             'PRO_ID' => $process->PRO_ID,
             'PRO_UID' => $process->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
@@ -477,7 +473,7 @@ class InboxTest extends TestCase
             'PRO_ID' => $process->PRO_ID,
             'PRO_UID' => $process->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
@@ -485,7 +481,7 @@ class InboxTest extends TestCase
             'PRO_ID' => $process->PRO_ID,
             'PRO_UID' => $process->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
@@ -493,7 +489,7 @@ class InboxTest extends TestCase
             'PRO_ID' => $process2->PRO_ID,
             'PRO_UID' => $process2->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
@@ -516,19 +512,19 @@ class InboxTest extends TestCase
      */
     public function it_should_test_get_counters_by_processes_method_top_ten()
     {
-        $user = factory(User::class)->create();
-        $process1 = factory(Process::class)->create();
-        $process2 = factory(Process::class)->create();
-        $process3 = factory(Process::class)->create();
-        $process4 = factory(Process::class)->create();
-        $process5 = factory(Process::class)->create();
-        $process6 = factory(Process::class)->create();
-        $process7 = factory(Process::class)->create();
-        $process8 = factory(Process::class)->create();
-        $process9 = factory(Process::class)->create();
-        $process10 = factory(Process::class)->create();
-        $process11 = factory(Process::class)->create();
-        factory(Delegation::class)->states('foreign_keys')->create([
+        $user = User::factory()->create();
+        $process1 = Process::factory()->create();
+        $process2 = Process::factory()->create();
+        $process3 = Process::factory()->create();
+        $process4 = Process::factory()->create();
+        $process5 = Process::factory()->create();
+        $process6 = Process::factory()->create();
+        $process7 = Process::factory()->create();
+        $process8 = Process::factory()->create();
+        $process9 = Process::factory()->create();
+        $process10 = Process::factory()->create();
+        $process11 = Process::factory()->create();
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
@@ -536,7 +532,7 @@ class InboxTest extends TestCase
             'PRO_ID' => $process1->PRO_ID,
             'PRO_UID' => $process1->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
@@ -544,7 +540,7 @@ class InboxTest extends TestCase
             'PRO_ID' => $process1->PRO_ID,
             'PRO_UID' => $process1->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
@@ -552,7 +548,7 @@ class InboxTest extends TestCase
             'PRO_ID' => $process1->PRO_ID,
             'PRO_UID' => $process1->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
@@ -560,7 +556,7 @@ class InboxTest extends TestCase
             'PRO_ID' => $process2->PRO_ID,
             'PRO_UID' => $process2->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
@@ -568,7 +564,7 @@ class InboxTest extends TestCase
             'PRO_ID' => $process2->PRO_ID,
             'PRO_UID' => $process2->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
@@ -576,7 +572,7 @@ class InboxTest extends TestCase
             'PRO_ID' => $process3->PRO_ID,
             'PRO_UID' => $process3->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
@@ -584,7 +580,7 @@ class InboxTest extends TestCase
             'PRO_ID' => $process4->PRO_ID,
             'PRO_UID' => $process4->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
@@ -592,7 +588,7 @@ class InboxTest extends TestCase
             'PRO_ID' => $process5->PRO_ID,
             'PRO_UID' => $process5->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
@@ -600,7 +596,7 @@ class InboxTest extends TestCase
             'PRO_ID' => $process6->PRO_ID,
             'PRO_UID' => $process6->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
@@ -608,7 +604,7 @@ class InboxTest extends TestCase
             'PRO_ID' => $process7->PRO_ID,
             'PRO_UID' => $process7->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
@@ -616,7 +612,7 @@ class InboxTest extends TestCase
             'PRO_ID' => $process8->PRO_ID,
             'PRO_UID' => $process8->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
@@ -624,7 +620,7 @@ class InboxTest extends TestCase
             'PRO_ID' => $process9->PRO_ID,
             'PRO_UID' => $process9->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
@@ -632,7 +628,7 @@ class InboxTest extends TestCase
             'PRO_ID' => $process10->PRO_ID,
             'PRO_UID' => $process10->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
@@ -655,10 +651,10 @@ class InboxTest extends TestCase
      */
     public function it_should_test_get_counters_by_processes_method_processes()
     {
-        $user = factory(User::class)->create();
-        $process = factory(Process::class)->create();
-        $process2 = factory(Process::class)->create();
-        factory(Delegation::class)->states('foreign_keys')->create([
+        $user = User::factory()->create();
+        $process = Process::factory()->create();
+        $process2 = Process::factory()->create();
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
@@ -666,7 +662,7 @@ class InboxTest extends TestCase
             'PRO_ID' => $process->PRO_ID,
             'PRO_UID' => $process->PRO_UID
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
@@ -689,10 +685,10 @@ class InboxTest extends TestCase
      */
     public function it_should_test_get_counters_by_range_method()
     {
-        $user = factory(User::class)->create();
-        $process = factory(Process::class)->create();
-        $process2 = factory(Process::class)->create();
-        factory(Delegation::class)->states('foreign_keys')->create([
+        $user = User::factory()->create();
+        $process = Process::factory()->create();
+        $process2 = Process::factory()->create();
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
@@ -701,7 +697,7 @@ class InboxTest extends TestCase
             'PRO_UID' => $process->PRO_UID,
             'DEL_DELEGATE_DATE' => '2021-05-20 09:52:32'
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
@@ -736,10 +732,9 @@ class InboxTest extends TestCase
      */
     public function it_should_test_getCustomListCounts_method()
     {
-        $this->markTestIncomplete('Illegal mix of collations');
         $cases = $this->createMultipleInbox(3);
 
-        $additionalTables = factory(AdditionalTables::class)->create([
+        $additionalTables = AdditionalTables::factory()->create([
             'PRO_UID' => $cases->PRO_UID
         ]);
         $query = ""
@@ -751,10 +746,11 @@ class InboxTest extends TestCase
             . "`VAR2` varchar(255) DEFAULT NULL,"
             . "`VAR3` varchar(255) DEFAULT NULL,"
             . "PRIMARY KEY (`APP_UID`),"
-            . "KEY `indexTable` (`APP_UID`))";
+            . "KEY `indexTable` (`APP_UID`)"
+            . ")ENGINE=InnoDB  DEFAULT CHARSET='utf8'";
         DB::statement($query);
 
-        $caseList = factory(CaseList::class)->create([
+        $caseList = CaseList::factory()->create([
             'CAL_TYPE' => 'inbox',
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID,
             'USR_ID' => $cases->USR_ID
@@ -789,9 +785,9 @@ class InboxTest extends TestCase
         $currentDate = $date->format('Y-m-d H:i:s');
         $diff1Day = new DateInterval('P1D');
         $diff2Days = new DateInterval('P2D');
-        $user = factory(User::class)->create();
-        $process = factory(Process::class)->create();
-        factory(Delegation::class)->states('foreign_keys')->create([
+        $user = User::factory()->create();
+        $process = Process::factory()->create();
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
@@ -820,9 +816,9 @@ class InboxTest extends TestCase
         $date = new DateTime('now');
         $currentDate = $date->format('Y-m-d H:i:s');
         $diff2Days = new DateInterval('P2D');
-        $user = factory(User::class)->create();
-        $process = factory(Process::class)->create();
-        factory(Delegation::class)->states('foreign_keys')->create([
+        $user = User::factory()->create();
+        $process = Process::factory()->create();
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,
@@ -851,9 +847,9 @@ class InboxTest extends TestCase
         $date = new DateTime('now');
         $currentDate = $date->format('Y-m-d H:i:s');
         $diff2Days = new DateInterval('P2D');
-        $user = factory(User::class)->create();
-        $process = factory(Process::class)->create();
-        factory(Delegation::class)->states('foreign_keys')->create([
+        $user = User::factory()->create();
+        $process = Process::factory()->create();
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
             'USR_UID' => $user->USR_UID,

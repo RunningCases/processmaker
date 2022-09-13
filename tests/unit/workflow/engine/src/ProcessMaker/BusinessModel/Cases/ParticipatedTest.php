@@ -2,7 +2,6 @@
 
 namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Cases\Participated;
 use ProcessMaker\Model\Application;
@@ -16,16 +15,13 @@ use Tests\TestCase;
  */
 class ParticipatedTest extends TestCase
 {
-    use DatabaseTransactions;
-
     /**
      * Method set up.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-        Delegation::truncate();
-        Application::truncate();
+        $this->truncateNonInitialModels();
     }
 
     /**
@@ -37,12 +33,12 @@ class ParticipatedTest extends TestCase
      */
     public function createParticipated()
     {
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+        $delegation = Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'CLOSED',
             'DEL_INDEX' => 1,
             'DEL_LAST_INDEX' => 0,
         ]);
-        $delegation = factory(Delegation::class)->states('last_thread')->create([
+        $delegation = Delegation::factory()->last_thread()->create([
             'APP_NUMBER' => $delegation->APP_NUMBER,
             'TAS_ID' => $delegation->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
@@ -65,8 +61,8 @@ class ParticipatedTest extends TestCase
      */
     public function createParticipatedDraft()
     {
-        $application = factory(Application::class)->states('draft')->create();
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->draft()->create();
+        $delegation = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
             'DEL_THREAD_STATUS' => 'OPEN',
@@ -86,15 +82,15 @@ class ParticipatedTest extends TestCase
      */
     public function createParticipatedCompleted()
     {
-        $application = factory(Application::class)->states('completed')->create();
-        $delegation = factory(Delegation::class)->states('first_thread')->create([
+        $application = Application::factory()->completed()->create();
+        $delegation = Delegation::factory()->first_thread()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
             'DEL_THREAD_STATUS' => 'CLOSED',
             'DEL_INDEX' => 1,
             'DEL_LAST_INDEX' => 0,
         ]);
-        $delegation = factory(Delegation::class)->states('last_thread')->create([
+        $delegation = Delegation::factory()->last_thread()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
             'DEL_THREAD_STATUS' => 'CLOSED',
@@ -116,17 +112,17 @@ class ParticipatedTest extends TestCase
      */
     public function createMultipleParticipated($cases = 2)
     {
-        $user = factory(\ProcessMaker\Model\User::class)->create();
+        $user = \ProcessMaker\Model\User::factory()->create();
 
         for ($i = 0; $i < $cases; $i = $i + 1) {
-            $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+            $delegation = Delegation::factory()->foreign_keys()->create([
                 'DEL_THREAD_STATUS' => 'CLOSED',
                 'DEL_INDEX' => 1,
                 'USR_UID' =>  $user->USR_UID,
                 'USR_ID' =>  $user->USR_ID,
                 'DEL_LAST_INDEX' => 0,
             ]);
-            factory(Delegation::class)->states('last_thread')->create([
+            Delegation::factory()->last_thread()->create([
                 'APP_UID' => $delegation->APP_UID,
                 'APP_NUMBER' => $delegation->APP_NUMBER,
                 'TAS_ID' => $delegation->TAS_ID,

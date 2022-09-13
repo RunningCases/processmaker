@@ -16,7 +16,7 @@ class DbConnectionsTest extends TestCase
     /**
      * Setup method.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->dbConnections = new DbConnections();
@@ -29,10 +29,10 @@ class DbConnectionsTest extends TestCase
      */
     public function it_should_test_loadAdditionalConnections_method()
     {
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
 
         $dbName = env('DB_DATABASE');
-        $dbSource = factory(DbSource::class)->create([
+        $dbSource = DbSource::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'DBS_TYPE' => 'mysql',
             'DBS_SERVER' => env('DB_HOST'),
@@ -60,10 +60,10 @@ class DbConnectionsTest extends TestCase
      */
     public function it_should_test_loadAdditionalConnections_method_with_force_option_true()
     {
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
 
         $dbName = env('DB_DATABASE');
-        $dbSource = factory(DbSource::class)->create([
+        $dbSource = DbSource::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'DBS_TYPE' => 'mysql',
             'DBS_SERVER' => env('DB_HOST'),
@@ -88,10 +88,10 @@ class DbConnectionsTest extends TestCase
      */
     public function it_should_test_loadAdditionalConnections_method_with_force_option_false()
     {
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
 
         $dbName = env('DB_DATABASE');
-        $dbSource = factory(DbSource::class)->create([
+        $dbSource = DbSource::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'DBS_TYPE' => 'mysql',
             'DBS_SERVER' => env('DB_HOST'),

@@ -22,7 +22,7 @@ class PMFProcessListTest extends TestCase
     public function it_return_list_of_process()
     {
         // Create delegation
-        factory(Process::class)->create();
+        Process::factory()->create();
         $result = PMFProcessList();
         $this->assertNotEmpty($result);
     }

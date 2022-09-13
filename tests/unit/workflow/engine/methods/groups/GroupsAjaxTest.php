@@ -15,11 +15,11 @@ class GroupsAjaxTest extends TestCase
     /**
      * Set up function
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
+        $this->truncateNonInitialModels();
         $this->settingUserLogged();
-        Groupwf::truncate();
         $this->createGroups();
     }
 
@@ -28,7 +28,7 @@ class GroupsAjaxTest extends TestCase
      */
     private function createGroups()
     {
-        $this->groups = factory(Groupwf::class, 10)->create();
+        $this->groups = Groupwf::factory(10)->create();
     }
 
     /**
@@ -58,6 +58,7 @@ class GroupsAjaxTest extends TestCase
     {
         global $RBAC;
         $_POST['action'] = 'groupsList';
+        $_GET['action'] = 'groupsList';
         $_REQUEST["dir"] = "DESC";
         $_REQUEST["sort"] = "GRP_TITLE";
 
@@ -68,10 +69,9 @@ class GroupsAjaxTest extends TestCase
         $content = ob_get_clean();
         $content = json_decode($content, JSON_OBJECT_AS_ARRAY);
 
-        // @todo, review the issue in the circle CI 
-        //$this->assertArrayHasKey("success", $content);
-        //$this->assertArrayHasKey("groups", $content);
-        //$this->assertTrue($content["success"]);
-        //$this->assertTrue(is_array($content["groups"]));
+        $this->assertArrayHasKey("success", $content);
+        $this->assertArrayHasKey("groups", $content);
+        $this->assertTrue($content["success"]);
+        $this->assertTrue(is_array($content["groups"]));
     }
 }

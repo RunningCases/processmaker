@@ -25,8 +25,8 @@ class PMFDeleteCaseTest extends TestCase
     public function it_should_test_this_pmfunction_default_parameters()
     {
         $this->expectException(Exception::class);
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
-        factory(Triggers::class)->create([
+        $table = Delegation::factory()->foreign_keys()->create();
+        Triggers::factory()->create([
             'PRO_UID' => $table->PRO_UID
         ]);
         // Force commit for propel

@@ -32,9 +32,10 @@ class LightTest extends TestCase
      * This is using instead of DatabaseTransactions
      * @todo DatabaseTransactions is having conflicts with propel
      */
-    protected function setUp()
+    public function setUp(): void
     {
         parent::setUp();
+        $this->truncateNonInitialModels();
         $this->workspace = env("DB_DATABASE", "test");
         $this->clientId = config("oauthClients.pm.clientId");
         $this->clientSecret = config("oauthClients.pm.clientSecret");
@@ -126,7 +127,7 @@ class LightTest extends TestCase
         $faker = $faker = Factory::create();
 
         //Create process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
 
         //Tasks created in the factory process are cleaned because it does not meet the test rules
         Task::where('PRO_UID', $process->PRO_UID)->delete();
@@ -137,14 +138,14 @@ class LightTest extends TestCase
                 ->first();
 
         //Create a task self service
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID
         ]);
 
         //Assign a user in the task
-        factory(TaskUser::class, 1)->create([
+        TaskUser::factory(1)->create([
             'TAS_UID' => $task->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1, //Related to the user
@@ -155,7 +156,7 @@ class LightTest extends TestCase
         ListUnassigned::truncate();
 
         //Create a record in list unassigned
-        $listUnassigned = factory(ListUnassigned::class, 15)->create([
+        $listUnassigned = ListUnassigned::factory(15)->create([
             'TAS_ID' => $task->TAS_ID,
             'DEL_PREVIOUS_USR_UID' => $user->USR_UID
         ]);

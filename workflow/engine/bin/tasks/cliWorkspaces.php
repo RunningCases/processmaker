@@ -465,6 +465,17 @@ CLI::taskArg('caseNumberTo', true);
 CLI::taskRun('migrate_case_title_to_threads');
 
 /**
+ * Convert Output Documents generator from 'HTML2PDF' to 'TCPDF', because thirdparty related is obsolete and doesn't work over PHP 7.x.
+ */
+CLI::taskName('convert-out-docs-from-html2pdf-to-tcpdf');
+CLI::taskDescription(<<<EOT
+    Convert Output Documents generator from 'HTML2PDF' to 'TCPDF', because thirdparty related is obsolete and doesn't work over PHP 7.x.
+EOT
+);
+CLI::taskArg('workspace');
+CLI::taskRun('convert_out_docs_from_html2pdf_to_tcpdf');
+
+/**
  * Function run_info
  * 
  * @param array $args
@@ -542,7 +553,7 @@ function upgradeContent($args, $opts)
  * Verify if we need to execute an external program for each workspace
  * If we apply the command for all workspaces, we will need to execute one by one by redefining the constants
  * @param string $args, workspaceName that we need to apply the database-upgrade
- * @param string $opts
+ * @param array $opts
  *
  * @return void
  */
@@ -1420,7 +1431,9 @@ function run_check_queries_incompatibilities($args)
 function check_queries_incompatibilities($wsName)
 {
     Bootstrap::setConstantsRelatedWs($wsName);
-    require_once(PATH_DB . $wsName . '/db.php');
+    if (!defined('DB_ADAPTER')) {
+        require_once(PATH_DB . $wsName . '/db.php');
+    }
     System::initLaravel();
 
     $query = Process::query()->select('PRO_UID', 'PRO_TITLE');
@@ -1715,4 +1728,16 @@ function migrate_case_title_to_threads($args)
     //The constructor requires an argument, so we send an empty value in order to use the class.
     $workspaceTools = new WorkspaceTools('');
     $workspaceTools->migrateCaseTitleToThreads($args);
+}
+
+/**
+ * Convert Output Documents generator from 'HTML2PDF' to 'TCPDF', because thirdparty related is obsolete and doesn't work over PHP 7.x.
+ *
+ * @param array $args
+ */
+function convert_out_docs_from_html2pdf_to_tcpdf($args)
+{
+    // The constructor requires an argument, so we send an empty value in order to use the class.
+    $workspaceTools = new WorkspaceTools('');
+    $workspaceTools->convertOutDocsHtml2Ps2Pdf($args);
 }

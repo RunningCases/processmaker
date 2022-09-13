@@ -4,7 +4,6 @@ namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 
 use DateInterval;
 use Datetime;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Cases\Paused;
 use ProcessMaker\Model\AdditionalTables;
@@ -24,15 +23,13 @@ use Tests\TestCase;
  */
 class PausedTest extends TestCase
 {
-    use DatabaseTransactions;
-
     /**
      * Method set up.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-        Delegation::truncate();
+        $this->truncateNonInitialModels();
     }
 
     /**
@@ -45,29 +42,29 @@ class PausedTest extends TestCase
     public function createPaused()
     {
         //Create processes
-        $process1 = factory(Process::class)->create(
+        $process1 = Process::factory()->create(
             ['PRO_CATEGORY' => '1']
         );
-        $process2 = factory(Process::class)->create(
+        $process2 = Process::factory()->create(
             ['PRO_CATEGORY' => '2']
         );
 
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         //Create a task
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => '',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process1->PRO_UID,
             'TAS_TYPE' => 'NORMAL'
         ]);
 
-        $application1 = factory(Application::class)->create();
-        $application2 = factory(Application::class)->create();
+        $application1 = Application::factory()->create();
+        $application2 = Application::factory()->create();
 
         //Create the register in delegation
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_NUMBER' => $application1->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
             'DEL_THREAD_STATUS' => 'CLOSED',
@@ -78,7 +75,7 @@ class PausedTest extends TestCase
             'DEL_PREVIOUS' => 0,
             'DEL_INDEX' => 1
         ]);
-        $delegation1 = factory(Delegation::class)->create([
+        $delegation1 = Delegation::factory()->create([
             'APP_NUMBER' => $application1->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
             'DEL_THREAD_STATUS' => 'CLOSED',
@@ -90,7 +87,7 @@ class PausedTest extends TestCase
             'DEL_INDEX' => 2
         ]);
 
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_NUMBER' => $application2->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
@@ -101,7 +98,7 @@ class PausedTest extends TestCase
             'DEL_PREVIOUS' => 0,
             'DEL_INDEX' => 1
         ]);
-        $delegation2 = factory(Delegation::class)->create([
+        $delegation2 = Delegation::factory()->create([
             'APP_NUMBER' => $application2->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
@@ -114,7 +111,7 @@ class PausedTest extends TestCase
         ]);
 
         //Create the registers in AppDelay
-        factory(AppDelay::class, 5)->create([
+        AppDelay::factory(5)->create([
             'APP_DELEGATION_USER' => $user->USR_UID,
             'PRO_UID' => $process2->PRO_UID,
             'APP_NUMBER' => $delegation1->APP_NUMBER,
@@ -123,7 +120,7 @@ class PausedTest extends TestCase
             'APP_TYPE' => 'PAUSE'
         ]);
         //Create the registers in AppDelay
-        factory(AppDelay::class, 5)->create([
+        AppDelay::factory(5)->create([
             'APP_DELEGATION_USER' => $user->USR_UID,
             'PRO_UID' => $process2->PRO_UID,
             'APP_NUMBER' => $delegation2->APP_NUMBER,
@@ -144,24 +141,24 @@ class PausedTest extends TestCase
     public function createMultiplePaused($cases, $category = 1, $user = null)
     {
         if (is_null($user)) {
-            $user = factory(User::class)->create();
+            $user = User::factory()->create();
         }
 
         for ($i = 0; $i < $cases; $i = $i + 1) {
-            $process1 = factory(Process::class)->create(
+            $process1 = Process::factory()->create(
                 ['PRO_CATEGORY' => 1, 'CATEGORY_ID' => $category]
             );
 
-            $task = factory(Task::class)->create([
+            $task = Task::factory()->create([
                 'TAS_ASSIGN_TYPE' => '',
                 'TAS_GROUP_VARIABLE' => '',
                 'PRO_UID' => $process1->PRO_UID,
                 'TAS_TYPE' => 'NORMAL'
             ]);
 
-            $application1 = factory(Application::class)->create();
+            $application1 = Application::factory()->create();
 
-            factory(Delegation::class)->create([
+            Delegation::factory()->create([
                 'APP_UID' => $application1->APP_UID,
                 'APP_NUMBER' => $application1->APP_NUMBER,
                 'TAS_ID' => $task->TAS_ID,
@@ -173,7 +170,7 @@ class PausedTest extends TestCase
                 'DEL_PREVIOUS' => 0,
                 'DEL_INDEX' => 1
             ]);
-            $delegation1 = factory(Delegation::class)->create([
+            $delegation1 = Delegation::factory()->create([
                 'APP_UID' => $application1->APP_UID,
                 'APP_NUMBER' => $application1->APP_NUMBER,
                 'TAS_ID' => $task->TAS_ID,
@@ -186,7 +183,7 @@ class PausedTest extends TestCase
                 'DEL_INDEX' => 2
             ]);
 
-            factory(AppDelay::class)->create([
+            AppDelay::factory()->create([
                 'APP_DELEGATION_USER' => $user->USR_UID,
                 'PRO_UID' => $process1->PRO_UID,
                 'APP_NUMBER' => $delegation1->APP_NUMBER,
@@ -371,7 +368,7 @@ class PausedTest extends TestCase
         // Set the title
         $paused->setCaseTitle($cases->DEL_TITLE);
         $res = $paused->getData();
-        $this->assertNotEmpty($res);
+        $this->assertTrue(!empty($res));
     }
 
     /**
@@ -488,7 +485,7 @@ class PausedTest extends TestCase
      */
     public function it_should_test_get_counters_by_processes_method_category()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $this->createMultiplePaused(3, 2, $user);
         $this->createMultiplePaused(2, 3, $user);
         $paused = new Paused();
@@ -506,7 +503,7 @@ class PausedTest extends TestCase
      */
     public function it_should_test_get_counters_by_processes_method_top_ten()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $this->createMultiplePaused(20, 2, $user);
         $paused = new Paused();
         $paused->setUserId($user->USR_ID);
@@ -523,19 +520,19 @@ class PausedTest extends TestCase
      */
     public function it_should_test_get_counters_by_processes_method_processes_filter()
     {
-        $user = factory(User::class)->create();
-        $process1 = factory(Process::class)->create();
+        $user = User::factory()->create();
+        $process1 = Process::factory()->create();
 
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => '',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process1->PRO_UID,
             'TAS_TYPE' => 'NORMAL'
         ]);
 
-        $application1 = factory(Application::class)->create();
+        $application1 = Application::factory()->create();
 
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_UID' => $application1->APP_UID,
             'APP_NUMBER' => $application1->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
@@ -547,7 +544,7 @@ class PausedTest extends TestCase
             'DEL_PREVIOUS' => 0,
             'DEL_INDEX' => 1
         ]);
-        $delegation1 = factory(Delegation::class)->create([
+        $delegation1 = Delegation::factory()->create([
             'APP_UID' => $application1->APP_UID,
             'APP_NUMBER' => $application1->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
@@ -560,7 +557,7 @@ class PausedTest extends TestCase
             'DEL_INDEX' => 2
         ]);
 
-        factory(AppDelay::class)->create([
+        AppDelay::factory()->create([
             'APP_DELEGATION_USER' => $user->USR_UID,
             'PRO_UID' => $process1->PRO_UID,
             'APP_NUMBER' => $delegation1->APP_NUMBER,
@@ -584,17 +581,17 @@ class PausedTest extends TestCase
      */
     public function it_should_test_get_counters_by_range_method()
     {
-        $user = factory(User::class)->create();
-        $process1 = factory(Process::class)->create();
-        $task = factory(Task::class)->create([
+        $user = User::factory()->create();
+        $process1 = Process::factory()->create();
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => '',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process1->PRO_UID,
             'TAS_TYPE' => 'NORMAL'
         ]);
 
-        $application1 = factory(Application::class)->create();
-        factory(Delegation::class)->create([
+        $application1 = Application::factory()->create();
+        Delegation::factory()->create([
             'APP_UID' => $application1->APP_UID,
             'APP_NUMBER' => $application1->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
@@ -606,7 +603,7 @@ class PausedTest extends TestCase
             'DEL_PREVIOUS' => 0,
             'DEL_INDEX' => 1
         ]);
-        $delegation1 = factory(Delegation::class)->create([
+        $delegation1 = Delegation::factory()->create([
             'APP_UID' => $application1->APP_UID,
             'APP_NUMBER' => $application1->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
@@ -619,7 +616,7 @@ class PausedTest extends TestCase
             'DEL_INDEX' => 2,
             'DEL_DELEGATE_DATE' => '2021-05-23 00:00:00'
         ]);
-        factory(AppDelay::class)->create([
+        AppDelay::factory()->create([
             'APP_DELEGATION_USER' => $user->USR_UID,
             'PRO_UID' => $process1->PRO_UID,
             'APP_NUMBER' => $delegation1->APP_NUMBER,
@@ -628,8 +625,8 @@ class PausedTest extends TestCase
             'APP_TYPE' => 'PAUSE'
         ]);
 
-        $application2 = factory(Application::class)->create();
-        factory(Delegation::class)->create([
+        $application2 = Application::factory()->create();
+        Delegation::factory()->create([
             'APP_UID' => $application2->APP_UID,
             'APP_NUMBER' => $application2->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
@@ -641,7 +638,7 @@ class PausedTest extends TestCase
             'DEL_PREVIOUS' => 0,
             'DEL_INDEX' => 1
         ]);
-        $delegation2 = factory(Delegation::class)->create([
+        $delegation2 = Delegation::factory()->create([
             'APP_UID' => $application2->APP_UID,
             'APP_NUMBER' => $application2->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
@@ -654,7 +651,7 @@ class PausedTest extends TestCase
             'DEL_INDEX' => 2,
             'DEL_DELEGATE_DATE' => '2021-05-24 09:52:32'
         ]);
-        factory(AppDelay::class)->create([
+        AppDelay::factory()->create([
             'APP_DELEGATION_USER' => $user->USR_UID,
             'PRO_UID' => $process1->PRO_UID,
             'APP_NUMBER' => $delegation2->APP_NUMBER,
@@ -689,10 +686,9 @@ class PausedTest extends TestCase
      */
     public function it_should_test_getCustomListCounts_method()
     {
-        $this->markTestIncomplete('Illegal mix of collations');
         $cases = $this->createMultiplePaused(3);
 
-        $additionalTables = factory(AdditionalTables::class)->create([
+        $additionalTables = AdditionalTables::factory()->create([
             'PRO_UID' => $cases->PRO_UID
         ]);
         $query = ""
@@ -704,10 +700,11 @@ class PausedTest extends TestCase
             . "`VAR2` varchar(255) DEFAULT NULL,"
             . "`VAR3` varchar(255) DEFAULT NULL,"
             . "PRIMARY KEY (`APP_UID`),"
-            . "KEY `indexTable` (`APP_UID`))";
+            . "KEY `indexTable` (`APP_UID`)"
+            . ")ENGINE=InnoDB  DEFAULT CHARSET='utf8'";
         DB::statement($query);
 
-        $caseList = factory(CaseList::class)->create([
+        $caseList = CaseList::factory()->create([
             'CAL_TYPE' => 'paused',
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID,
             'USR_ID' => $cases->USR_ID
@@ -742,19 +739,19 @@ class PausedTest extends TestCase
         $currentDate = $date->format('Y-m-d H:i:s');
         $diff1Day = new DateInterval('P1D');
         $diff2Days = new DateInterval('P2D');
-        $user = factory(User::class)->create();
-        $process1 = factory(Process::class)->create();
+        $user = User::factory()->create();
+        $process1 = Process::factory()->create();
 
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => '',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process1->PRO_UID,
             'TAS_TYPE' => 'NORMAL'
         ]);
 
-        $application1 = factory(Application::class)->create();
+        $application1 = Application::factory()->create();
 
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_UID' => $application1->APP_UID,
             'APP_NUMBER' => $application1->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
@@ -769,7 +766,7 @@ class PausedTest extends TestCase
             'DEL_RISK_DATE' => $date->add($diff1Day),
             'DEL_TASK_DUE_DATE' => $date->add($diff2Days)
         ]);
-        $delegation1 = factory(Delegation::class)->create([
+        $delegation1 = Delegation::factory()->create([
             'APP_UID' => $application1->APP_UID,
             'APP_NUMBER' => $application1->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
@@ -785,7 +782,7 @@ class PausedTest extends TestCase
             'DEL_TASK_DUE_DATE' => $date->add($diff2Days)
         ]);
 
-        factory(AppDelay::class)->create([
+        AppDelay::factory()->create([
             'APP_DELEGATION_USER' => $user->USR_UID,
             'PRO_UID' => $process1->PRO_UID,
             'APP_NUMBER' => $delegation1->APP_NUMBER,
@@ -812,19 +809,19 @@ class PausedTest extends TestCase
         $date = new DateTime('now');
         $currentDate = $date->format('Y-m-d H:i:s');
         $diff2Days = new DateInterval('P2D');
-        $user = factory(User::class)->create();
-        $process1 = factory(Process::class)->create();
+        $user = User::factory()->create();
+        $process1 = Process::factory()->create();
 
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => '',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process1->PRO_UID,
             'TAS_TYPE' => 'NORMAL'
         ]);
 
-        $application1 = factory(Application::class)->create();
+        $application1 = Application::factory()->create();
 
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_UID' => $application1->APP_UID,
             'APP_NUMBER' => $application1->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
@@ -839,7 +836,7 @@ class PausedTest extends TestCase
             'DEL_RISK_DATE' => $currentDate,
             'DEL_TASK_DUE_DATE' => $date->add($diff2Days)
         ]);
-        $delegation1 = factory(Delegation::class)->create([
+        $delegation1 = Delegation::factory()->create([
             'APP_UID' => $application1->APP_UID,
             'APP_NUMBER' => $application1->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
@@ -855,7 +852,7 @@ class PausedTest extends TestCase
             'DEL_TASK_DUE_DATE' => $date->add($diff2Days)
         ]);
 
-        factory(AppDelay::class)->create([
+        AppDelay::factory()->create([
             'APP_DELEGATION_USER' => $user->USR_UID,
             'PRO_UID' => $process1->PRO_UID,
             'APP_NUMBER' => $delegation1->APP_NUMBER,
@@ -882,19 +879,19 @@ class PausedTest extends TestCase
         $date = new DateTime('now');
         $currentDate = $date->format('Y-m-d H:i:s');
         $diff2Days = new DateInterval('P2D');
-        $user = factory(User::class)->create();
-        $process1 = factory(Process::class)->create();
+        $user = User::factory()->create();
+        $process1 = Process::factory()->create();
 
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => '',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process1->PRO_UID,
             'TAS_TYPE' => 'NORMAL'
         ]);
 
-        $application1 = factory(Application::class)->create();
+        $application1 = Application::factory()->create();
 
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_UID' => $application1->APP_UID,
             'APP_NUMBER' => $application1->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
@@ -909,7 +906,7 @@ class PausedTest extends TestCase
             'DEL_RISK_DATE' => $currentDate,
             'DEL_TASK_DUE_DATE' => $date->sub($diff2Days)
         ]);
-        $delegation1 = factory(Delegation::class)->create([
+        $delegation1 = Delegation::factory()->create([
             'APP_UID' => $application1->APP_UID,
             'APP_NUMBER' => $application1->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
@@ -925,7 +922,7 @@ class PausedTest extends TestCase
             'DEL_TASK_DUE_DATE' => $date->sub($diff2Days)
         ]);
 
-        factory(AppDelay::class)->create([
+        AppDelay::factory()->create([
             'APP_DELEGATION_USER' => $user->USR_UID,
             'PRO_UID' => $process1->PRO_UID,
             'APP_NUMBER' => $delegation1->APP_NUMBER,

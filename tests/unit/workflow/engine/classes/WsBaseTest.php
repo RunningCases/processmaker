@@ -2,7 +2,6 @@
 
 use App\Jobs\EmailEvent;
 use Faker\Factory;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Queue;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\AppDelay;
@@ -23,9 +22,6 @@ use Tests\TestCase;
  */
 class WsBaseTest extends TestCase
 {
-
-    use DatabaseTransactions;
-
     /**
      * Constructor of the class.
      * 
@@ -36,15 +32,6 @@ class WsBaseTest extends TestCase
     public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
-    }
-
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
-    protected function setUp()
-    {
-        parent::setUp();
         Application::query()->truncate();
         AppThread::query()->truncate();
         Delegation::query()->truncate();
@@ -54,7 +41,7 @@ class WsBaseTest extends TestCase
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
      */
-    protected function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
     }
@@ -89,19 +76,19 @@ class WsBaseTest extends TestCase
             'PIN' => '97ZN'
         ];
 
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'USR_UID' => $userUid
         ]);
 
-        $process = factory(Process::class)->create([
+        $process = Process::factory()->create([
             'PRO_UID' => $processUid
         ]);
 
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
 
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'APP_UID' => $applicationUid,
             'APP_NUMBER' => $applicationNumber,
@@ -124,7 +111,7 @@ class WsBaseTest extends TestCase
     {
         $passwordEnv = env('emailAccountPassword');
         $password = G::encrypt("hash:" . $passwordEnv, 'EMAILENCRYPT');
-        $emailServer = factory(EmailServerModel::class)->create([
+        $emailServer = EmailServerModel::factory()->create([
             'MESS_ENGINE' => env('emailEngine'),
             'MESS_SERVER' => env('emailServer'),
             'MESS_PORT' => env('emailPort'),
@@ -167,7 +154,7 @@ class WsBaseTest extends TestCase
             mkdir(PATH_DATA_SITE . 'mailTemplates' . PATH_SEP . $proUid);
         }
         file_put_contents(PATH_DATA_SITE . 'mailTemplates' . PATH_SEP . $proUid . PATH_SEP . 'template.html', $data);
-        $template = factory(\ProcessMaker\Model\ProcessFiles::class)->create([
+        $template = \ProcessMaker\Model\ProcessFiles::factory()->create([
             'PRO_UID' => $proUid,
             'USR_UID' => $usrUid,
             'PRF_PATH' => 'template.html'
@@ -506,16 +493,16 @@ class WsBaseTest extends TestCase
     public function it_should_test_that_the_cases_list_method_returns_the_case_title()
     {
         //Create the user factory
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         //Create the application factory
-        $application1 = factory(Application::class)->create(
+        $application1 = Application::factory()->create(
             [
                 'APP_STATUS' => 'TO_DO',
                 'APP_TITLE' => 'Title1'
             ]
         );
-        $application2 = factory(Application::class)->create(
+        $application2 = Application::factory()->create(
             [
                 'APP_STATUS' => 'DRAFT',
                 'APP_TITLE' => 'Title2'
@@ -523,7 +510,7 @@ class WsBaseTest extends TestCase
         );
 
         //Create the delegation factory
-        $delegation1 = factory(Delegation::class)->create(
+        $delegation1 = Delegation::factory()->create(
             [
                 'USR_UID' => $user->USR_UID,
                 'DEL_THREAD_STATUS' => 'OPEN',
@@ -531,7 +518,7 @@ class WsBaseTest extends TestCase
                 'APP_NUMBER' => $application1->APP_NUMBER
             ]
         );
-        $delegation2 = factory(Delegation::class)->create(
+        $delegation2 = Delegation::factory()->create(
             [
                 'USR_UID' => $user->USR_UID,
                 'DEL_THREAD_STATUS' => 'OPEN',
@@ -541,13 +528,13 @@ class WsBaseTest extends TestCase
         );
 
         //Create app thread factory
-        factory(AppThread::class)->create(
+        AppThread::factory()->create(
             [
                 'APP_THREAD_STATUS' => 'OPEN',
                 'APP_UID' => $delegation1->APP_UID
             ]
         );
-        factory(AppThread::class)->create(
+        AppThread::factory()->create(
             [
                 'APP_THREAD_STATUS' => 'OPEN',
                 'APP_UID' => $delegation2->APP_UID
@@ -580,17 +567,17 @@ class WsBaseTest extends TestCase
     public function it_should_test_the_cases_list_method_when_there_are_no_results()
     {
         //Create the user factory
-        $user1 = factory(User::class)->create();
-        $user2 = factory(User::class)->create();
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
 
         //Create the application factory
-        $application1 = factory(Application::class)->create(
+        $application1 = Application::factory()->create(
             [
                 'APP_STATUS' => 'TO_DO',
                 'APP_TITLE' => 'Title1'
             ]
         );
-        $application2 = factory(Application::class)->create(
+        $application2 = Application::factory()->create(
             [
                 'APP_STATUS' => 'DRAFT',
                 'APP_TITLE' => 'Title2'
@@ -598,7 +585,7 @@ class WsBaseTest extends TestCase
         );
 
         //Create the delegation factory
-        $delegation1 = factory(Delegation::class)->create(
+        $delegation1 = Delegation::factory()->create(
             [
                 'USR_UID' => $user1->USR_UID,
                 'DEL_THREAD_STATUS' => 'OPEN',
@@ -606,7 +593,7 @@ class WsBaseTest extends TestCase
                 'APP_NUMBER' => $application1->APP_NUMBER
             ]
         );
-        $delegation2 = factory(Delegation::class)->create(
+        $delegation2 = Delegation::factory()->create(
             [
                 'USR_UID' => $user1->USR_UID,
                 'DEL_THREAD_STATUS' => 'OPEN',
@@ -616,13 +603,13 @@ class WsBaseTest extends TestCase
         );
 
         //Create app thread factory
-        factory(AppThread::class)->create(
+        AppThread::factory()->create(
             [
                 'APP_THREAD_STATUS' => 'OPEN',
                 'APP_UID' => $delegation1->APP_UID
             ]
         );
-        factory(AppThread::class)->create(
+        AppThread::factory()->create(
             [
                 'APP_THREAD_STATUS' => 'OPEN',
                 'APP_UID' => $delegation2->APP_UID
@@ -803,11 +790,11 @@ class WsBaseTest extends TestCase
      */
     public function it_should_set_flag_when_is_same_case()
     {
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'APP_STATUS_ID' => 2,
             'APP_STATUS' => 'TO_DO'
         ]);
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+        $delegation = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
         ]);
@@ -826,7 +813,7 @@ class WsBaseTest extends TestCase
      */
     public function it_should_validate_required_app_uid()
     {
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create();
+        $delegation = Delegation::factory()->foreign_keys()->create();
         $ws = new WsBase();
         $response = (object) $ws->cancelCase('', $delegation->DE_INDEX, $delegation->URS_UID);
         $this->assertEquals($response->status_code, 100);
@@ -842,11 +829,11 @@ class WsBaseTest extends TestCase
     public function it_should_validate_required_status_todo()
     {
         // Create a case in DRAFT status
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'APP_STATUS_ID' => 1,
             'APP_STATUS' => 'DRAFT'
         ]);
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+        $delegation = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
         ]);
@@ -856,11 +843,11 @@ class WsBaseTest extends TestCase
         $this->assertEquals($response->message, G::LoadTranslation("ID_CASE_IN_STATUS") . ' DRAFT');
 
         // Create a case in COMPLETED status
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'APP_STATUS_ID' => 3,
             'APP_STATUS' => 'COMPLETED'
         ]);
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+        $delegation = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
         ]);
@@ -870,11 +857,11 @@ class WsBaseTest extends TestCase
         $this->assertEquals($response->message, G::LoadTranslation("ID_CASE_IN_STATUS") . ' COMPLETED');
 
         // Create a case in CANCELLED status
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'APP_STATUS_ID' => 4,
             'APP_STATUS' => 'CANCELLED'
         ]);
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+        $delegation = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
         ]);
@@ -892,11 +879,11 @@ class WsBaseTest extends TestCase
      */
     public function it_should_validate_required_del_index()
     {
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'APP_STATUS_ID' => 2,
             'APP_STATUS' => 'TO_DO'
         ]);
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+        $delegation = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
         ]);
@@ -914,11 +901,11 @@ class WsBaseTest extends TestCase
      */
     public function it_should_validate_required_open_thread()
     {
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'APP_STATUS_ID' => 2,
             'APP_STATUS' => 'TO_DO'
         ]);
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+        $delegation = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
             'DEL_THREAD_STATUS' => 'CLOSED'
@@ -937,11 +924,11 @@ class WsBaseTest extends TestCase
      */
     public function it_should_validate_required_usr_uid()
     {
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'APP_STATUS_ID' => 2,
             'APP_STATUS' => 'TO_DO'
         ]);
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+        $delegation = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
         ]);
@@ -959,30 +946,30 @@ class WsBaseTest extends TestCase
      */
     public function it_should_validate_only_one_thread_opened()
     {
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'APP_STATUS_ID' => 2,
             'APP_STATUS' => 'TO_DO'
         ]);
-        factory(AppThread::class)->create([
+        AppThread::factory()->create([
             'APP_UID' => $application->APP_UID,
             'APP_THREAD_INDEX' => 1,
             'APP_THREAD_PARENT' => 1,
             'APP_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
             'DEL_THREAD_STATUS' => 'OPEN'
         ]);
-        factory(AppThread::class)->create([
+        AppThread::factory()->create([
             'APP_UID' => $application->APP_UID,
             'APP_THREAD_INDEX' => 2,
             'APP_THREAD_PARENT' => 1,
             'APP_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2
         ]);
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+        $delegation = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
             'DEL_THREAD_STATUS' => 'OPEN',
@@ -1012,35 +999,35 @@ class WsBaseTest extends TestCase
         $RBAC->loadUserRolePermission('PROCESSMAKER', $_SESSION['USER_LOGGED']);
 
         // Create the data related to the cancel a case
-        $process = factory(Process::class)->create([
+        $process = Process::factory()->create([
             'PRO_CREATE_USER' => $user->USR_UID
         ]);
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_USER' => $user->USR_UID
         ]);
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'USR_UID' => $user->USR_UID
         ]);
-        factory(UserReporting::class)->create([
+        UserReporting::factory()->create([
             'TAS_UID' => $task->TAS_UID
         ]);
-        $application = factory(Application::class)->states('foreign_keys')->create([
+        $application = Application::factory()->foreign_keys()->create([
             'PRO_UID' => $process->PRO_UID,
             'APP_INIT_USER' => $user->USR_UID,
             'APP_CUR_USER' => $user->USR_UID,
             'APP_STATUS_ID' => 2,
             'APP_STATUS' => 'TO_DO'
         ]);
-        factory(AppThread::class)->create([
+        AppThread::factory()->create([
             'APP_UID' => $application->APP_UID,
             'APP_THREAD_INDEX' => 1,
             'APP_THREAD_PARENT' => 1,
             'APP_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2
         ]);
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+        $delegation = Delegation::factory()->foreign_keys()->create([
             'TAS_UID' => $task->TAS_UID,
             'PRO_UID' => $application->PRO_UID,
             'APP_NUMBER' => $application->APP_NUMBER,
@@ -1074,25 +1061,25 @@ class WsBaseTest extends TestCase
         $RBAC->loadUserRolePermission('PROCESSMAKER', $_SESSION['USER_LOGGED']);
 
         // Create the data related to the cancel a case
-        $task = factory(Task::class)->create();
-        factory(UserReporting::class)->create([
+        $task = Task::factory()->create();
+        UserReporting::factory()->create([
             'TAS_UID' => $task->TAS_UID
         ]);
-        $application = factory(Application::class)->states('foreign_keys')->create([
+        $application = Application::factory()->foreign_keys()->create([
             'APP_STATUS_ID' => 2,
             'APP_INIT_USER' => $user->USR_UID,
             'APP_CUR_USER' => $user->USR_UID,
             'APP_STATUS' => 'TO_DO'
         ]);
         // Create the first thread
-        factory(AppThread::class)->create([
+        AppThread::factory()->create([
             'APP_UID' => $application->APP_UID,
             'APP_THREAD_INDEX' => 2,
             'APP_THREAD_PARENT' => 1,
             'APP_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        Delegation::factory()->foreign_keys()->create([
             'TAS_UID' => $task->TAS_UID,
             'PRO_UID' => $application->PRO_UID,
             'APP_NUMBER' => $application->APP_NUMBER,
@@ -1102,14 +1089,14 @@ class WsBaseTest extends TestCase
             'DEL_PREVIOUS' => 2,
         ]);
         // Create the second thread
-        factory(AppThread::class)->create([
+        AppThread::factory()->create([
             'APP_UID' => $application->APP_UID,
             'APP_THREAD_INDEX' => 3,
             'APP_THREAD_PARENT' => 1,
             'APP_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 3
         ]);
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+        $delegation = Delegation::factory()->foreign_keys()->create([
             'TAS_UID' => $task->TAS_UID,
             'PRO_UID' => $application->PRO_UID,
             'USR_UID' => $user->USR_UID,
@@ -1136,18 +1123,18 @@ class WsBaseTest extends TestCase
     public function it_tried_cancel_an_undefined_case()
     {
         $fakeApp = G::generateUniqueID();
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'APP_STATUS_ID' => 2,
             'APP_STATUS' => 'TO_DO'
         ]);
-        factory(AppThread::class)->create([
+        AppThread::factory()->create([
             'APP_UID' => $application->APP_UID,
             'APP_THREAD_INDEX' => 1,
             'APP_THREAD_PARENT' => 1,
             'APP_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2
         ]);
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+        $delegation = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
             'DEL_THREAD_STATUS' => 'OPEN',
@@ -1156,7 +1143,7 @@ class WsBaseTest extends TestCase
         $ws = new WsBase();
         $response = (object) $ws->cancelCase($fakeApp, $delegation->DEL_INDEX, $delegation->USR_UID);
         $this->assertEquals($response->status_code, 100);
-        $this->assertContains($fakeApp, $response->message);
+        $this->assertStringContainsString($fakeApp, $response->message);
     }
 
     /**
@@ -1168,51 +1155,51 @@ class WsBaseTest extends TestCase
     public function it_should_test_the_unassigned_case_list_method_with_unassigned_cases()
     {
         //Create process
-        $process1 = factory(Process::class)->create([
+        $process1 = Process::factory()->create([
             'PRO_TITLE' => 'China Supplier Payment Proposal'
         ]);
-        $process2 = factory(Process::class)->create([
+        $process2 = Process::factory()->create([
             'PRO_TITLE' => 'Egypt Supplier Payment Proposal'
         ]);
         //Create application
-        $application1 = factory(Application::class)->create([
+        $application1 = Application::factory()->create([
             'APP_STATUS_ID' => 2
         ]);
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Create a task self service
-        $task1 = factory(Task::class)->create([
+        $task1 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process1->PRO_UID
         ]);
-        $task2 = factory(Task::class)->create([
+        $task2 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process1->PRO_UID
         ]);
         //Assign a user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task1->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1, //Related to the user
             'TU_TYPE' => 1
         ]);
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task2->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1, //Related to the user
             'TU_TYPE' => 1
         ]);
         //Create the register in delegation relate to self-service
-        factory(Delegation::class, 2)->create([
+        Delegation::factory(2)->create([
             'APP_NUMBER' => $application1->APP_NUMBER,
             'TAS_ID' => $task1->TAS_ID,
             'PRO_ID' => $process1->id,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
         ]);
-        factory(Delegation::class, 2)->create([
+        Delegation::factory(2)->create([
             'APP_NUMBER' => $application1->APP_NUMBER,
             'TAS_ID' => $task2->TAS_ID,
             'PRO_ID' => $process2->id,
@@ -1235,52 +1222,52 @@ class WsBaseTest extends TestCase
     public function it_should_test_the_unassigned_case_list_method_without_unassigned_cases()
     {
         //Create process
-        $process1 = factory(Process::class)->create([
+        $process1 = Process::factory()->create([
             'PRO_TITLE' => 'China Supplier Payment Proposal'
         ]);
-        $process2 = factory(Process::class)->create([
+        $process2 = Process::factory()->create([
             'PRO_TITLE' => 'Egypt Supplier Payment Proposal'
         ]);
         //Create application
-        $application1 = factory(Application::class)->create([
+        $application1 = Application::factory()->create([
             'APP_STATUS_ID' => 2
         ]);
         //Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         //Create a task self service
-        $task1 = factory(Task::class)->create([
+        $task1 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process1->PRO_UID
         ]);
-        $task2 = factory(Task::class)->create([
+        $task2 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process1->PRO_UID
         ]);
         //Assign a user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task1->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1, //Related to the user
             'TU_TYPE' => 1
         ]);
         //Assign a user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task2->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1, //Related to the user
             'TU_TYPE' => 1
         ]);
         //Create the register in delegation relate to self-service
-        factory(Delegation::class, 2)->create([
+        Delegation::factory(2)->create([
             'APP_NUMBER' => $application1->APP_NUMBER,
             'TAS_ID' => $task1->TAS_ID,
             'PRO_ID' => $process1->id,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 5,
         ]);
-        factory(Delegation::class, 2)->create([
+        Delegation::factory(2)->create([
             'APP_NUMBER' => $application1->APP_NUMBER,
             'TAS_ID' => $task2->TAS_ID,
             'PRO_ID' => $process2->id,
@@ -1308,18 +1295,18 @@ class WsBaseTest extends TestCase
         $response = (object) $ws->pauseCase('', 0, '');
         $this->assertEquals($response->status_code, 100);
         // Validate the status
-        $application = factory(Application::class)->states('draft')->create();
+        $application = Application::factory()->draft()->create();
         $ws = new WsBase();
         $response = (object) $ws->pauseCase($application->APP_UID, 0, '');
         $this->assertEquals($response->status_code, 100);
         // Validate the index
-        $application = factory(Application::class)->states('todo')->create();
+        $application = Application::factory()->todo()->create();
         $ws = new WsBase();
         $response = (object) $ws->pauseCase($application->APP_UID, '', '');
         $this->assertEquals($response->status_code, 100);
         // Validate the user
-        $application = factory(Application::class)->states('todo')->create();
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->todo()->create();
+        $delegation = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
         ]);
@@ -1327,12 +1314,12 @@ class WsBaseTest extends TestCase
         $response = (object) $ws->pauseCase($application->APP_UID, $delegation->DEL_INDEX, '');
         $this->assertEquals($response->status_code, 100);
         // If needs to validate the current user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $response = (object) $ws->pauseCase($application->APP_UID, $delegation->DEL_INDEX, $user->USR_UID, null, true);
         $this->assertEquals($response->status_code, 100);
         // Validate if status is closed
-        $application = factory(Application::class)->states('todo')->create();
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->todo()->create();
+        $delegation = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
             'DEL_THREAD_STATUS' => 'CLOSED',
@@ -1342,12 +1329,12 @@ class WsBaseTest extends TestCase
         $response = (object) $ws->pauseCase($application->APP_UID, $delegation->DEL_INDEX, $delegation->USR_UID, null);
         $this->assertEquals($response->status_code, 100);
         // Validate if the case is paused
-        $application = factory(Application::class)->states('todo')->create();
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->todo()->create();
+        $delegation = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
         ]);
-        factory(AppDelay::class)->create([
+        AppDelay::factory()->create([
             'APP_DELEGATION_USER' => $delegation->USR_UID,
             'PRO_UID' => $delegation->PRO_UID,
             'APP_NUMBER' => $delegation->APP_NUMBER,
@@ -1355,7 +1342,7 @@ class WsBaseTest extends TestCase
             'APP_DISABLE_ACTION_USER' => 0,
             'APP_TYPE' => 'PAUSE'
         ]);
-        factory(AppThread::class)->create([
+        AppThread::factory()->create([
             'APP_UID' => $delegation->APP_UID,
             'APP_THREAD_INDEX' => 1,
             'APP_THREAD_PARENT' => 0,
@@ -1365,8 +1352,8 @@ class WsBaseTest extends TestCase
         $ws = new WsBase();
         $response = (object) $ws->pauseCase($application->APP_UID, $delegation->DEL_INDEX, $delegation->USR_UID, null);
         // Review the unpaused date
-        $application = factory(Application::class)->states('todo')->create();
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->todo()->create();
+        $delegation = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
         ]);
@@ -1383,14 +1370,14 @@ class WsBaseTest extends TestCase
      */
     public function it_pause_case()
     {
-        $application = factory(Application::class)->states('todo')->create();
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->todo()->create();
+        $delegation = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
         ]);
-        factory(AppDelay::class)->create([
+        AppDelay::factory()->create([
             'APP_DELEGATION_USER' => $delegation->USR_UID,
             'PRO_UID' => $delegation->PRO_UID,
             'APP_NUMBER' => $delegation->APP_NUMBER,
@@ -1398,7 +1385,7 @@ class WsBaseTest extends TestCase
             'APP_DISABLE_ACTION_USER' => 0,
             'APP_TYPE' => 'PAUSE'
         ]);
-        factory(AppThread::class)->create([
+        AppThread::factory()->create([
             'APP_UID' => $delegation->APP_UID,
             'APP_THREAD_INDEX' => 1,
             'APP_THREAD_PARENT' => 0,
@@ -1407,6 +1394,6 @@ class WsBaseTest extends TestCase
         ]);
         $ws = new WsBase();
         $response = (object) $ws->pauseCase($delegation->APP_UID, $delegation->DEL_INDEX, $delegation->USR_UID);
-        $this->assertNotEmpty($response->status_code);
+        $this->assertEquals(0, $response->status_code);
     }
 }

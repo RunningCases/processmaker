@@ -14,9 +14,10 @@ class SystemTest extends TestCase
     /**
      * Define the required variables
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
+        $this->truncateNonInitialModels();
     }
 
     /**
@@ -26,8 +27,6 @@ class SystemTest extends TestCase
      */
     public function it_should_init_laravel_configurations()
     {
-        $this->markTestIncomplete("@todo: Please correct this unit test");
-
         $object = new System();
         $object->initLaravel();
 
@@ -48,12 +47,11 @@ class SystemTest extends TestCase
         $system = new System();
 
         //default values
-        EmailServerModel::truncate();
         $actual = $system->getEmailConfiguration();
         $this->assertEmpty($actual);
 
         //new instance
-        $emailServer = factory(EmailServerModel::class)->create([
+        $emailServer = EmailServerModel::factory()->create([
             'MESS_DEFAULT' => 1
         ]);
         $actual = $system->getEmailConfiguration();

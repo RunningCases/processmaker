@@ -1464,7 +1464,7 @@ class System
      *
      * @return array
      */
-    public static function checkPermissionsDbUser($adapter = 'mysql', $serverName, $port = 3306, $userName, $pass, $dbName = '')
+    public static function checkPermissionsDbUser($adapter = 'mysql', $serverName = '', $port = 3306, $userName = '', $pass = '', $dbName = '')
     {
         if (empty($port)) {
             //setting defaults ports

@@ -26,7 +26,7 @@ class ProcessUserTest extends TestCase
      */
     public function it_get_process_of_supervisor()
     {
-        $table = factory(ProcessUser::class)->states('foreign_keys')->create();
+        $table = ProcessUser::factory()->foreign_keys()->create();
         $result = ProcessUser::getProcessesOfSupervisor($table->USR_UID);
         $this->assertNotEmpty($result);
     }

@@ -22,7 +22,7 @@ class PMFGetUserEmailAddressTest extends TestCase
     {
         // Create User
         global $RBAC;
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         DB::commit();
         $result = PMFGetUserEmailAddress([$user->USR_UID], null);
         $this->assertNotEmpty($result);

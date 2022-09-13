@@ -4,7 +4,6 @@ namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 
 use DateInterval;
 use Datetime;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Cases\Unassigned;
 use ProcessMaker\Model\AdditionalTables;
@@ -28,17 +27,13 @@ use Tests\TestCase;
  */
 class UnassignedTest extends TestCase
 {
-    use DatabaseTransactions;
-
     /**
      * Method set up.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-        Delegation::truncate();
-        Groupwf::truncate();
-        Application::truncate();
+        $this->truncateNonInitialModels();
     }
 
     /**
@@ -51,11 +46,11 @@ class UnassignedTest extends TestCase
     public function createSelfServiceUserOrGroup($relation = 1)
     {
         // Create user`
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         // Create a group
-        $group = factory(Groupwf::class)->create();
+        $group = Groupwf::factory()->create();
         // Assign a user in the group
-        factory(GroupUser::class)->create([
+        GroupUser::factory()->create([
             'GRP_UID' => $group->GRP_UID,
             'GRP_ID' => $group->GRP_ID,
             'USR_UID' => $user->USR_UID,
@@ -63,34 +58,34 @@ class UnassignedTest extends TestCase
         // Create self-services
         for ($i = 1; $i <= 2; $i++) {
             //Create process
-            $process = factory(Process::class)->create();
+            $process = Process::factory()->create();
             //Create application
-            $application = factory(Application::class)->create([
+            $application = Application::factory()->create([
                 'APP_STATUS_ID' => 2
             ]);
             //Create a task self service
-            $task = factory(Task::class)->create([
+            $task = Task::factory()->create([
                 'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
                 'TAS_GROUP_VARIABLE' => '',
                 'PRO_UID' => $process->PRO_UID,
                 'PRO_ID' => $process->PRO_ID,
             ]);
             //Assign a user in the task
-            $taskUser = factory(TaskUser::class)->create([
+            $taskUser = TaskUser::factory()->create([
                 'TAS_UID' => $task->TAS_UID,
                 'USR_UID' => $user->USR_UID,
                 'TU_RELATION' => $relation, //Related to the user
                 'TU_TYPE' => 1
             ]);
             //Create the previous delegation before self-service
-            $delegation = factory(Delegation::class)->create([
+            $delegation = Delegation::factory()->create([
                 'APP_NUMBER' => $application->APP_NUMBER,
                 'PRO_ID' => $process->PRO_ID,
                 'DEL_THREAD_STATUS' => 'CLOSED',
                 'DEL_DELEGATE_DATE' => date('Y-m-d H:i:s', strtotime("-$i year"))
             ]);
             //Create the register in delegation relate to self-service
-            $delegation = factory(Delegation::class)->create([
+            $delegation = Delegation::factory()->create([
                 'APP_NUMBER' => $application->APP_NUMBER,
                 'TAS_ID' => $task->TAS_ID,
                 'PRO_ID' => $process->PRO_ID,
@@ -118,11 +113,11 @@ class UnassignedTest extends TestCase
     public function createSelfServiceByVariable($relation = 1, $userAssignee = true)
     {
         // Create user`
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         // Create a group
-        $group = factory(Groupwf::class)->create();
+        $group = Groupwf::factory()->create();
         // Assign a user in the group
-        factory(GroupUser::class)->create([
+        GroupUser::factory()->create([
             'GRP_UID' => $group->GRP_UID,
             'GRP_ID' => $group->GRP_ID,
             'USR_UID' => $user->USR_UID,
@@ -130,39 +125,39 @@ class UnassignedTest extends TestCase
         // Create self-services
         for ($i = 1; $i <= 2; $i++) {
             //Create process
-            $process = factory(Process::class)->create();
+            $process = Process::factory()->create();
             //Create application
-            $application = factory(Application::class)->create([
+            $application = Application::factory()->create([
                 'APP_STATUS_ID' => 2
             ]);
             //Create a task self service
-            $task = factory(Task::class)->create([
+            $task = Task::factory()->create([
                 'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
                 'TAS_GROUP_VARIABLE' => '@@ARRAY_OF_USERS',
                 'PRO_UID' => $process->PRO_UID,
                 'PRO_ID' => $process->PRO_ID,
             ]);
             //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
-            $appSelfValueUser = factory(AppAssignSelfServiceValue::class)->create([
+            $appSelfValueUser = AppAssignSelfServiceValue::factory()->create([
                 'APP_NUMBER' => $application->APP_NUMBER,
                 'DEL_INDEX' => 2,
                 'TAS_ID' => $task->TAS_ID
             ]);
-            $selfValueGroup = factory(AppAssignSelfServiceValueGroup::class)->create([
+            $selfValueGroup = AppAssignSelfServiceValueGroup::factory()->create([
                 'ID' => $appSelfValueUser->ID,
                 'GRP_UID' => $user->USR_UID,
                 'ASSIGNEE_ID' => ($userAssignee) ? $user->USR_ID : $group->GRP_ID,
                 'ASSIGNEE_TYPE' => $relation
             ]);
             //Create the previous delegation before self-service
-            $delegation = factory(Delegation::class)->create([
+            $delegation = Delegation::factory()->create([
                 'APP_NUMBER' => $application->APP_NUMBER,
                 'PRO_ID' => $process->PRO_ID,
                 'DEL_THREAD_STATUS' => 'CLOSED',
                 'DEL_DELEGATE_DATE' => date('Y-m-d H:i:s', strtotime("-$i year"))
             ]);
             //Create the register in delegation relate to self-service
-            $delegation = factory(Delegation::class)->create([
+            $delegation = Delegation::factory()->create([
                 'APP_NUMBER' => $application->APP_NUMBER,
                 'DEL_INDEX' => $appSelfValueUser->DEL_INDEX,
                 'TAS_ID' => $task->TAS_ID,
@@ -189,26 +184,26 @@ class UnassignedTest extends TestCase
      */
     public function createMultipleUnassigned($cases)
     {
-        $user = factory(\ProcessMaker\Model\User::class)->create();
+        $user = \ProcessMaker\Model\User::factory()->create();
 
         for ($i = 0; $i < $cases; $i = $i + 1) {
-            $process = factory(Process::class)->create();
-            $application = factory(Application::class)->create([
+            $process = Process::factory()->create();
+            $application = Application::factory()->create([
                 'APP_STATUS_ID' => 2
             ]);
-            $task = factory(Task::class)->create([
+            $task = Task::factory()->create([
                 'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
                 'TAS_GROUP_VARIABLE' => '',
                 'PRO_UID' => $process->PRO_UID,
                 'PRO_ID' => $process->PRO_ID,
             ]);
-            factory(TaskUser::class)->create([
+            TaskUser::factory()->create([
                 'TAS_UID' => $task->TAS_UID,
                 'USR_UID' => $user->USR_UID,
                 'TU_RELATION' => 1, //Related to the user
                 'TU_TYPE' => 1
             ]);
-            $delegation = factory(Delegation::class)->create([
+            $delegation = Delegation::factory()->create([
                 'APP_NUMBER' => $application->APP_NUMBER,
                 'TAS_ID' => $task->TAS_ID,
                 'PRO_ID' => $process->PRO_ID,
@@ -516,7 +511,7 @@ class UnassignedTest extends TestCase
         // Get the data
         $res = $unassigned->getData();
         // Asserts
-        $this->assertNotEmpty($res);
+        $this->assertTrue(!empty($res));
     }
 
     /**
@@ -594,29 +589,29 @@ class UnassignedTest extends TestCase
      */
     public function it_should_test_get_counters_by_processes_method_category()
     {
-        $user = factory(User::class)->create();
-        $process1 = factory(Process::class)->create([
+        $user = User::factory()->create();
+        $process1 = Process::factory()->create([
             'CATEGORY_ID' => 2
         ]);
-        $process2 = factory(Process::class)->create([
+        $process2 = Process::factory()->create([
             'CATEGORY_ID' => 3
         ]);
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'APP_STATUS_ID' => 2
         ]);
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process1->PRO_UID,
             'PRO_ID' => $process1->PRO_ID,
         ]);
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1,
             'TU_TYPE' => 1
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
             'PRO_ID' => $process1->PRO_ID,
@@ -624,19 +619,19 @@ class UnassignedTest extends TestCase
             'USR_ID' => 0,
             'DEL_DELEGATE_DATE' => date('Y-m-d H:i:s', strtotime("-1 year"))
         ]);
-        $task2 = factory(Task::class)->create([
+        $task2 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process2->PRO_UID,
             'PRO_ID' => $process2->PRO_ID,
         ]);
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task2->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1,
             'TU_TYPE' => 1
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_ID' => $task2->TAS_ID,
             'PRO_ID' => $process2->PRO_ID,
@@ -675,29 +670,29 @@ class UnassignedTest extends TestCase
      */
     public function it_should_test_get_counters_by_processes_method_processes()
     {
-        $user = factory(User::class)->create();
-        $process1 = factory(Process::class)->create([
+        $user = User::factory()->create();
+        $process1 = Process::factory()->create([
             'CATEGORY_ID' => 2
         ]);
-        $process2 = factory(Process::class)->create([
+        $process2 = Process::factory()->create([
             'CATEGORY_ID' => 3
         ]);
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'APP_STATUS_ID' => 2
         ]);
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process1->PRO_UID,
             'PRO_ID' => $process1->PRO_ID,
         ]);
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1,
             'TU_TYPE' => 1
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
             'PRO_ID' => $process1->PRO_ID,
@@ -705,19 +700,19 @@ class UnassignedTest extends TestCase
             'USR_ID' => 0,
             'DEL_DELEGATE_DATE' => date('Y-m-d H:i:s', strtotime("-1 year"))
         ]);
-        $task2 = factory(Task::class)->create([
+        $task2 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process2->PRO_UID,
             'PRO_ID' => $process2->PRO_ID,
         ]);
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task2->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1,
             'TU_TYPE' => 1
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_ID' => $task2->TAS_ID,
             'PRO_ID' => $process2->PRO_ID,
@@ -740,29 +735,29 @@ class UnassignedTest extends TestCase
      */
     public function it_should_test_get_counters_by_range_method()
     {
-        $user = factory(User::class)->create();
-        $process1 = factory(Process::class)->create([
+        $user = User::factory()->create();
+        $process1 = Process::factory()->create([
             'CATEGORY_ID' => 2
         ]);
-        $process2 = factory(Process::class)->create([
+        $process2 = Process::factory()->create([
             'CATEGORY_ID' => 3
         ]);
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'APP_STATUS_ID' => 2
         ]);
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process1->PRO_UID,
             'PRO_ID' => $process1->PRO_ID,
         ]);
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1,
             'TU_TYPE' => 1
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
             'PRO_ID' => $process1->PRO_ID,
@@ -770,19 +765,19 @@ class UnassignedTest extends TestCase
             'USR_ID' => 0,
             'DEL_DELEGATE_DATE' => '2021-05-21 09:52:32'
         ]);
-        $task2 = factory(Task::class)->create([
+        $task2 = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process2->PRO_UID,
             'PRO_ID' => $process2->PRO_ID,
         ]);
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task2->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1,
             'TU_TYPE' => 1
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_ID' => $task2->TAS_ID,
             'PRO_ID' => $process2->PRO_ID,
@@ -817,9 +812,8 @@ class UnassignedTest extends TestCase
      */
     public function it_should_test_getCustomListCount_method()
     {
-        $this->markTestIncomplete('Illegal mix of collations');
         $cases = $this->createMultipleUnassigned(1);
-        $additionalTables = factory(AdditionalTables::class)->create([
+        $additionalTables = AdditionalTables::factory()->create([
             'PRO_UID' => $cases['delegation']->PRO_UID
         ]);
         $query = ""
@@ -831,10 +825,11 @@ class UnassignedTest extends TestCase
             . "`VAR2` varchar(255) DEFAULT NULL,"
             . "`VAR3` varchar(255) DEFAULT NULL,"
             . "PRIMARY KEY (`APP_UID`),"
-            . "KEY `indexTable` (`APP_UID`))";
+            . "KEY `indexTable` (`APP_UID`)"
+            . ")ENGINE=InnoDB  DEFAULT CHARSET='utf8'";
         DB::statement($query);
 
-        $caseList = factory(CaseList::class)->create([
+        $caseList = CaseList::factory()->create([
             'CAL_TYPE' => 'unassigned',
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID,
             'USR_ID' => $cases['taskUser']->USR_ID
@@ -887,26 +882,26 @@ class UnassignedTest extends TestCase
         $currentDate = $date->format('Y-m-d H:i:s');
         $diff1Day = new DateInterval('P1D');
         $diff2Days = new DateInterval('P2D');
-        $user = factory(User::class)->create();
-        $process1 = factory(Process::class)->create([
+        $user = User::factory()->create();
+        $process1 = Process::factory()->create([
             'CATEGORY_ID' => 2
         ]);
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'APP_STATUS_ID' => 2
         ]);
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process1->PRO_UID,
             'PRO_ID' => $process1->PRO_ID,
         ]);
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1,
             'TU_TYPE' => 1
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
             'PRO_ID' => $process1->PRO_ID,
@@ -935,26 +930,26 @@ class UnassignedTest extends TestCase
         $date = new DateTime('now');
         $currentDate = $date->format('Y-m-d H:i:s');
         $diff2Days = new DateInterval('P2D');
-        $user = factory(User::class)->create();
-        $process1 = factory(Process::class)->create([
+        $user = User::factory()->create();
+        $process1 = Process::factory()->create([
             'CATEGORY_ID' => 2
         ]);
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'APP_STATUS_ID' => 2
         ]);
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process1->PRO_UID,
             'PRO_ID' => $process1->PRO_ID,
         ]);
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1,
             'TU_TYPE' => 1
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
             'PRO_ID' => $process1->PRO_ID,
@@ -983,26 +978,26 @@ class UnassignedTest extends TestCase
         $date = new DateTime('now');
         $currentDate = $date->format('Y-m-d H:i:s');
         $diff2Days = new DateInterval('P2D');
-        $user = factory(User::class)->create();
-        $process1 = factory(Process::class)->create([
+        $user = User::factory()->create();
+        $process1 = Process::factory()->create([
             'CATEGORY_ID' => 2
         ]);
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'APP_STATUS_ID' => 2
         ]);
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process1->PRO_UID,
             'PRO_ID' => $process1->PRO_ID,
         ]);
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1,
             'TU_TYPE' => 1
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
             'PRO_ID' => $process1->PRO_ID,

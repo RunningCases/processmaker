@@ -827,7 +827,7 @@ class AppDelegation extends BaseAppDelegation
         return (int)$data['DEL_INDEX'];
     }
 
-    public function getCurrentTask($appUid)
+    public static function getCurrentTask($appUid)
     {
         $oCriteria = new Criteria();
         $oCriteria->addSelectColumn(AppDelegationPeer::TAS_UID);

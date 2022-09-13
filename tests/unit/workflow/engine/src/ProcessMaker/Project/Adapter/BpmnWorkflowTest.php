@@ -19,11 +19,11 @@ class BpmnWorkflowTest extends TestCase
     /**
      * Set up testing.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-        $this->user = factory(User::class)->create();
-        Process::truncate();
+        $this->truncateNonInitialModels();
+        $this->user = User::factory()->create();
     }
 
     /**
@@ -79,7 +79,7 @@ class BpmnWorkflowTest extends TestCase
     {
         $faker = Factory::create();
         $title = $faker->title;
-        factory(\ProcessMaker\Model\Process::class)->create([
+        \ProcessMaker\Model\Process::factory()->create([
             'PRO_TITLE' => $title
         ]);
 
@@ -115,7 +115,9 @@ class BpmnWorkflowTest extends TestCase
         $projectData["process"]["pro_id"] = $faker->randomDigit;
 
         $bpmnWorkflow = new BpmnWorkflow();
-        $bpmnWorkflow->createFromStruct($projectData, true, null);
+        $result = $bpmnWorkflow->createFromStruct($projectData, true, null);
+        $result = json_encode($result);
+        $this->assertStringContainsString($projectData['prj_uid'], $result);
     }
 
     /**
@@ -158,11 +160,11 @@ class BpmnWorkflowTest extends TestCase
 
         $bpmnWorkflow = new BpmnWorkflow();
 
-        factory(\ProcessMaker\Model\BpmnProject::class)->create([
+        \ProcessMaker\Model\BpmnProject::factory()->create([
             'PRJ_NAME' => $projectData['prj_name']
         ]);
 
-        factory(\ProcessMaker\Model\Process::class)->create([
+        \ProcessMaker\Model\Process::factory()->create([
             'PRO_TITLE' => $projectData['prj_name']
         ]);
 

@@ -383,6 +383,11 @@ class WorkspaceTools
         $start = microtime(true);
         $this->migrateCaseTitleToThreads([$workspace]);
         CLI::logging("* End migrating case title...(Completed on " . (microtime(true) - $start) . " seconds)\n");
+
+        CLI::logging("* Start converting Output Documents from 'HTML2PDF' to 'TCPDF'...\n");
+        $start = microtime(true);
+        $this->convertOutDocsHtml2Ps2Pdf([$workspace]);
+        CLI::logging("* End converting Output Documents from 'HTML2PDF' to 'TCPDF...(Completed on " . (microtime(true) - $start) . " seconds)\n");
     }
 
     /**
@@ -1797,7 +1802,7 @@ class WorkspaceTools
      * @param int $versionBackupEngine
      * @param string $connection
      */
-    public function executeSQLScript($database, $filename, $parameters, $versionBackupEngine = 1, $connection)
+    public function executeSQLScript($database, $filename, $parameters, $versionBackupEngine = 1, $connection = '')
     {
         DB::connection($connection)
             ->statement('CREATE DATABASE IF NOT EXISTS ' . $database);
@@ -2306,6 +2311,11 @@ class WorkspaceTools
                 $start = microtime(true);
                 $workspace->migrateCaseTitleToThreads([$workspaceName]);
                 CLI::logging("* End migrating case title...(Completed on " . (microtime(true) - $start) . " seconds)\n");
+
+                CLI::logging("* Start converting Output Documents from 'HTML2PDF' to 'TCPDF'...\n");
+                $start = microtime(true);
+                $workspace->convertOutDocsHtml2Ps2Pdf([$workspaceName]);
+                CLI::logging("* End converting Output Documents from 'HTML2PDF' to 'TCPDF...(Completed on " . (microtime(true) - $start) . " seconds)\n");
             }
 
             CLI::logging("> Start To Verify License Enterprise...\n");
@@ -5369,6 +5379,38 @@ class WorkspaceTools
             } else {
                 CLI::logging("The workspace is required." . PHP_EOL . PHP_EOL);
             }
+        } catch (Exception $e) {
+            // Display the error message
+            CLI::logging($e->getMessage() . PHP_EOL . PHP_EOL);
+        }
+    }
+
+    /**
+     * Convert Output Documents generator from 'HTML2PDF' to 'TCPDF', because thirdparty related is obsolete and doesn't work over PHP 7.x
+     * @param array $args
+     */
+    public function convertOutDocsHtml2Ps2Pdf(array $args)
+    {
+        // Define query
+        $query = "
+            UPDATE
+                `OUTPUT_DOCUMENT`
+            SET
+                `OUT_DOC_REPORT_GENERATOR` = 'TCPDF'
+            WHERE
+                `OUT_DOC_REPORT_GENERATOR` = 'HTML2PDF'
+            ";
+
+        try {
+            // Set workspace constants and initialize DB connection
+            Bootstrap::setConstantsRelatedWs($args[0]);
+            Propel::init(PATH_CONFIG . 'databases.php');
+
+            // Execute the query
+            $statement = Propel::getConnection('workflow')->createStatement();
+            $statement->executeQuery($query);
+
+            CLI::logging("The report generator was updated to 'TCPDF' in OUTPUT_DOCUMENT table." . PHP_EOL);
         } catch (Exception $e) {
             // Display the error message
             CLI::logging($e->getMessage() . PHP_EOL . PHP_EOL);

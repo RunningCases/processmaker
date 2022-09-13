@@ -136,6 +136,15 @@ if (env('RUN_MSSQL_TESTS')) {
  * This is for standard ProcessMaker tables
  */
 if (!env('POPULATE_DATABASE')) {
+    refreshDatabases();
+}
+
+/**
+ * Refresh databases.
+ * @return void
+ */
+function refreshDatabases(): void
+{
     // Create a table for define the connection
     Schema::connection('testexternal')->dropIfExists('test');
     Schema::connection('testexternal')->create('test', function ($table) {

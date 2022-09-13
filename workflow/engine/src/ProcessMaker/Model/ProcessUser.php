@@ -2,10 +2,13 @@
 
 namespace ProcessMaker\Model;
 
+use App\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ProcessUser extends Model
 {
+    use HasFactory;
+
     protected $table = 'PROCESS_USER';
     protected $primaryKey = 'PU_UID';
     // We do not have create/update timestamps for this table

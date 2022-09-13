@@ -25,7 +25,7 @@ function postNote($httpData)
     @ob_flush();
     @flush();
     @ob_end_flush();
-    ob_implicit_flush(1);
+    ob_implicit_flush(true);
 
     //send notification in background
     $noteRecipientsList = array();
@@ -726,4 +726,15 @@ function calculateDate($iniDate, $timeUnit, $time)
     }
 
     return $datetime->format('Y-m-d H:i:s');
+}
+
+/**
+ * Get the constant value.
+ * @param string $name
+ * @param mixed $default
+ * @return mixed
+ */
+function getConstant(string $name, $default = '')
+{
+    return defined($name) === true ? constant($name) : $default;
 }

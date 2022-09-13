@@ -199,7 +199,7 @@ class AppProxy extends HttpProxyController
         @ob_flush();
         @flush();
         @ob_end_flush();
-        ob_implicit_flush(1);
+        ob_implicit_flush(true);
     }
 
     /**

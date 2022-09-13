@@ -2,10 +2,13 @@
 
 namespace ProcessMaker\Model;
 
+use App\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Step extends Model
 {
+    use HasFactory;
+
     protected $table = "STEP";
     public $timestamps = false;
 

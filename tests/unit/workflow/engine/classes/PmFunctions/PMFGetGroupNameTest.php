@@ -23,7 +23,7 @@ class PMFGetGroupNameTest extends TestCase
     public function it_get_group_name()
     {
         // Create group
-        $group = factory(Groupwf::class)->create();
+        $group = Groupwf::factory()->create();
         DB::commit();
         $result = PMFGetGroupName($group->GRP_TITLE, 'en');
         $this->assertFalse($result);

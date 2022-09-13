@@ -22,7 +22,7 @@ class UserInfoTest extends TestCase
     {
         // Create User
         global $RBAC;
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         DB::commit();
         $result = userInfo($user->USR_UID);
         $this->assertNotEmpty($result);

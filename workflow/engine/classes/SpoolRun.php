@@ -623,9 +623,9 @@ class SpoolRun
                             }
                             $phpMailer->Body = $msBody;
                             //Attachments
-                            $attachment = @unserialize($this->fileData['attachments']);
-                            if ($attachment === false) {
-                                $attachment = $this->fileData['attachments'];
+                            $attachment = $this->fileData['attachments'];
+                            if (is_string($attachment)) {
+                                $attachment = @unserialize($attachment);
                             }
                             if (is_array($attachment)) {
                                 foreach ($attachment as $key => $fileAttach) {

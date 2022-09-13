@@ -19,10 +19,10 @@ class XmlImporterTest extends TestCase
     /**
      * Set up unit tests.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
         Groupwf::truncate();
 
         $cached = ["jXsSi94bkRUcVZyRStNVExlTXhEclVadGRRcG9xbjNvTWVFQUF3cklKQVBiVT0=" => 1];
@@ -52,10 +52,10 @@ class XmlImporterTest extends TestCase
      */
     public function it_should_matter_with_import_option_keep_without_changing_and_create_new_and_group_import_option_merge_preexistent()
     {
-        factory(\ProcessMaker\Model\Groupwf::class)->create([
+        \ProcessMaker\Model\Groupwf::factory()->create([
             'GRP_TITLE' => 'group1'
         ]);
-        factory(\ProcessMaker\Model\Groupwf::class)->create([
+        \ProcessMaker\Model\Groupwf::factory()->create([
             'GRP_TITLE' => 'group2'
         ]);
         $regenerateUids = false;
@@ -74,10 +74,10 @@ class XmlImporterTest extends TestCase
      */
     public function it_should_matter_with_import_option_overwrite_and_group_import_option_rename()
     {
-        factory(\ProcessMaker\Model\Groupwf::class)->create([
+        \ProcessMaker\Model\Groupwf::factory()->create([
             'GRP_TITLE' => 'group1'
         ]);
-        factory(\ProcessMaker\Model\Groupwf::class)->create([
+        \ProcessMaker\Model\Groupwf::factory()->create([
             'GRP_TITLE' => 'group2'
         ]);
         $filename = PATH_TRUNK . "tests/resources/p1normal-1.pmx";
@@ -196,10 +196,10 @@ class XmlImporterTest extends TestCase
      */
     public function it_should_matter_with_import_option_overwrite_and_group_import_option_create_new_with_groups()
     {
-        factory(\ProcessMaker\Model\Groupwf::class)->create([
+        \ProcessMaker\Model\Groupwf::factory()->create([
             'GRP_TITLE' => 'group1'
         ]);
-        factory(\ProcessMaker\Model\Groupwf::class)->create([
+        \ProcessMaker\Model\Groupwf::factory()->create([
             'GRP_TITLE' => 'group2'
         ]);
         $filename = PATH_TRUNK . "tests/resources/p1normal-1.pmx";
@@ -237,7 +237,7 @@ class XmlImporterTest extends TestCase
      */
     public function it_should_matter_with_import_option_create_new_and_group_import_option_create_new_try_rename_title()
     {
-        factory(\ProcessMaker\Model\Process::class)->create([
+        \ProcessMaker\Model\Process::factory()->create([
             'PRO_TITLE' => 'p1normalWithoutTitle'
         ]);
 
@@ -249,7 +249,7 @@ class XmlImporterTest extends TestCase
         $result = $importer->import(XmlImporter::IMPORT_OPTION_CREATE_NEW, XmlImporter::GROUP_IMPORT_OPTION_CREATE_NEW, false);
         $this->assertNotNull($result);
 
-        factory(\ProcessMaker\Model\Process::class)->create([
+        \ProcessMaker\Model\Process::factory()->create([
             'PRO_TITLE' => 'p1normalWithoutTitle2'
         ]);
 

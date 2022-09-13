@@ -25,19 +25,19 @@ use Tests\TestCase;
  */
 class HomeTest extends TestCase
 {
-
     /**
      * setUp method.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
+        $this->truncateNonInitialModels();
     }
 
     /**
      * tearDown method.
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
     }
@@ -50,8 +50,8 @@ class HomeTest extends TestCase
      */
     public function it_should_test_getDraft()
     {
-        $application = factory(Application::class)->states('draft')->create();
-        factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->draft()->create();
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application->APP_INIT_USER,
@@ -73,8 +73,8 @@ class HomeTest extends TestCase
      */
     public function it_should_test_getInbox()
     {
-        $application = factory(Application::class)->states('todo')->create();
-        factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->todo()->create();
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2
         ]);
@@ -93,30 +93,30 @@ class HomeTest extends TestCase
      */
     public function it_should_test_getUnassigned()
     {
-        $user = factory(User::class)->create();
-        $group = factory(Groupwf::class)->create();
-        factory(GroupUser::class)->create([
+        $user = User::factory()->create();
+        $group = Groupwf::factory()->create();
+        GroupUser::factory()->create([
             'GRP_UID' => $group->GRP_UID,
             'GRP_ID' => $group->GRP_ID,
             'USR_UID' => $user->USR_UID,
         ]);
-        $process = factory(Process::class)->create();
-        $application = factory(Application::class)->create([
+        $process = Process::factory()->create();
+        $application = Application::factory()->create([
             'APP_STATUS_ID' => 2
         ]);
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID,
             'PRO_ID' => $process->PRO_ID,
         ]);
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1,
             'TU_TYPE' => 1
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
             'PRO_ID' => $process->PRO_ID,
@@ -139,17 +139,17 @@ class HomeTest extends TestCase
      */
     public function it_should_test_getPaused()
     {
-        $user = factory(User::class)->create();
-        $process1 = factory(Process::class)->create();
-        $task = factory(Task::class)->create([
+        $user = User::factory()->create();
+        $process1 = Process::factory()->create();
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => '',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process1->PRO_UID,
             'TAS_TYPE' => 'NORMAL'
         ]);
 
-        $application1 = factory(Application::class)->create();
-        $delegation1 = factory(Delegation::class)->create([
+        $application1 = Application::factory()->create();
+        $delegation1 = Delegation::factory()->create([
             'APP_NUMBER' => $application1->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
             'DEL_THREAD_STATUS' => 'CLOSED',
@@ -161,9 +161,9 @@ class HomeTest extends TestCase
             'DEL_INDEX' => 2
         ]);
 
-        $process2 = factory(Process::class)->create();
-        $application2 = factory(Application::class)->create();
-        $delegation2 = factory(Delegation::class)->create([
+        $process2 = Process::factory()->create();
+        $application2 = Application::factory()->create();
+        $delegation2 = Delegation::factory()->create([
             'APP_NUMBER' => $application2->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
@@ -174,7 +174,7 @@ class HomeTest extends TestCase
             'DEL_PREVIOUS' => 1,
             'DEL_INDEX' => 2
         ]);
-        factory(AppDelay::class, 5)->create([
+        AppDelay::factory(5)->create([
             'APP_DELEGATION_USER' => $user->USR_UID,
             'PRO_UID' => $process2->PRO_UID,
             'APP_NUMBER' => $delegation1->APP_NUMBER,
@@ -182,7 +182,7 @@ class HomeTest extends TestCase
             'APP_DISABLE_ACTION_USER' => 0,
             'APP_TYPE' => 'PAUSE'
         ]);
-        factory(AppDelay::class, 5)->create([
+        AppDelay::factory(5)->create([
             'APP_DELEGATION_USER' => $user->USR_UID,
             'PRO_UID' => $process2->PRO_UID,
             'APP_NUMBER' => $delegation2->APP_NUMBER,
@@ -205,9 +205,8 @@ class HomeTest extends TestCase
      */
     public function it_should_test_buildCustomCaseList()
     {
-        $this->markTestIncomplete('Illegal mix of collations');
-        $user = factory(User::class)->create();
-        $additionalTables = factory(AdditionalTables::class)->create();
+        $user = User::factory()->create();
+        $additionalTables = AdditionalTables::factory()->create();
         $query = ""
             . "CREATE TABLE IF NOT EXISTS `{$additionalTables->ADD_TAB_NAME}` ("
             . "`APP_UID` varchar(32) NOT NULL,"
@@ -217,24 +216,25 @@ class HomeTest extends TestCase
             . "`VAR2` varchar(255) DEFAULT NULL,"
             . "`VAR3` varchar(255) DEFAULT NULL,"
             . "PRIMARY KEY (`APP_UID`),"
-            . "KEY `indexTable` (`APP_UID`))";
+            . "KEY `indexTable` (`APP_UID`)"
+            . ")ENGINE=InnoDB  DEFAULT CHARSET='utf8'";
         DB::statement($query);
-        factory(Fields::class)->create([
+        Fields::factory()->create([
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID,
             'FLD_NAME' => 'VAR1'
         ]);
-        factory(Fields::class)->create([
+        Fields::factory()->create([
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID,
             'FLD_NAME' => 'VAR2'
         ]);
-        factory(Fields::class)->create([
+        Fields::factory()->create([
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID,
             'FLD_NAME' => 'VAR3'
         ]);
 
         //for inbox
         $type = 'inbox';
-        $caseList = factory(CaseList::class)->create([
+        $caseList = CaseList::factory()->create([
             'CAL_TYPE' => $type,
             'CAL_COLUMNS' => '[{"field":"case_number","enableFilter":false,"set":true},{"field":"case_title","enableFilter":false,"set":true},{"field":"process_name","enableFilter":false,"set":true},{"field":"task","enableFilter":false,"set":true},{"field":"send_by","enableFilter":false,"set":true},{"field":"due_date","enableFilter":false,"set":true},{"field":"delegation_date","enableFilter":false,"set":true},{"field":"priority","enableFilter":false,"set":true},{"field":"VAR1","enableFilter":false,"set":true},{"field":"VAR2","enableFilter":false,"set":true},{"field":"VAR3","enableFilter":false,"set":false}]',
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID,
@@ -256,8 +256,7 @@ class HomeTest extends TestCase
      */
     public function it_should_test_getCustomDraft()
     {
-        $this->markTestIncomplete('Illegal mix of collations');
-        $additionalTables = factory(AdditionalTables::class)->create();
+        $additionalTables = AdditionalTables::factory()->create();
         $query = ""
             . "CREATE TABLE IF NOT EXISTS `{$additionalTables->ADD_TAB_NAME}` ("
             . "`APP_UID` varchar(32) NOT NULL,"
@@ -267,23 +266,24 @@ class HomeTest extends TestCase
             . "`VAR2` varchar(255) DEFAULT NULL,"
             . "`VAR3` varchar(255) DEFAULT NULL,"
             . "PRIMARY KEY (`APP_UID`),"
-            . "KEY `indexTable` (`APP_UID`))";
+            . "KEY `indexTable` (`APP_UID`)"
+            . ")ENGINE=InnoDB  DEFAULT CHARSET='utf8'";
         DB::statement($query);
-        factory(Fields::class)->create([
+        Fields::factory()->create([
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID,
             'FLD_NAME' => 'VAR1'
         ]);
-        factory(Fields::class)->create([
+        Fields::factory()->create([
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID,
             'FLD_NAME' => 'VAR2'
         ]);
-        factory(Fields::class)->create([
+        Fields::factory()->create([
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID,
             'FLD_NAME' => 'VAR3'
         ]);
 
-        $application = factory(Application::class)->states('draft')->create();
-        factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->draft()->create();
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application->APP_INIT_USER,
@@ -291,7 +291,7 @@ class HomeTest extends TestCase
             'APP_NUMBER' => $application->APP_NUMBER,
         ]);
 
-        $caseList = factory(CaseList::class)->create([
+        $caseList = CaseList::factory()->create([
             'CAL_TYPE' => 'draft',
             'CAL_COLUMNS' => '[{"field":"case_number","enableFilter":false,"set":true},{"field":"case_title","enableFilter":false,"set":true},{"field":"process_name","enableFilter":false,"set":true},{"field":"task","enableFilter":false,"set":true},{"field":"send_by","enableFilter":false,"set":true},{"field":"due_date","enableFilter":false,"set":true},{"field":"delegation_date","enableFilter":false,"set":true},{"field":"priority","enableFilter":false,"set":true},{"field":"VAR1","enableFilter":false,"set":true},{"field":"VAR2","enableFilter":false,"set":true},{"field":"VAR3","enableFilter":false,"set":false}]',
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID
@@ -313,8 +313,7 @@ class HomeTest extends TestCase
      */
     public function it_should_test_getCustomInbox()
     {
-        $this->markTestIncomplete('Illegal mix of collations');
-        $additionalTables = factory(AdditionalTables::class)->create();
+        $additionalTables = AdditionalTables::factory()->create();
         $query = ""
             . "CREATE TABLE IF NOT EXISTS `{$additionalTables->ADD_TAB_NAME}` ("
             . "`APP_UID` varchar(32) NOT NULL,"
@@ -324,28 +323,29 @@ class HomeTest extends TestCase
             . "`VAR2` varchar(255) DEFAULT NULL,"
             . "`VAR3` varchar(255) DEFAULT NULL,"
             . "PRIMARY KEY (`APP_UID`),"
-            . "KEY `indexTable` (`APP_UID`))";
+            . "KEY `indexTable` (`APP_UID`)"
+            . ")ENGINE=InnoDB  DEFAULT CHARSET='utf8'";
         DB::statement($query);
-        factory(Fields::class)->create([
+        Fields::factory()->create([
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID,
             'FLD_NAME' => 'VAR1'
         ]);
-        factory(Fields::class)->create([
+        Fields::factory()->create([
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID,
             'FLD_NAME' => 'VAR2'
         ]);
-        factory(Fields::class)->create([
+        Fields::factory()->create([
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID,
             'FLD_NAME' => 'VAR3'
         ]);
 
-        $application = factory(Application::class)->states('todo')->create();
-        factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->todo()->create();
+        Delegation::factory()->foreign_keys()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2
         ]);
 
-        $caseList = factory(CaseList::class)->create([
+        $caseList = CaseList::factory()->create([
             'CAL_TYPE' => 'inbox',
             'CAL_COLUMNS' => '[{"field":"case_number","enableFilter":false,"set":true},{"field":"case_title","enableFilter":false,"set":true},{"field":"process_name","enableFilter":false,"set":true},{"field":"task","enableFilter":false,"set":true},{"field":"send_by","enableFilter":false,"set":true},{"field":"due_date","enableFilter":false,"set":true},{"field":"delegation_date","enableFilter":false,"set":true},{"field":"priority","enableFilter":false,"set":true},{"field":"VAR1","enableFilter":false,"set":true},{"field":"VAR2","enableFilter":false,"set":true},{"field":"VAR3","enableFilter":false,"set":false}]',
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID
@@ -367,8 +367,7 @@ class HomeTest extends TestCase
      */
     public function it_should_test_getCustomUnassigned()
     {
-        $this->markTestIncomplete('Illegal mix of collations');
-        $additionalTables = factory(AdditionalTables::class)->create();
+        $additionalTables = AdditionalTables::factory()->create();
         $query = ""
             . "CREATE TABLE IF NOT EXISTS `{$additionalTables->ADD_TAB_NAME}` ("
             . "`APP_UID` varchar(32) NOT NULL,"
@@ -378,45 +377,46 @@ class HomeTest extends TestCase
             . "`VAR2` varchar(255) DEFAULT NULL,"
             . "`VAR3` varchar(255) DEFAULT NULL,"
             . "PRIMARY KEY (`APP_UID`),"
-            . "KEY `indexTable` (`APP_UID`))";
+            . "KEY `indexTable` (`APP_UID`)"
+            . ")ENGINE=InnoDB  DEFAULT CHARSET='utf8'";
         DB::statement($query);
-        factory(Fields::class)->create([
+        Fields::factory()->create([
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID,
             'FLD_NAME' => 'VAR1'
         ]);
-        factory(Fields::class)->create([
+        Fields::factory()->create([
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID,
             'FLD_NAME' => 'VAR2'
         ]);
-        factory(Fields::class)->create([
+        Fields::factory()->create([
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID,
             'FLD_NAME' => 'VAR3'
         ]);
 
-        $user = factory(User::class)->create();
-        $group = factory(Groupwf::class)->create();
-        factory(GroupUser::class)->create([
+        $user = User::factory()->create();
+        $group = Groupwf::factory()->create();
+        GroupUser::factory()->create([
             'GRP_UID' => $group->GRP_UID,
             'GRP_ID' => $group->GRP_ID,
             'USR_UID' => $user->USR_UID,
         ]);
-        $process = factory(Process::class)->create();
-        $application = factory(Application::class)->create([
+        $process = Process::factory()->create();
+        $application = Application::factory()->create([
             'APP_STATUS_ID' => 2
         ]);
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process->PRO_UID,
             'PRO_ID' => $process->PRO_ID,
         ]);
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1,
             'TU_TYPE' => 1
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
             'PRO_ID' => $process->PRO_ID,
@@ -425,7 +425,7 @@ class HomeTest extends TestCase
             'DEL_DELEGATE_DATE' => date('Y-m-d H:i:s', strtotime("-1 year"))
         ]);
 
-        $caseList = factory(CaseList::class)->create([
+        $caseList = CaseList::factory()->create([
             'CAL_TYPE' => 'unassigned',
             'CAL_COLUMNS' => '[{"field":"case_number","enableFilter":false,"set":true},{"field":"case_title","enableFilter":false,"set":true},{"field":"process_name","enableFilter":false,"set":true},{"field":"task","enableFilter":false,"set":true},{"field":"send_by","enableFilter":false,"set":true},{"field":"due_date","enableFilter":false,"set":true},{"field":"delegation_date","enableFilter":false,"set":true},{"field":"priority","enableFilter":false,"set":true},{"field":"VAR1","enableFilter":false,"set":true},{"field":"VAR2","enableFilter":false,"set":true},{"field":"VAR3","enableFilter":false,"set":false}]',
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID
@@ -447,8 +447,7 @@ class HomeTest extends TestCase
      */
     public function it_should_test_getCustomPaused()
     {
-        $this->markTestIncomplete('Illegal mix of collations');
-        $additionalTables = factory(AdditionalTables::class)->create();
+        $additionalTables = AdditionalTables::factory()->create();
         $query = ""
             . "CREATE TABLE IF NOT EXISTS `{$additionalTables->ADD_TAB_NAME}` ("
             . "`APP_UID` varchar(32) NOT NULL,"
@@ -458,32 +457,33 @@ class HomeTest extends TestCase
             . "`VAR2` varchar(255) DEFAULT NULL,"
             . "`VAR3` varchar(255) DEFAULT NULL,"
             . "PRIMARY KEY (`APP_UID`),"
-            . "KEY `indexTable` (`APP_UID`))";
+            . "KEY `indexTable` (`APP_UID`)"
+            . ")ENGINE=InnoDB  DEFAULT CHARSET='utf8'";
         DB::statement($query);
-        factory(Fields::class)->create([
+        Fields::factory()->create([
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID,
             'FLD_NAME' => 'VAR1'
         ]);
-        factory(Fields::class)->create([
+        Fields::factory()->create([
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID,
             'FLD_NAME' => 'VAR2'
         ]);
-        factory(Fields::class)->create([
+        Fields::factory()->create([
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID,
             'FLD_NAME' => 'VAR3'
         ]);
 
-        $user = factory(User::class)->create();
-        $process1 = factory(Process::class)->create();
-        $task = factory(Task::class)->create([
+        $user = User::factory()->create();
+        $process1 = Process::factory()->create();
+        $task = Task::factory()->create([
             'TAS_ASSIGN_TYPE' => '',
             'TAS_GROUP_VARIABLE' => '',
             'PRO_UID' => $process1->PRO_UID,
             'TAS_TYPE' => 'NORMAL'
         ]);
 
-        $application1 = factory(Application::class)->create();
-        $delegation1 = factory(Delegation::class)->create([
+        $application1 = Application::factory()->create();
+        $delegation1 = Delegation::factory()->create([
             'APP_NUMBER' => $application1->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
             'DEL_THREAD_STATUS' => 'CLOSED',
@@ -495,9 +495,9 @@ class HomeTest extends TestCase
             'DEL_INDEX' => 2
         ]);
 
-        $process2 = factory(Process::class)->create();
-        $application2 = factory(Application::class)->create();
-        $delegation2 = factory(Delegation::class)->create([
+        $process2 = Process::factory()->create();
+        $application2 = Application::factory()->create();
+        $delegation2 = Delegation::factory()->create([
             'APP_NUMBER' => $application2->APP_NUMBER,
             'TAS_ID' => $task->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
@@ -508,7 +508,7 @@ class HomeTest extends TestCase
             'DEL_PREVIOUS' => 1,
             'DEL_INDEX' => 2
         ]);
-        factory(AppDelay::class, 5)->create([
+        AppDelay::factory(5)->create([
             'APP_DELEGATION_USER' => $user->USR_UID,
             'PRO_UID' => $process2->PRO_UID,
             'APP_NUMBER' => $delegation1->APP_NUMBER,
@@ -516,7 +516,7 @@ class HomeTest extends TestCase
             'APP_DISABLE_ACTION_USER' => 0,
             'APP_TYPE' => 'PAUSE'
         ]);
-        factory(AppDelay::class, 5)->create([
+        AppDelay::factory(5)->create([
             'APP_DELEGATION_USER' => $user->USR_UID,
             'PRO_UID' => $process2->PRO_UID,
             'APP_NUMBER' => $delegation2->APP_NUMBER,
@@ -525,7 +525,7 @@ class HomeTest extends TestCase
             'APP_TYPE' => 'PAUSE'
         ]);
 
-        $caseList = factory(CaseList::class)->create([
+        $caseList = CaseList::factory()->create([
             'CAL_TYPE' => 'paused',
             'CAL_COLUMNS' => '[{"field":"case_number","enableFilter":false,"set":true},{"field":"case_title","enableFilter":false,"set":true},{"field":"process_name","enableFilter":false,"set":true},{"field":"task","enableFilter":false,"set":true},{"field":"send_by","enableFilter":false,"set":true},{"field":"due_date","enableFilter":false,"set":true},{"field":"delegation_date","enableFilter":false,"set":true},{"field":"priority","enableFilter":false,"set":true},{"field":"VAR1","enableFilter":false,"set":true},{"field":"VAR2","enableFilter":false,"set":true},{"field":"VAR3","enableFilter":false,"set":false}]',
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID

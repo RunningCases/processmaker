@@ -50,7 +50,7 @@ switch ($request) {
         if (isset($_POST["casesListDateFormat"])) {
             $config['casesListDateFormat'] = $_POST["casesListDateFormat"]; 
         }
-        if (isset($_POST["casesListDateFormat"])) {
+        if (isset($_POST["casesListRowNumber"])) {
             $config['casesListRowNumber'] = intval( $_POST["casesListRowNumber"] );
         }
         if (isset($_POST["txtCasesRefreshTime"])) {

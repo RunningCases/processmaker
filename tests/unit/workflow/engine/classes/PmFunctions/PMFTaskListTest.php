@@ -25,11 +25,11 @@ class PMFTaskListTest extends TestCase
     public function it_return_pending_tasks()
     {
         // Create task
-        $task = factory(Task::class)->create();
+        $task = Task::factory()->create();
         // Create user
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         // Assign a user in the task
-        factory(TaskUser::class)->create([
+        TaskUser::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'USR_UID' => $user->USR_UID,
             'TU_RELATION' => 1, //Related to the user

@@ -13,7 +13,7 @@ class EmailServerAjaxTest extends TestCase
     /**
      * This set initial parameters for each test.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->settingUserLogged();
@@ -133,7 +133,7 @@ class EmailServerAjaxTest extends TestCase
     {
         $faker = Factory::create();
 
-        $emailServer = factory(EmailServerModel::class)->create([
+        $emailServer = EmailServerModel::factory()->create([
             'MESS_ENGINE' => 'PHPMAILER',
         ]);
 
@@ -169,7 +169,7 @@ class EmailServerAjaxTest extends TestCase
      */
     public function it_should_verify_the_option_del()
     {
-        $emailServer = factory(EmailServerModel::class)->create([
+        $emailServer = EmailServerModel::factory()->create([
             'MESS_ENGINE' => 'PHPMAILER',
         ]);
 

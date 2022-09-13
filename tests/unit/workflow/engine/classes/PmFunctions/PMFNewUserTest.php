@@ -2,8 +2,6 @@
 
 namespace Tests\unit\workflow\engine\classes\PmFunctions;
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\DB;
 use ProcessMaker\Model\GroupUser;
 use ProcessMaker\Model\Groupwf;
 use ProcessMaker\Model\RbacUsers;
@@ -19,7 +17,7 @@ class PMFNewUserTest extends TestCase
     /**
      * Creates the setUp method
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setup();
 
@@ -37,7 +35,7 @@ class PMFNewUserTest extends TestCase
     /**
      * Creates the tearDown method
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
     }
@@ -56,7 +54,7 @@ class PMFNewUserTest extends TestCase
         $RBAC->initRBAC();
         $RBAC->loadUserRolePermission('PROCESSMAKER', $_SESSION['USER_LOGGED']);
 
-        $group = factory(Groupwf::class)->create();
+        $group = Groupwf::factory()->create();
 
         // Active
         $result = PMFNewUser("test", "Test123*", "test", "test", "test@test.com", "PROCESSMAKER_ADMIN", null, null, $group['GRP_UID']);

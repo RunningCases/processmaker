@@ -1,6 +1,6 @@
 <?php
-namespace Tests\unit\workflow\engine\classes\PmFunctions;
 
+namespace Tests\unit\workflow\engine\classes\PmFunctions;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
@@ -24,7 +24,7 @@ class PMFNewCaseImpersonateTest extends TestCase
      */
     public function it_should_test_this_pmfunction_default_parameters()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         // Force commit for propel
         DB::commit();
         $result = PMFNewCaseImpersonate($table->PRO_UID, $table->USR_UID, [], '');

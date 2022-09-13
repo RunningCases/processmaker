@@ -1970,7 +1970,7 @@ class Cases
      * @return void
      * @throws Exception
      */
-    public function setCaseVariables($app_uid, $app_data, $dyn_uid = null, $usr_uid, $del_index = 0)
+    public function setCaseVariables($app_uid, $app_data, $dyn_uid = null, $usr_uid = '', $del_index = 0)
     {
         Validator::isString($app_uid, '$app_uid');
         Validator::appUid($app_uid, '$app_uid');
@@ -2208,7 +2208,7 @@ class Cases
     /**
      * Get all Tasks of Case
      * Based in: processmaker/workflow/engine/classes/class.processMap.php
-     * Method:   processMap::load()
+     * Method: processMap::load()
      *
      * @param string $applicationUid Unique id of Case
      *

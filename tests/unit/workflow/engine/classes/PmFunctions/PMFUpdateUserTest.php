@@ -24,7 +24,7 @@ class PMFUpdateUserTest extends TestCase
     {
         // Create User
         global $RBAC;
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         DB::commit();
         $result = PMFUpdateUser($user->USR_UID, $user->USR_USERNAME, 'John A.');
         $this->assertEquals(0, $result);

@@ -19,7 +19,7 @@ class ListsTest extends TestCase
      */
     public function it_should_test_the_lists_construct()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $list = new Lists();
         $res = $list->getList('inbox', ['userId' => $user->USR_UID]);

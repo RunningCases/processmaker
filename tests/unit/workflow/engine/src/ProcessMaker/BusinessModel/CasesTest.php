@@ -28,12 +28,10 @@ class CasesTest extends TestCase
     /**
      * Set up method.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-        Delegation::truncate();
-        Documents::truncate();
-        Application::truncate();
+        $this->truncateNonInitialModels();
         User::where('USR_ID', '=', 1)
             ->where('USR_ID', '=', 2)
             ->delete();
@@ -55,9 +53,11 @@ class CasesTest extends TestCase
         $RBAC = RBAC::getSingleton();
         $RBAC->initRBAC();
 
-        $application = factory(Application::class)->create(['APP_INIT_USER' => G::generateUniqueID()]);
+        $application = Application::factory()->create(['APP_INIT_USER' => G::generateUniqueID()]);
         // Tried to delete case
         $case = new Cases();
+
+        $this->expectException('Exception');
         $case->deleteCase($application->APP_UID, $_SESSION['USER_LOGGED']);
     }
 
@@ -77,9 +77,11 @@ class CasesTest extends TestCase
         $RBAC = RBAC::getSingleton();
         $RBAC->initRBAC();
 
-        $application = factory(Application::class)->create(['APP_STATUS' => 'TO_DO']);
+        $application = Application::factory()->create(['APP_STATUS' => 'TO_DO']);
         // Tried to delete case
         $case = new Cases();
+
+        $this->expectException('Exception');
         $case->deleteCase($application->APP_UID, $_SESSION['USER_LOGGED']);
     }
 
@@ -99,9 +101,11 @@ class CasesTest extends TestCase
         $RBAC = RBAC::getSingleton();
         $RBAC->initRBAC();
 
-        $application = factory(Application::class)->create(['APP_INIT_USER' => G::generateUniqueID()]);
+        $application = Application::factory()->create(['APP_INIT_USER' => G::generateUniqueID()]);
         // Tried to delete case
         $case = new Cases();
+
+        $this->expectException('Exception');
         $case->deleteCase($application->APP_UID, $_SESSION['USER_LOGGED']);
     }
 
@@ -114,8 +118,8 @@ class CasesTest extends TestCase
      */
     public function it_should_upload_files_related_case_note()
     {
-        $application = factory(Application::class)->create();
-        factory(Delegation::class)->states('foreign_keys')->create([
+        $application = Application::factory()->create();
+        Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID
         ]);
@@ -150,11 +154,11 @@ class CasesTest extends TestCase
      */
     public function it_should_test_upload_files_method()
     {
-        $user = factory(User::class)->create();
-        $application = factory(Application::class)->create([
+        $user = User::factory()->create();
+        $application = Application::factory()->create([
             'APP_CUR_USER' => $user->USR_UID
         ]);
-        $delegation = factory(Delegation::class)->create([
+        $delegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID
         ]);
         $varName = "/tmp/test.pdf";
@@ -189,11 +193,11 @@ class CasesTest extends TestCase
      */
     public function it_should_test_exception_in_upload_files_method()
     {
-        $user = factory(User::class)->create();
-        $application = factory(Application::class)->create([
+        $user = User::factory()->create();
+        $application = Application::factory()->create([
             'APP_CUR_USER' => $user->USR_UID
         ]);
-        factory(Delegation::class)->create([
+        Delegation::factory()->create([
             'APP_UID' => $application->APP_UID
         ]);
         $varName = "/tmp/test.pdf";
@@ -216,11 +220,11 @@ class CasesTest extends TestCase
      */
     public function it_should_test_the_exception_in_upload_files_method()
     {
-        $user = factory(User::class)->create();
-        $application = factory(Application::class)->create([
+        $user = User::factory()->create();
+        $application = Application::factory()->create([
             'APP_CUR_USER' => $user->USR_UID
         ]);
-        $delegation = factory(Delegation::class)->create([
+        $delegation = Delegation::factory()->create([
             'APP_UID' => $application->APP_UID
         ]);
         $varName = "/tmp/test.pdf";
@@ -250,22 +254,21 @@ class CasesTest extends TestCase
      */
     public function it_execute_trigger_from_cases_with_self_service_timeout_every_time()
     {
-        ListUnassigned::truncate();
         // Define the Execute Trigger = EVERY_TIME
-        $application = factory(Application::class)->states('foreign_keys')->create();
+        $application = Application::factory()->foreign_keys()->create();
         // Create a trigger
-        $trigger = factory(Triggers::class)->create([
+        $trigger = Triggers::factory()->create([
             'PRO_UID' => $application->PRO_UID,
             'TRI_WEBBOT' => 'echo(1);'
         ]);
         // Create a task with the configuration trigger execution
-        $task = factory(Task::class)->states('sef_service_timeout')->create([
+        $task = Task::factory()->sef_service_timeout()->create([
             'PRO_UID' => $application->PRO_UID,
             'TAS_SELFSERVICE_EXECUTION' => 'EVERY_TIME',
             'TAS_SELFSERVICE_TRIGGER_UID' => $trigger->TRI_UID
         ]);
         // Create a unassigned cases
-        factory(ListUnassigned::class)->create([
+        ListUnassigned::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'TAS_ID' => $task->TAS_ID,
             'APP_NUMBER' => $application->APP_NUMBER,
@@ -289,22 +292,21 @@ class CasesTest extends TestCase
      */
     public function it_execute_trigger_from_cases_with_self_service_timeout_once()
     {
-        ListUnassigned::truncate();
         // Define the Execute Trigger = ONCE
-        $application = factory(Application::class)->states('foreign_keys')->create();
+        $application = Application::factory()->foreign_keys()->create();
         // Create a trigger
-        $trigger = factory(Triggers::class)->create([
+        $trigger = Triggers::factory()->create([
             'PRO_UID' => $application->PRO_UID,
             'TRI_WEBBOT' => 'echo(1);'
         ]);
         // Create a task with the configuration trigger execution
-        $task = factory(Task::class)->states('sef_service_timeout')->create([
+        $task = Task::factory()->sef_service_timeout()->create([
             'PRO_UID' => $application->PRO_UID,
             'TAS_SELFSERVICE_EXECUTION' => 'ONCE',
             'TAS_SELFSERVICE_TRIGGER_UID' => $trigger->TRI_UID
         ]);
         // Create a unassigned cases
-        factory(ListUnassigned::class)->create([
+        ListUnassigned::factory()->create([
             'TAS_UID' => $task->TAS_UID,
             'TAS_ID' => $task->TAS_ID,
             'APP_NUMBER' => $application->APP_NUMBER,
@@ -329,20 +331,20 @@ class CasesTest extends TestCase
     public function it_should_test_get_dynaforms_by_application()
     {
         // Create a process
-        $process = factory(Process::class)->create();
+        $process = Process::factory()->create();
 
         // Create a task related to the process
-        $task1 = factory(Task::class)->create([
+        $task1 = Task::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
 
         // Created another task related to the process
-        $task2 = factory(Task::class)->create([
+        $task2 = Task::factory()->create([
             'PRO_UID' => $process->PRO_UID
         ]);
 
         // Created a step related to the first task
-        factory(Step::class)->create([
+        Step::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $task1->TAS_UID,
             'STEP_TYPE_OBJ' => 'DYNAFORM',
@@ -352,7 +354,7 @@ class CasesTest extends TestCase
 
         // Created a step related to the second task and with a specific DynaForm Uid
         $dynUid = G::generateUniqueID();
-        factory(Step::class)->create([
+        Step::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'TAS_UID' => $task2->TAS_UID,
             'STEP_TYPE_OBJ' => 'DYNAFORM',
@@ -361,7 +363,7 @@ class CasesTest extends TestCase
         ]);
 
         // Create an application related to the process in draft status
-        $application = factory(Application::class)->create([
+        $application = Application::factory()->create([
             'PRO_UID' => $process->PRO_UID,
             'APP_STATUS' => 'DRAFT'
         ]);
@@ -392,7 +394,7 @@ class CasesTest extends TestCase
     public function it_should_test_case_status_info()
     {
         // Get status info when the case is PAUSED
-        $table = factory(AppDelay::class)->states('paused_foreign_keys')->create();
+        $table = AppDelay::factory()->paused_foreign_keys()->create();
         $cases = new Cases();
         $result = $cases->getStatusInfo($table->APP_UID, $table->APP_DEL_INDEX, $table->APP_DELEGATION_USER);
         $this->assertNotEmpty($result);
@@ -401,7 +403,7 @@ class CasesTest extends TestCase
         $this->assertArrayHasKey('PRO_UID', $result);
         // Get status info when the case is UNASSIGNED
         // Get status info when the case is TO_DO
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $cases = new Cases();
         $result = $cases->getStatusInfo($table->APP_UID, $table->DEL_INDEX, $table->USR_UID);
         $this->assertNotEmpty($result);
@@ -409,8 +411,8 @@ class CasesTest extends TestCase
         $this->assertArrayHasKey('DEL_INDEX', $result);
         $this->assertArrayHasKey('PRO_UID', $result);
         // Get status info when the case is COMPLETED
-        $table = factory(Application::class)->states('completed')->create();
-        $table = factory(Delegation::class)->states('foreign_keys')->create([
+        $table = Application::factory()->completed()->create();
+        $table = Delegation::factory()->foreign_keys()->create([
             'APP_NUMBER' => $table->APP_NUMBER,
             'APP_UID' => $table->APP_UID,
         ]);

@@ -264,7 +264,9 @@ class Task
             }
 
             foreach ($arrayProperty as $k => $v) {
-                $arrayProperty[$k] = str_replace("@amp@", "&", $v);
+                if (!is_array($v)) {
+                    $arrayProperty[$k] = str_replace("@amp@", "&", $v);
+                }
             }
 
             if (isset($arrayProperty["TAS_SEND_LAST_EMAIL"])) {
