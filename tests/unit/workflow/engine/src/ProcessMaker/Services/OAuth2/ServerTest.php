@@ -17,7 +17,7 @@ class ServerTest extends TestCase
     /**
      * Setup method.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->server = $_SERVER;
@@ -29,7 +29,7 @@ class ServerTest extends TestCase
     /**
      * Teardown method.
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $_SERVER = $this->server;
@@ -43,7 +43,7 @@ class ServerTest extends TestCase
     public function it_should_test_post_token_with_valid_credentials()
     {
         $user = User::where('USR_ID', '=', 1)->first();
-        $oauthClients = factory(OauthClients::class)->create([
+        $oauthClients = OauthClients::factory()->create([
             "USR_UID" => $user->USR_UID
         ]);
 
@@ -81,7 +81,7 @@ class ServerTest extends TestCase
     public function it_should_test_post_token_with_return_handle_token()
     {
         $user = User::where('USR_ID', '=', 1)->first();
-        $oauthClients = factory(OauthClients::class)->create([
+        $oauthClients = OauthClients::factory()->create([
             "USR_UID" => $user->USR_UID
         ]);
 
@@ -117,7 +117,7 @@ class ServerTest extends TestCase
     public function it_should_test_post_token_with_empty_client_id()
     {
         $user = User::where('USR_ID', '=', 1)->first();
-        $oauthClients = factory(OauthClients::class)->create([
+        $oauthClients = OauthClients::factory()->create([
             "USR_UID" => $user->USR_UID
         ]);
 
@@ -202,7 +202,7 @@ class ServerTest extends TestCase
         file_put_contents($filename, $data);
 
         LicenseManager::truncate();
-        factory(LicenseManager::class)->create([
+        LicenseManager::factory()->create([
             "LICENSE_DATA" => $data,
             "LICENSE_PATH" => $filename,
             "LICENSE_WORKSPACE" => env('MAIN_SYS_SYS')
