@@ -140,15 +140,14 @@ class Capsule {
             }
         }
                 
-        @ini_set('track_errors', true);
         include $__template;
-        @ini_restore('track_errors');
         
         // restore the include path
         ini_set('include_path', $__old_inc_path);
         
-        if (!empty($php_errormsg)) {
-            throw new Exception("Unable to parse template " . $__template . ": " . $php_errormsg);
+        $lastError = error_get_last();
+        if (!empty($lastError['message'])) {
+            throw new Exception("Unable to parse template " . $__template . ": " . $lastError['message']);
         }
     }
     
