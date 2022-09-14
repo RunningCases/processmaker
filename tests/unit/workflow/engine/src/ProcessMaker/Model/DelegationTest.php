@@ -155,7 +155,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_thread_id_open()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = Delegation::factory()->foreign_keys()->create();
         $this->assertCount(1, $table->threadIdOpen()->get());
     }
 

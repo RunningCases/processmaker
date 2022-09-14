@@ -114,9 +114,10 @@ class WebEntryTest extends TestCase
         $webEntryFilename = 'My_Custom_Form';
 
         //assert true result
-        $webEntry = factory(WebEntry::class)->create([
+        $webEntry = WebEntry::factory()->create([
             'WE_DATA' => $webEntryFilename . $phpExtension,
-            'WE_HIDE_ACTIVE_SESSION_WARNING' => '0'
+            'WE_HIDE_ACTIVE_SESSION_WARNING' => '0',
+            'WE_AUTHENTICATION' => 'LOGIN_REQUIRED'
         ]);
 
         $weUid = $webEntry->WE_UID;
@@ -126,9 +127,10 @@ class WebEntryTest extends TestCase
         $this->assertEquals($result, true);
 
         //assert false result
-        $webEntry = factory(WebEntry::class)->create([
+        $webEntry = WebEntry::factory()->create([
             'WE_DATA' => $webEntryFilename . $phpExtension,
-            'WE_HIDE_ACTIVE_SESSION_WARNING' => '1'
+            'WE_HIDE_ACTIVE_SESSION_WARNING' => '1',
+            'WE_AUTHENTICATION' => 'LOGIN_REQUIRED'
         ]);
 
         $weUid = $webEntry->WE_UID;

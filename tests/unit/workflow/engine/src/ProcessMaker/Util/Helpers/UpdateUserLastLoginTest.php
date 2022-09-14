@@ -37,7 +37,7 @@ class UpdateUserLastLoginTest extends TestCase
         $userLog = ['USR_UID' => $user['USR_UID']];
 
         // Assert the expected exception
-        $this->expectExceptionMessage('Undefined array key "LOG_INIT_DATE"');
+        $this->expectException('Exception');
 
         // Call the updateUserLastLogin function
         updateUserLastLogin($userLog);
