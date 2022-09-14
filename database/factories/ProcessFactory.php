@@ -12,6 +12,7 @@ class ProcessFactory extends Factory
 
     public function definition(): array
     {
+        $category = \ProcessMaker\Model\ProcessCategory::factory()->create();
         return [
             'PRO_UID' => G::generateUniqueID(),
             'PRO_ID' => $this->faker->unique()->numberBetween(2000),
@@ -31,10 +32,8 @@ class ProcessFactory extends Factory
             'PRO_ITEE' => 1,
             'PRO_ACTION_DONE' => serialize([]),
             'PRO_SUBPROCESS' => 0,
-            'PRO_CATEGORY' => function () {
-                return \ProcessMaker\Model\ProcessCategory::factory()->create()->CATEGORY_UID;
-            },
-            'CATEGORY_ID' => 0
+            'PRO_CATEGORY' => $category->CATEGORY_UID,
+            'CATEGORY_ID' => $category->CATEGORY_ID
         ];
     }
 

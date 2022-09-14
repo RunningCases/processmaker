@@ -368,6 +368,6 @@ class GmailOAuthTest extends TestCase
         $res = $gmailOauth->getMessageBody();
 
         // Assert the result contains the server protocol and host
-        $this->assertRegExp("#" . System::getServerProtocol() . System::getServerHost() . "#", $res);
+        $this->assertMatchesRegularExpression("#" . System::getServerProtocol() . System::getServerHost() . "#", $res);
     }
 }
