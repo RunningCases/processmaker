@@ -368,7 +368,7 @@ class EmailServerTest extends TestCase
         $emailServer = new EmailServer();
 
         // This expects an exception message
-        $this->expectExceptionMessage('Undefined array key "MESS_ENGINE"');
+        $this->expectException('ErrorException');
 
         // Call the sendTestMail method
         $emailServer->sendTestMail($data);

@@ -678,7 +678,7 @@ class MetricsTest extends TestCase
             'DEL_INDEX' => 2,
         ]);
         $metrics = new Metrics();
-        $this->expectExceptionMessage('Undefined variable $list');
+        $this->expectException('Luracast\Restler\RestException');
         $metrics->getProcessTotalCases(12, 123, "asda");
     }
 
@@ -695,7 +695,7 @@ class MetricsTest extends TestCase
             'DEL_INDEX' => 2,
         ]);
         $metrics = new Metrics();
-        $this->expectExceptionMessage('Undefined variable $list');
+        $this->expectException('Luracast\Restler\RestException');
         $metrics->getTotalCasesByRange(12, 123, "asda");
     }
 
@@ -712,7 +712,7 @@ class MetricsTest extends TestCase
             'DEL_INDEX' => 2,
         ]);
         $metrics = new Metrics();
-        $this->expectExceptionMessage('Undefined variable $list');
+        $this->expectException('Luracast\Restler\RestException');
         $metrics->getCasesRiskByProcess(12, 123, "asda");
     }
 }

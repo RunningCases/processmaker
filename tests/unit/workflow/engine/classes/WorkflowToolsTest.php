@@ -39,11 +39,11 @@ class WorkflowToolsTest extends TestCase
         ob_start();
         $this->workspaceTools->addAsyncOptionToSchedulerCommands(false);
         $string = ob_get_clean();
-        $this->assertRegExp("/This was previously updated/", $string);
+        $this->assertMatchesRegularExpression("/This was previously updated/", $string);
 
         ob_start();
         $this->workspaceTools->addAsyncOptionToSchedulerCommands(true);
         $string = ob_get_clean();
-        $this->assertRegExp("/Adding \+async option/", $string);
+        $this->assertMatchesRegularExpression("/Adding \+async option/", $string);
     }
 }
