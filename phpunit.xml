@@ -25,22 +25,6 @@
         </testsuite>
     </testsuites>
 
-    <filter>
-        <whitelist addUncoveredFilesFromWhitelist="true" processUncoveredFilesFromWhitelist="false">
-            <directory suffix=".php">./gulliver</directory>
-            <directory suffix=".php">./workflow/engine/classes</directory>
-            <directory suffix=".php">./workflow/engine/src</directory>
-            <directory suffix=".php">./workflow/engine/methods/emailServer/</directory>
-            <directory suffix=".php">./workflow/engine/controllers</directory>
-        </whitelist>
-        <exclude>
-            <directory>./workflow/engine/classes/model/map</directory>
-            <directory>./workflow/engine/classes/model/om</directory>
-            <directory>./workflow/engine/src/Tests</directory>
-            <directory>./workflow/public_html</directory>
-        </exclude>
-    </filter>
-
     <php>
         <!--Main environment-->
         <env name="MAIN_SYS_SYS" value="workflow" />
