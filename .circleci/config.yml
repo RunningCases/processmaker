@@ -28,7 +28,9 @@ jobs:
           name: Run Test Units
           command: |
             mkdir -p coverage
-            XDEBUG_MODE=coverage vendor/phpunit/phpunit/phpunit --stop-on-error --testdox-html coverage/result.html --coverage-html coverage --verbose tests/unit/
+            vendor/phpunit/phpunit/phpunit --stop-on-error --testdox-html coverage/result.html --coverage-html coverage --verbose tests/unit/
+          environment:
+            XDEBUG_MODE: coverage
       - store_artifacts:
           path: coverage
           destination: coverage
