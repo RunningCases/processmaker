@@ -50,7 +50,7 @@ class TriggerLibrary
      *
      * @return self::$instance;
      */
-    public function &getSingleton()
+    public static function &getSingleton()
     {
         if (self::$instance == null) {
             self::$instance = new TriggerLibrary();
