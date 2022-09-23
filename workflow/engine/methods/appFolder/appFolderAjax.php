@@ -203,6 +203,8 @@ function expandNode()
         $limit = 1000000;
     }
 
+    $start = $_POST['start'] ?? 0;
+
     $totalItems = 0;
     $totalFolders = 0;
     $totalDocuments = 0;
