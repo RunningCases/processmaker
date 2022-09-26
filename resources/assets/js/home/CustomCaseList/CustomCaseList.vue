@@ -43,92 +43,95 @@
             :key="random"
             name="todo"
         >
-            <div slot="detail" slot-scope="props">
-                <div
-                    class="btn-default"
-                    :class="props.row.INIT_DATE ? '' : 'pm-main-text-color '"
-                    @click="openCaseDetail(props.row)"
+            <div
+                v-for="col in columns"
+                :slot="col"
+                slot-scope="props"
+                :key="col.id"
+            >
+                <div 
+                    v-if="col === 'detail'"
                 >
-                    <i class="fas fa-info-circle"></i>
+                    <div
+                        class="btn-default"
+                        :class="props.row.INIT_DATE ? '' : 'pm-main-text-color '"
+                        @click="openCaseDetail(props.row)"
+                    >
+                        <i class="fas fa-info-circle"></i>
+                    </div>
                 </div>
-            </div>
-
-            <div
-                :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
-                slot="case_number"
-                slot-scope="props"
-            >
-                {{ props.row.CASE_NUMBER }}
-            </div>
-            <div
-                :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
-                slot="case_title"
-                slot-scope="props"
-            >
-                {{ props.row.THREAD_TITLE }}
-            </div>
-            <div
-                :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
-                slot="process_category"
-                slot-scope="props"
-            >
-                {{ props.row.PROCESS_CATEGORY }}
-            </div>
-            <div
-                :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
-                slot="process_name"
-                slot-scope="props"
-            >
-                {{ props.row.PROCESS_NAME }}
-            </div>
-            <div
-                :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
-                slot="task"
-                slot-scope="props"
-            >
-                <TaskCell :data="props.row.TASK" />
-            </div>
-            <div
-                :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
-                slot="send_by"
-                slot-scope="props"
-            >
-                <CurrentUserCell :data="props.row.USER_DATA" />
-            </div>
-            <div
-                :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
-                slot="current_user"
-                slot-scope="props"
-            >
-                {{ props.row.USERNAME_DISPLAY_FORMAT }}
-            </div>
-            <div
-                :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
-                slot="due_date"
-                slot-scope="props"
-            >
-                {{ props.row.DUE_DATE }}
-            </div>
-            <div
-                :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
-                slot="delegation_date"
-                slot-scope="props"
-            >
-                {{ props.row.DELEGATION_DATE }}
-            </div>
-            <div
-                :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
-                slot="priority"
-                slot-scope="props"
-            >
-                {{ props.row.PRIORITY }}
-            </div>
-            <div
-                :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
-                slot="actions"
-                slot-scope="props"
-            >
-                <ellipsis :data="updateDataEllipsis(props.row)"> </ellipsis>
+                <div
+                    v-if="col === 'case_number'"
+                    :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
+                >
+                    {{ props.row.CASE_NUMBER }}
+                </div>
+                <div
+                    v-if="col === 'case_title'"
+                    :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
+                >
+                    {{ props.row.THREAD_TITLE }}
+                </div>
+                <div
+                    v-if="col === 'process_category'"
+                    :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
+                >
+                    {{ props.row.PROCESS_CATEGORY }}
+                </div>
+                <div
+                    v-if="col === 'process_name'"
+                    :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
+                >
+                    {{ props.row.PROCESS_NAME }}
+                </div>
+                <div
+                    v-if="col === 'task'"
+                    :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
+                >
+                    <TaskCell :data="props.row.TASK" />
+                </div>
+                <div
+                    v-if="col === 'send_by'"
+                    :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
+                >
+                    <CurrentUserCell :data="props.row.USER_DATA" />
+                </div>
+                <div
+                    v-if="col === 'current_user'"
+                    :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
+                >
+                    {{ props.row.USERNAME_DISPLAY_FORMAT }}
+                </div>
+                <div
+                    v-if="col === 'due_date'"
+                    :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
+                >
+                    {{ props.row.DUE_DATE }}
+                </div>
+                <div
+                    v-if="col === 'delegation_date'"
+                    :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
+                >
+                    {{ props.row.DELEGATION_DATE }}
+                </div>
+                <div
+                    v-if="col === 'priority'"
+                    :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
+                >
+                    {{ props.row.PRIORITY }}
+                </div>
+                <div
+                    :slot="col"
+                    :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
+                >
+                    {{ props.row[col] }}
+                </div>
+                <div
+                    v-if="col === 'actions'"
+                    :class="props.row.INIT_DATE ? '' : 'font-weight-bold'"
+                >
+                    <ellipsis :data="updateDataEllipsis(props.row)"> </ellipsis>
+                </div>
             </div>
         </v-server-table>
         <VueCardView
@@ -686,7 +689,7 @@ export default {
                     id: this.data.customListId
                 });
             }
-        }
+        },
     },
     computed: {
         /**
@@ -695,10 +698,7 @@ export default {
         ProcessMaker() {
             return window.ProcessMaker;
         },
-       
     },
-    updated() {},
-    beforeCreate() {},
     methods: {
         /**
          * Get custom headigns for dynamic lists
@@ -857,6 +857,7 @@ export default {
                         });
                         that.filterItems = newItems;
                         dt = that.formatDataResponse(response.data.data);
+                        
                         that.cardColumns = columns;
                         if (that.isFistTime) {
                             that.filters = that.data.settings && that.data.settings.filters ? that.data.settings.filters : {};

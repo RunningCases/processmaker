@@ -1104,7 +1104,6 @@ class Phing {
      * @return void
      */
     private static function setIni() {
-        error_reporting(E_ALL);
         set_time_limit(0);
         ini_set('short_open_tag', 'off');
         ini_set('default_charset', 'iso-8859-1');

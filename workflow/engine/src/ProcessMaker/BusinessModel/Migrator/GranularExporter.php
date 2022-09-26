@@ -2,6 +2,7 @@
 
 namespace ProcessMaker\BusinessModel\Migrator;
 
+use Processes;
 use ProcessMaker\Core\System;
 use ProcessMaker\Project;
 use ProcessMaker\Util\Common;
@@ -85,8 +86,9 @@ class GranularExporter
                         'PROCESS'       => [],
                         'PROJECT'       => array(\BpmnProjectPeer::retrieveByPK($this->prjuid)->toArray())
         );
+        $processes = new Processes();
         $workflowDefinition = array(
-                        'process'                => array(\Processes::getProcessRow($this->prjuid, false)),
+                        'process'                => array($processes->getProcessRow($this->prjuid, false)),
                         'tasks'                  => [],
                         'routes'                 => [],
                         'lanes'                  => [],
