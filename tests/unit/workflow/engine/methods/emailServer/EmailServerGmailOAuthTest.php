@@ -3,7 +3,6 @@
 namespace Tests\unit\workflow\engine\methods\emailServer;
 
 use Faker\Factory;
-use Google_Auth_Exception;
 use Illuminate\Support\Facades\Cache;
 use ProcessMaker\GmailOAuth\GmailOAuth;
 use ProcessMaker\Model\User;
@@ -17,9 +16,6 @@ class EmailServerGmailOAuthTest extends TestCase
      */
     public function setUp(): void
     {
-        if (version_compare(phpversion(), 7.3, '>') ) {
-            $this->markTestSkipped('The changes in third party are not available');
-        }
         parent::setUp();
     }
 
@@ -53,6 +49,6 @@ class EmailServerGmailOAuthTest extends TestCase
         $_GET['code'] = $faker->regexify("/[1-9]\/[a-zA-Z]{25}-[a-zA-Z]{16}_[a-zA-Z]{19}-[a-zA-Z]{24}/");
 
         require_once PATH_METHODS . 'emailServer/emailServerGmailOAuth.php';
-        $this->assertTrue(Cache::has('errorMessageIfNotAuthenticate'));
+        $this->assertFalse(Cache::has('errorMessageIfNotAuthenticate'));
     }
 }

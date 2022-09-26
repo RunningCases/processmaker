@@ -39,7 +39,7 @@
         "colosa/michelangelofe": "release/3.8.0-dev",
         "colosa/pmdynaform": "release/3.8.0-dev",
         "colosa/taskscheduler": "release/1.0.3-dev",
-        "google/apiclient": "1.1.6",
+        "google/apiclient": "2.9.0",
         "dapphp/securimage": "^3.6",
         "psr/log": "1.0.1",
         "monolog/monolog": "^2.1",
