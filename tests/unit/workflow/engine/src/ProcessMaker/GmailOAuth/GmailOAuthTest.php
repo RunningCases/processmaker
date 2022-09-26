@@ -17,7 +17,6 @@ use BadMethodCallException;
 
 class GmailOAuthTest extends TestCase
 {
-
     use DatabaseTransactions;
     private $faker;
 
@@ -26,9 +25,6 @@ class GmailOAuthTest extends TestCase
      */
     public function setUp(): void
     {
-        if (version_compare(phpversion(), 7.3, '>') ) {
-            $this->markTestSkipped('The changes in third party are not available');
-        }
         parent::setUp();
         $this->faker = Factory::create();
 
