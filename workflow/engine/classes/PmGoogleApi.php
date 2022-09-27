@@ -4,9 +4,6 @@
  * class.pmGoogleApi.php
  *
  */
-
-require_once PATH_TRUNK . 'vendor' . PATH_SEP . 'google' . PATH_SEP . 'apiclient' . PATH_SEP . 'src' . PATH_SEP . 'Google' . PATH_SEP . 'autoload.php';
-
 class PmGoogleApi
 {
     const DRIVE = 'https://www.googleapis.com/auth/drive';
