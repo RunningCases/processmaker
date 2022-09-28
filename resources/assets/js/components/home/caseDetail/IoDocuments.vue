@@ -42,6 +42,7 @@
               <div class="flex">
                 <a
                   @click="item.onClick"
+                  target="_blank"
                   :href="hrefOutput(item)"
                   class="v-item-except text-sm h-1x"
                 >
