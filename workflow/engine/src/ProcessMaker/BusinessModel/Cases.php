@@ -37,6 +37,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use InputDocument;
 use InvalidIndexSearchTextException;
+use Luracast\Restler\RestException;
 use PmDynaform;
 use PmTable;
 use ProcessMaker\BusinessModel\Cases as BmCases;
@@ -57,6 +58,7 @@ use ProcessMaker\Model\Triggers;
 use ProcessMaker\Model\ProcessUser;
 use ProcessMaker\Model\User;
 use ProcessMaker\Plugins\PluginRegistry;
+use ProcessMaker\Services\Api;
 use ProcessMaker\Services\OAuth2\Server;
 use ProcessMaker\Util\DateTime as UtilDateTime;
 use ProcessMaker\Validation\ExceptionRestApi;
@@ -2640,7 +2642,7 @@ class Cases
      * @param string $typeView type of view
      *
      * @return array Return an array with process list that the user can start.
-     * @throws Exception
+     * @throws RestException
      */
     public function getCasesListStarCase($usrUid, $typeView)
     {
