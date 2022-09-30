@@ -481,13 +481,22 @@ class Ajax
     public function changeLogHistory()
     {
         global $G_PUBLISH;
-
-        $idHistory = sprintf(
-            '%s_%s_%s',
-            $_SESSION['PROCESS'],
-            $_SESSION['APPLICATION'],
-            $_SESSION['TASK']
-        );
+        
+        if (isset($_REQUEST['PRO_UID']) && isset($_REQUEST['APP_UID']) && isset($_REQUEST['TAS_UID'])) {
+            $idHistory = sprintf(
+                '%s_%s_%s',
+                $_REQUEST['PRO_UID'],
+                $_REQUEST['APP_UID'],
+                $_REQUEST['TAS_UID']
+            );
+        } else {
+            $idHistory = sprintf(
+                '%s_%s_%s',
+                $_SESSION['PROCESS'],
+                $_SESSION['APPLICATION'],
+                $_SESSION['TASK']
+            );
+        }
 
         $oHeadPublisher = headPublisher::getSingleton();
         $conf = new Configurations();

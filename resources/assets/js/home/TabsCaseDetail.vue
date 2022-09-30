@@ -18,7 +18,7 @@
         <CaseHistory :data="dataCase"> </CaseHistory>
       </tab>
       <tab :name="$t('ID_DYNAFORM_HISTORY')">
-        <ChangeLog :data="dataCase"> </ChangeLog>
+        <ChangeLog :caseData="dataCase"> </ChangeLog>
       </tab>
     </tabs>
   </div>

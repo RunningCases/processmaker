@@ -15,7 +15,7 @@
 export default {
   name: "ChangeLog",
   props: {
-    data: Object,
+    caseData: Object,
   },
   data() {
     return {
@@ -26,11 +26,17 @@ export default {
   },
   computed: {
     path() {
-      let url =
-        window.config.SYS_SERVER_AJAX +
-        window.config.SYS_URI +
-        `cases/ajaxListener?action=changeLogHistory`;
-      return url;
+      if (this.caseData) {
+        let url =
+          window.config.SYS_SERVER_AJAX +
+          window.config.SYS_URI +
+          `cases/ajaxListener?action=changeLogHistory` +
+          `&APP_UID=${this.caseData.APP_UID}` +
+          `&PRO_UID=${this.caseData.PRO_UID}` +
+          `&TAS_UID=${this.caseData.TAS_UID}`;
+        return url;
+      }
+      return '';
     },
   },
   mounted() {},
