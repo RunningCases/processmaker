@@ -1517,12 +1517,13 @@ class System
 
             //Test Create Database
             $dbNameTest = 'PROCESSMAKERTESTDC';
-            $result = DB::connection($connection)->statement("CREATE DATABASE $dbNameTest");
+            $result = DB::connection($connection)->statement("CREATE DATABASE IF NOT EXISTS $dbNameTest");
             if ($result) {
                 //Test set permissions user
                 $usrTest = self::generateUserName(strlen($userName));
                 $passTest = '!Sample123_';
-                $result = DB::connection($connection)->statement("GRANT ALL PRIVILEGES ON `$dbNameTest`.* TO $usrTest@'%%' IDENTIFIED BY '$passTest' WITH GRANT OPTION");
+                $result = DB::connection($connection)->statement("CREATE USER `$usrTest`@`%%` IDENTIFIED BY '$passTest'");
+                $result = DB::connection($connection)->statement("GRANT ALL PRIVILEGES ON `$dbNameTest`.* TO `$usrTest`@`%%`");
 
                 if ($result) {
                     //Test Create user
