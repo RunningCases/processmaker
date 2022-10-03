@@ -1132,7 +1132,7 @@ if (!defined('EXECUTE_BY_CRON')) {
         header('Pragma: ');
     }
 
-    ob_end_flush();
+    @ob_end_flush();
     if (DEBUG_TIME_LOG) {
         bootstrap::logTimeByPage(); //log this page
     }
