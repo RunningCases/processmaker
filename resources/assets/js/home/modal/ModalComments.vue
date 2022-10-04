@@ -93,11 +93,10 @@ export default {
             })
           )
           .then((response) => {
-            if (response.status === 200) {
+            if (response.status === 200 || response.status === 201) {
               that.attachDocuments = false;
               that.dataAttachedDocuments.items = [];
               that.getCasesNotes();
-              this.$refs["modal-comments"].hide();
               this.$emit("postNotes"); 
             }
           })
