@@ -396,11 +396,24 @@ class AdditionalTables extends BaseAdditionalTables
         }
     }
 
-    public function getAllData($sUID, $start = null, $limit = null, $keyOrderUppercase = true, $filter = '', $appUid = false, $search = '')
+    /**
+     * Get all data
+     *
+     * @param string $uid
+     * @param int $start
+     * @param int $limit
+     * @param bool $keyOrderUppercase
+     * @param string $filter
+     * @param bool $appUid
+     * @param string $search
+     *
+     * @return array
+     */
+    public static function getAllData($uid, $start = null, $limit = null, $keyOrderUppercase = true, $filter = '', $appUid = false, $search = '')
     {
         $conf = Bootstrap::getSystemConfiguration();
         $addTab = new AdditionalTables();
-        $aData = $addTab->load($sUID, true);
+        $aData = $addTab->load($uid, true);
         if (!isset($_SESSION['PROCESS'])) {
             $_SESSION["PROCESS"] = $aData['PRO_UID'];
         }
