@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Cache;
+use PHPMailer\PHPMailer\SMTP;
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Validation\ValidationUploadedFiles;
@@ -430,7 +431,7 @@ class adminProxy extends HttpProxyController
         $SMTPSecure  = $_POST['UseSecureCon'];
 
         $Server = new Net($server);
-        $smtp = new SMTP;
+        $smtp = new SMTP();
 
         $timeout = 10;
         $hostinfo = array();
