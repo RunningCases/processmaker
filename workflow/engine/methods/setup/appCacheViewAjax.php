@@ -212,7 +212,6 @@ switch ($request) {
         echo $message;
         break;
     case 'captcha':
-        require_once PATH_TRUNK . 'vendor/dapphp/securimage/securimage.php';
         $img = new Securimage();
         $img->show();
         break;
