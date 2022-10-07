@@ -262,6 +262,30 @@ try {
         if (!defined('DB_PASS')) {
             define('DB_PASS', $DB_PASS);
         }
+        if (!defined('DB_RBAC_HOST')) {
+            define('DB_RBAC_HOST', $DB_RBAC_HOST);
+        }
+        if (!defined('DB_RBAC_NAME')) {
+            define('DB_RBAC_NAME', $DB_RBAC_NAME);
+        }
+        if (!defined('DB_RBAC_USER')) {
+            define('DB_RBAC_USER', $DB_RBAC_USER);
+        }
+        if (!defined('DB_RBAC_PASS')) {
+            define('DB_RBAC_PASS', $DB_RBAC_PASS);
+        }
+        if (!defined('DB_REPORT_HOST')) {
+            define('DB_REPORT_HOST', $DB_REPORT_HOST);
+        }
+        if (!defined('DB_REPORT_NAME')) {
+            define('DB_REPORT_NAME', $DB_REPORT_NAME);
+        }
+        if (!defined('DB_REPORT_USER')) {
+            define('DB_REPORT_USER', $DB_REPORT_USER);
+        }
+        if (!defined('DB_REPORT_PASS')) {
+            define('DB_REPORT_PASS', $DB_REPORT_PASS);
+        }
         if (!defined('SYS_SKIN')) {
             define('SYS_SKIN', $arraySystemConfiguration['default_skin']);
         }
