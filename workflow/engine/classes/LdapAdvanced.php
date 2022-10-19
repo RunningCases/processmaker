@@ -511,6 +511,10 @@ class LdapAdvanced
     {
         $pass = explode("_", $aAuthSource["AUTH_SOURCE_PASSWORD"]);
 
+        // Removing sensitive data
+        $loggableAuthSource = $aAuthSource;
+        unset($loggableAuthSource["AUTH_SOURCE_PASSWORD"]);
+
         foreach ($pass as $index => $value) {
             if ($value == "2NnV3ujj3w") {
                 $aAuthSource["AUTH_SOURCE_PASSWORD"] = G::decrypt($pass[0], $aAuthSource["AUTH_SOURCE_SERVER_NAME"]);
@@ -518,18 +522,18 @@ class LdapAdvanced
         }
 
         $ldapcnn = ldap_connect($aAuthSource['AUTH_SOURCE_SERVER_NAME'], $aAuthSource['AUTH_SOURCE_PORT']);
-        $this->stdLog($ldapcnn, "ldap_connect", $aAuthSource);
+        $this->stdLog($ldapcnn, "ldap_connect", $loggableAuthSource);
 
         $ldapServer = $aAuthSource["AUTH_SOURCE_SERVER_NAME"] . ":" . $aAuthSource["AUTH_SOURCE_PORT"];
 
         ldap_set_option($ldapcnn, LDAP_OPT_PROTOCOL_VERSION, 3);
-        $this->stdLog($ldapcnn, "ldap_set_option", $aAuthSource);
+        $this->stdLog($ldapcnn, "ldap_set_option", $loggableAuthSource);
         ldap_set_option($ldapcnn, LDAP_OPT_REFERRALS, 0);
-        $this->stdLog($ldapcnn, "ldap_set_option", $aAuthSource);
+        $this->stdLog($ldapcnn, "ldap_set_option", $loggableAuthSource);
 
         if (isset($aAuthSource["AUTH_SOURCE_ENABLED_TLS"]) && $aAuthSource["AUTH_SOURCE_ENABLED_TLS"]) {
             $resultLDAPStartTLS = @ldap_start_tls($ldapcnn);
-            $this->stdLog($ldapcnn, "ldap_start_tls", $aAuthSource);
+            $this->stdLog($ldapcnn, "ldap_start_tls", $loggableAuthSource);
             $ldapServer = "TLS " . $ldapServer;
         }
 
@@ -538,9 +542,9 @@ class LdapAdvanced
             $this->log($ldapcnn, "bind $ldapServer like anonymous user");
         } else {
             $bBind = @ldap_bind($ldapcnn, $aAuthSource['AUTH_SOURCE_SEARCH_USER'], $aAuthSource['AUTH_SOURCE_PASSWORD']);
-            $this->log($ldapcnn, "bind $ldapServer with user " . $aAuthSource["AUTH_SOURCE_SEARCH_USER"]);
+            $this->log($ldapcnn, "bind $ldapServer with user " . $loggableAuthSource["AUTH_SOURCE_SEARCH_USER"]);
         }
-        $this->stdLog($ldapcnn, "ldap_bind", $aAuthSource);
+        $this->stdLog($ldapcnn, "ldap_bind", $loggableAuthSource);
         $this->getDiagnosticMessage($ldapcnn);
         if (!$bBind) {
             throw new Exception("Unable to bind to server: $ldapServer . " . "LDAP-Errno: " . ldap_errno($ldapcnn) . " : " . ldap_error($ldapcnn) . " \n");
