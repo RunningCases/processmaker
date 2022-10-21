@@ -449,18 +449,23 @@ class adminProxy extends HttpProxyController
                 $this->msg = $this->result ? '' : $Server->error;
                 break;
             case 3:   //try to connect to host
-                if (preg_match('/^(.+):([0-9]+)$/', $srv, $hostinfo)) {
-                    $server = $hostinfo[1];
-                    $port = $hostinfo[2];
-                } else {
-                    $host = $srv;
+                try {
+                    if (preg_match('/^(.+):([0-9]+)$/', $srv, $hostinfo)) {
+                        $server = $hostinfo[1];
+                        $port = $hostinfo[2];
+                    } else {
+                        $server = $srv;
+                    }
+                    
+                    $tls = (strtoupper($SMTPSecure) === 'TLS');
+                    $ssl = (strtoupper($SMTPSecure) === 'SSL');
+
+                    $this->success = $smtp->Connect(($ssl ? 'ssl://':'') . $server, $port, $timeout);
+                    $this->msg = $this->result ? '' : $Server->error;
+                } catch (Exception $e) {
+                    $this->success = false;
+                    $this->msg = $e->getMessage();
                 }
-
-                $tls = (strtoupper($SMTPSecure) == 'tls');
-                $ssl = (strtoupper($SMTPSecure) == 'ssl');
-
-                $this->success = $smtp->Connect(($ssl ? 'ssl://':'').$server, $port, $timeout);
-                $this->msg = $this->result ? '' : $Server->error;
                 break;
             case 4:  //try login to host
                 if ($auth_required == 'true') {
