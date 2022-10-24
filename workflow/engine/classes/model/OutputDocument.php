@@ -799,15 +799,13 @@ class OutputDocument extends BaseOutputDocument
         // Check and prepare the fonts path used by TCPDF library
         self::checkTcPdfFontsPath();
 
-        // Including the basic configuration for the TCPDF library
-        require_once PATH_TRUNK . "vendor" . PATH_SEP . "tecnickcom" . PATH_SEP . "tcpdf" . PATH_SEP . "config" . PATH_SEP . "tcpdf_config.php";
-
         // Initialize variables
         $nrt = ["\n", "\r", "\t"];
         $nrtHtml = ["(n /)", "(r /)", "(t /)"];
         $outputType = 2;
-        $orientation = ($landscape == false) ? PDF_PAGE_ORIENTATION : 'L';
-        $media = (isset($properties['media'])) ? $properties['media'] : PDF_PAGE_FORMAT;
+        // Page orientation (P=portrait, L=landscape).
+        $orientation = ($landscape == false) ? 'P' : 'L';
+        $media = (isset($properties['media'])) ? $properties['media'] : 'A4';
         $lang = (defined('SYS_LANG')) ? SYS_LANG : 'en';
         $strContentAux = str_replace($nrt, $nrtHtml, $content);
         $content = null;
