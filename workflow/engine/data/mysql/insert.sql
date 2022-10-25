@@ -57403,6 +57403,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CASEDEMO','en','Case Demo','2014-01-15') ,
 ( 'LABEL','ID_CASELIST_CAN_NOT_BE_IMPORTED_THE_PMTABLE_NOT_EXIST','en','Custom Case List {0} can not be imported because the PM Table does not exist in this Workspace.','2021-08-20') ,
 ( 'LABEL','ID_CASE_DELETE_SUCCESFULLY','en','The Case was deleted successfully.','2020-01-08') ,
+( 'LABEL','ID_CASE_DETAILS','en','Case Details','2022-10-25') ,
 ( 'LABEL','ID_CASE_UID','en','Case Uid','2021-04-04') ,
 ( 'LABEL','ID_CASE_THREAD_TITLE','en','Case Thread Title','2021-08-27') ,
 ( 'LABEL','ID_CASE_THREAD_TITLE_NAME','en','Case Thread Title Name','2021-09-29') ,

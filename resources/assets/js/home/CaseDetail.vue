@@ -10,12 +10,20 @@
       >
         {{ dataAlert.message }}
       </b-alert>
-      <p class="">
+      <p class="d-flex">
+        <div class="mr-2 d-flex justify-content-between">
+          <div class="d-flex">
+            <h5 class="v-search-title">{{ $t("ID_CASE_DETAILS") }}</h5>
+            <div class="pm-in-text-icon">
+              <i class="fas fa-info-circle"></i>
+            </div>
+          </div>
+          <button-fleft :data="newCase"></button-fleft>
+        </div>
         <b-icon icon="arrow-left"></b-icon>
         <button type="button" class="btn btn-link" @click="$emit('onLastPage')">
           {{ $t("ID_BACK") }}
         </button>
-        <button-fleft :data="newCase"></button-fleft>
       </p>
       <modal-new-request ref="newRequest"></modal-new-request>
     </div>
@@ -661,5 +669,10 @@ export default {
   padding-bottom: 20px;
   padding-left: 50px;
   padding-right: 20px;
+}
+.pm-in-text-icon {
+  font-size: 1.4rem;
+  padding-right: 10px;
+  line-height: 40px;
 }
 </style>

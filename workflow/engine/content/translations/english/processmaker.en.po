@@ -4020,6 +4020,12 @@ msgid "Case Description"
 msgstr "Case Description"
 
 # TRANSLATION
+# LABEL/ID_CASE_DETAILS
+#: LABEL/ID_CASE_DETAILS
+msgid "Case Details"
+msgstr "Case Details"
+
+# TRANSLATION
 # LABEL/ID_CASE_DOES_NOT_EXIST
 #: LABEL/ID_CASE_DOES_NOT_EXIST
 msgid "Case {0} does not exist"
