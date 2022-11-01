@@ -1847,25 +1847,25 @@ class Delegation extends Model
      * Return the open thread related to the task
      *
      * @param int $appNumber, Case number
-     * @param string $tasUid, The task uid
+     * @param int $delIndex
      *
      * @return array
      */
-    public static function getOpenThreads(int $appNumber, string $tasUid)
+    public static function getOpenThread(int $appNumber, int $delIndex)
     {
         $query = Delegation::query()->select();
         $query->where('DEL_THREAD_STATUS', 'OPEN');
         $query->where('DEL_FINISH_DATE', null);
         $query->where('APP_NUMBER', $appNumber);
-        $query->where('TAS_UID', $tasUid);
+        $query->where('DEL_INDEX', $delIndex);
         $results = $query->get();
 
-        $arrayOpenThreads = [];
-        $results->each(function ($item, $key) use (&$arrayOpenThreads) {
-            $arrayOpenThreads = $item->toArray();
+        $arrayOpenThread = [];
+        $results->each(function ($item, $key) use (&$arrayOpenThread) {
+            $arrayOpenThread = $item->toArray();
         });
 
-        return $arrayOpenThreads;
+        return $arrayOpenThread;
     }
 
     /**

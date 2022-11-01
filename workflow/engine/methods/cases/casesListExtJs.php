@@ -374,6 +374,7 @@ function getReassignList()
     $caseReaderFields[] = ['name' => 'APP_NUMBER'];
     $caseReaderFields[] = ['name' => 'APP_TITLE'];
     $caseReaderFields[] = ['name' => 'APP_UID'];
+    $caseReaderFields[] = ['name' => 'DEL_INDEX'];
     $caseReaderFields[] = ['name' => 'USR_UID'];
     $caseReaderFields[] = ['name' => 'APP_TAS_TITLE'];
     $caseReaderFields[] = ['name' => 'APP_PRO_TITLE'];
