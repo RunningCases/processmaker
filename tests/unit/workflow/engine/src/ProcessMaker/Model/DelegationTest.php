@@ -3332,13 +3332,13 @@ class DelegationTest extends TestCase
         //Create task
         $task = Task::factory()->create();
         //Create a delegation
-        Delegation::factory()->create([
+        $delegation = Delegation::factory()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_FINISH_DATE' => null,
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_UID' => $task->TAS_UID,
         ]);
-        $result = Delegation::getOpenThreads($application->APP_NUMBER, $task->TAS_UID);
+        $result = Delegation::getOpenThread($application->APP_NUMBER, $delegation->DEL_INDEX);
         $this->assertEquals($application->APP_NUMBER, $result['APP_NUMBER']);
     }
 
@@ -3357,12 +3357,12 @@ class DelegationTest extends TestCase
         //Create task
         $task = Task::factory()->create();
         //Create a delegation
-        Delegation::factory()->create([
+        $delegation = Delegation::factory()->create([
             'DEL_THREAD_STATUS' => 'CLOSED',
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_UID' => $task->TAS_UID,
         ]);
-        $result = Delegation::getOpenThreads($application->APP_NUMBER, $task->TAS_UID);
+        $result = Delegation::getOpenThread($application->APP_NUMBER, $delegation->DEL_INDEX);
         $this->assertEmpty($result);
     }
 
@@ -3383,12 +3383,12 @@ class DelegationTest extends TestCase
         //Create task
         $task = Task::factory()->create();
         //Create a delegation
-        Delegation::factory()->create([
+        $delegation = Delegation::factory()->create([
             'DEL_THREAD_STATUS' => 'CLOSED',
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_UID' => $task->TAS_UID,
         ]);
-        $result = Delegation::getOpenThreads($application->APP_NUMBER, $task->TAS_UID);
+        $result = Delegation::getOpenThread($application->APP_NUMBER, $delegation->DEL_INDEX);
         $this->assertEmpty($result);
     }
 
