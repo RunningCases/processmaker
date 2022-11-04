@@ -1038,6 +1038,30 @@ class Cases extends Api
     }
 
     /**
+     * Assign Case
+     *
+     * @url PUT /:appUid/:usrUid/assign
+     *
+     * @param string $appUid {@min 1}{@max 32}
+     * @param string $usrUid {@min 1}{@max 32}
+     * @param integer $index {@from body}
+     *
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function doPutAssignCase($appUid, $usrUid, $index)
+    {
+        try {
+            $cases = new BmCases();
+            $cases->putClaimCase($appUid, $index, $usrUid);
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
+    /**
      * Execute trigger in a case.
      *
      * @url PUT /:appUid/execute-trigger/:tri_uid
