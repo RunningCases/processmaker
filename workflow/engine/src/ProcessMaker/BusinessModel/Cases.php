@@ -905,6 +905,26 @@ class Cases
     }
 
     /**
+     * Review if the user is supervisor
+     *
+     * @param string $usrUid
+     * @param int $caseNumber
+     *
+     * @return bool
+    */
+    public function isSupervisor(string $usrUid, int $caseNumber)
+    {
+        $result = [];
+        $user = new BmUser();
+        if ($user->checkPermission($usrUid, 'PM_SUPERVISOR')) {
+            $processes = ProcessUser::getProcessesOfSupervisor($usrUid);
+            $query = Delegation::query()->select(['APP_NUMBER'])->case($caseNumber)->processInList($processes);
+            $result = $query->get()->values()->toArray();
+        }
+        return !empty($result);
+    }
+
+    /**
      * Reassign Case
      *
      * @param string $appUid Unique id of Case

@@ -1036,6 +1036,30 @@ class Cases extends Api
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
+    
+    /**
+     * User case supervisor permissions
+     *
+     * @url GET /:appNumber/supervisor
+     *
+     * @param int $appNumber
+     *
+     * @return boolean
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function isSupervisor(int $appNumber)
+    {
+        try {
+            $userUid = $this->getUserId();
+            $cases = new BmCases();
+            return $cases->isSupervisor($userUid, $appNumber);
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
 
     /**
      * Assign Case
