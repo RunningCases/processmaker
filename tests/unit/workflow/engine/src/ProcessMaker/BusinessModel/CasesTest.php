@@ -11,6 +11,7 @@ use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Documents;
 use ProcessMaker\Model\ListUnassigned;
 use ProcessMaker\Model\Process;
+use ProcessMaker\Model\ProcessUser;
 use ProcessMaker\Model\Step;
 use ProcessMaker\Model\Task;
 use ProcessMaker\Model\Triggers;
@@ -424,4 +425,62 @@ class CasesTest extends TestCase
         $this->assertArrayHasKey('PRO_UID', $result);
     }
 
+    /**
+     * It tests the response true of supervisor function
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases::isSupervisor()
+     * @test
+     */
+    public function it_should_test_supervisor_true()
+    {
+        $process = Process::factory()->create();
+        ProcessUser::factory()->create([
+            'PU_TYPE' => 'SUPERVISOR',
+            'PRO_UID' => $process->PRO_UID,
+            'USR_UID' => $process->PRO_CREATE_USER
+        ]);
+        $application = Application::factory()->create([
+            'PRO_UID' => $process->PRO_UID
+        ]);
+        Delegation::factory()->create([
+            'APP_UID' => $application->APP_UID,
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'PRO_UID' => $process->PRO_UID,
+            'PRO_ID' => $process->PRO_ID
+        ]);
+
+        $process = Process::factory()->create();
+
+        $cases = new Cases();
+        $result = $cases->isSupervisor($process->PRO_CREATE_USER, $application->APP_NUMBER);
+
+        // Asserts
+        $this->assertTrue($result);
+    }
+
+    /**
+     * It tests the response false of supervisor function
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases::isSupervisor()
+     * @test
+     */
+    public function it_should_test_supervisor_false()
+    {
+        $process = Process::factory()->create();
+        $application = Application::factory()->create([
+            'PRO_UID' => $process->PRO_UID
+        ]);
+        Delegation::factory()->create([
+            'APP_UID' => $application->APP_UID,
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'PRO_UID' => $process->PRO_UID,
+            'PRO_ID' => $process->PRO_ID
+        ]);
+
+        $cases = new Cases();
+        $result = $cases->isSupervisor($process->PRO_CREATE_USER, $application->APP_NUMBER);
+
+        // Asserts
+        $this->assertNotTrue($result);
+    }
 }
