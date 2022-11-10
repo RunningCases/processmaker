@@ -52,7 +52,7 @@ try {
             $enterprise->setup();
         }
         /*----------------------------------********---------------------------------*/
-        Cache::put('ldapMessageError', '', 2);
+        Cache::put('ldapMessageError', '', 120); //laravel 8.x the time parameter is in seconds.
         $uid = $RBAC->VerifyLogin($usr, $pwd);
         $ldapMessageError = Cache::pull('ldapMessageError');
         $RBAC->cleanSessionFiles(72); //cleaning session files older than 72 hours
@@ -404,7 +404,7 @@ try {
                 "browserTimeZoneOffset" => $_POST['form']['BROWSER_TIME_ZONE_OFFSET']
             ];
             $messPassword['__USR_PASSWORD_CHANGE__'] = G::generateUniqueID();
-            Cache::put($messPassword['__USR_PASSWORD_CHANGE__'], $values, 2);
+            Cache::put($messPassword['__USR_PASSWORD_CHANGE__'], $values, 120); //laravel 8.x the time parameter is in seconds.
             $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/changePasswordpm3', '', $messPassword, 'sysLoginVerify');
             G::RenderPage('publish');
             session_destroy();
