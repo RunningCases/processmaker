@@ -8,36 +8,32 @@
       @show="onshow"
     >
       <template #title>{{ $t("ID_COLUMNS").toUpperCase() }}</template>
-
       <div>
         <div class="input-group input-group-sm mb-3">
           <span class="input-group-text" id="inputGroup-sizing-sm"
             ><i class="fas fa-search"></i
           ></span>
-
           <input
             type="text"
             class="form-control"
-            aria-describedby="inputGroup-sizing-sm"
+            aria-label="inputGroup-sizing-sm"
             @keyup="search"
             v-model="text"
           />
         </div>
-
         <div class="form-check border-bottom">
           <input
             class="form-check-input"
             type="checkbox"
             v-model="allColumns"
             @change="toogleAllColumns"
+            id="flexCheckDefault"
           />
-
           <label class="form-check-label" for="flexCheckDefault">
             {{ $t("ID_ALL") }}
           </label>
         </div>
-
-        <b-form-group>
+        <b-form-group label-for="settingsPopover">
           <b-form-checkbox-group
             v-model="localSelected"
             :options="options"
@@ -48,13 +44,11 @@
             stacked
           ></b-form-checkbox-group>
         </b-form-group>
-
         <div class="v-popover-footer">
           <div class="float-right">
             <b-button @click="onClose" size="sm" variant="danger">
               {{ $t("ID_CANCEL") }}</b-button
             >
-
             <b-button @click="onSave" size="sm" variant="success">{{
               $t("ID_SAVE")
             }}</b-button>

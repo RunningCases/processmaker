@@ -16,7 +16,7 @@
           <span>{{ item.label }}</span>
         </span>
       </li>
-      <div
+      <li
         v-for="item in settings"
         :key="item.id"
         class="vp-bread-crumbs-settings vp-float-right vp-inline-block"
@@ -29,7 +29,7 @@
         >
           <i :class="formatClass(item)"></i>
         </span>
-      </div>
+      </li>
     </ol>
   </nav>
 </template>

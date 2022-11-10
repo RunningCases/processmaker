@@ -1,5 +1,5 @@
 <template>
-  <div id="v-pm-charts" ref="v-pm-charts" class="v-pm-charts vp-inline-block">
+  <div ref="v-pm-charts" class="v-pm-charts vp-inline-block">
     <div class="p-1 v-flex">
       <h6 class="v-search-title">
         {{ $t("ID_DRILL_DOWN_NUMBER_TASKS_PROCESS") }}
@@ -70,13 +70,13 @@
           </div>
         </b-popover>
         <div class="vp-inline-block vp-right vp-padding-r40">
-          <h4
+          <span
             class="v-search-title"
             @click="showProcessesPopover"
             id="pm-task-process"
           >
             <i class="fas fa-cog"></i>
-          </h4>
+          </span>
         </div>
       </div>
       <div class="v-search-info">

@@ -3,6 +3,7 @@
     <iframe
       :width="width"
       ref="IFrameChangeLog"
+      title="IFrameChangeLog"
       frameborder="0"
       :src="path"
       :height="height"

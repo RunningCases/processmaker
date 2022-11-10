@@ -3,6 +3,7 @@
         <iframe
             :width="width"
             ref="IFrameSummaryForm"
+            title="IFrameSummaryForm"
             frameborder="0"
             :src="path"
             :height="height"

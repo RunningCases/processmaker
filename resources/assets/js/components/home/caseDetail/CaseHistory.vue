@@ -3,6 +3,7 @@
     <iframe
       :width="width"
       ref="IFrameCaseHistory"
+      title="IFrameCaseHistory"
       frameborder="0"
       :src="path"
       :height="height"

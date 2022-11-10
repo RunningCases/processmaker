@@ -6,7 +6,7 @@
             :title="addSearchTitle"
         >
             <template v-slot:body>
-                <b-form-group>
+                <b-form-group label-for="casesFilter">
                     <b-form-radio-group
                         v-model="selected"
                         :options="criteriaItems"
@@ -15,7 +15,7 @@
                         name="flavour-2a"
                         stacked
                     ></b-form-radio-group>
-                    <b-form-group> </b-form-group>
+                    <p></p>
                     <b-form-checkbox
                         id="checkbox-2"
                         v-model="byProcessCategory"

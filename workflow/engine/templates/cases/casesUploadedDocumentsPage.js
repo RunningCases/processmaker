@@ -260,12 +260,19 @@
       }
     );
 
-    Ext.onReady(function(){
+    Ext.onReady(function() {
+      var i;
       Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
       Ext.QuickTips.init();
-
       uploadDocumentGrid();
-
+      if (document.getElementsByTagName('input')) {
+        document.getElementsByTagName('input')[0].ariaLabel = "pagination";
+      }
+      if (document.getElementsByTagName('button')) {
+        for (i = 0; i < document.getElementsByTagName('button').length; i+= 1) {
+          document.getElementsByTagName('button')[i].ariaLabel = document.getElementsByTagName('button')[i].getAttribute('id');
+        }
+      }
     });
 
 

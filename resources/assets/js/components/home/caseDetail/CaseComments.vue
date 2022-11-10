@@ -2,8 +2,8 @@
   <div class="container py-2">
     <div class="row"></div>
     <div class="comments col-md-12" id="comments">
-      <p>
-        <b>{{ data.title }}</b>
+      <p class="commentTitle">
+        {{ data.title }}
       </p>
       <div v-for="item in data.items" :key="item.date">
         <case-comment
@@ -45,6 +45,7 @@
                 ref="comment"
                 cols="80"
                 rows="5"
+                aria-label="comments"
               ></textarea>
             </div>
           </div>
@@ -52,7 +53,7 @@
       </div>
       <div class="comment mb-2 row float-right">
         <div class="form-check v-check-comment">
-          <input type="checkbox" class="form-check-input" ref="send" />
+          <input id="sendEmail" type="checkbox" class="form-check-input" ref="send" />
           <label class="form-check-label" for="sendEmail">
             {{ $t("ID_SEND_EMAIL_CASE_PARTICIPANTS") }}</label
           >
@@ -215,5 +216,8 @@ export default {
 .white-text {
   font-size: 32px;
   color: antiquewhite;
+}
+.commentTitle {
+  font-weight: bolder;
 }
 </style>

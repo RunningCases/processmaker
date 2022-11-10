@@ -2,6 +2,7 @@
     <div
         id="home"
         :class="[{ collapsed: collapsed }, { onmobile: isOnMobile }]"
+        role="main"
     >
         <div class="demo">
             <b-alert

@@ -26,12 +26,13 @@
           ref="comment"
           cols="80"
           rows="5"
+          aria-label="commentsCancelCase"
         ></textarea>
       </div>
       <div class="row">
         <div class="col-md-12 ml-auto">
-          <input type="checkbox" class="" ref="send" />
-          <label class="form-check-label" for="sendEmail">
+          <input id="sendEmailCancelCase" type="checkbox" class="" ref="send" />
+          <label class="form-check-label" for="sendEmailCancelCase">
             Send email to participants</label
           >
         </div>

@@ -21,13 +21,14 @@
         </b-alert>
         <b-row class="my-1">
           <b-col sm="3">
-            <label for="pauseDate">{{ $t('ID_PAUSE_DATE') }}</label>
+            <label aria-label="pauseDate">{{ $t('ID_PAUSE_DATE') }}</label>
           </b-col>
           <b-col sm="5">
             <b-form-datepicker
               disabled  
               id="pauseDate"
               class="mb-2"
+              aria-controls="pauseDate"
               v-model="pauseData.pauseDate"
               :locale="locale"
               :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
@@ -40,12 +41,13 @@
         
         <b-row class="my-1">
           <b-col sm="3">
-            <label for="unpauseDate">{{ $t('ID_UNPAUSE_DATE') }}</label>
+            <label aria-label="unpauseDate">{{ $t('ID_UNPAUSE_DATE') }}</label>
           </b-col>
           <b-col sm="5">
             <b-form-datepicker
               id="unpauseDate"
               class="mb-2"
+              aria-controls="unpauseDate"
               v-model="pauseData.unpauseDate"
               :locale="locale"
               :min="minDate"
