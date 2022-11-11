@@ -25,6 +25,21 @@
         </testsuite>
     </testsuites>
 
+    <coverage processUncoveredFiles="false">
+        <include>
+            <directory suffix=".php">./app</directory>
+            <directory suffix=".php">./gulliver</directory>
+            <directory suffix=".php">./rbac</directory>
+            <directory suffix=".php">./workflow</directory>
+        </include>
+        <exclude>
+            <directory>./workflow/engine/classes/model/map</directory>
+            <directory>./workflow/engine/classes/model/om</directory>
+            <directory>./workflow/public_html</directory>
+            <directory>./workflow/engine/templates</directory>
+        </exclude>
+    </coverage>
+
     <php>
         <!--Main environment-->
         <env name="MAIN_SYS_SYS" value="workflow" />

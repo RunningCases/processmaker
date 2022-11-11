@@ -4,7 +4,7 @@ jobs:
     working_directory: ~/processmaker
     docker:
       - image: devopsstacks/pm:n285-phpunit
-      - image: circleci/mysql:8.0.13-ram
+      - image: cimg/mysql:8.0
         command: |
           mysqld --default-authentication-plugin='mysql_native_password' --optimizer-switch='derived_merge=off' --sql-mode='NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' --collation-server='utf8mb4_unicode_ci' --character-set-server='utf8mb4' --max_connections=500
         environment:
@@ -28,10 +28,12 @@ jobs:
           name: Run Test Units
           command: |
             mkdir -p coverage
-            vendor/phpunit/phpunit/phpunit --stop-on-error --testdox-html coverage/result.html --coverage-html coverage --verbose tests/unit/
+            vendor/bin/phpunit --stop-on-error --testdox-html coverage/result.html --coverage-html coverage --verbose tests/unit/
           environment:
             XDEBUG_MODE: coverage
       - store_artifacts:
           path: coverage
           destination: coverage
+      - store_test_results:
+          path: coverage
           

@@ -149,7 +149,7 @@ class CliWorkspacesTest extends TestCase
     /**
      * Test the queries incompatibilities in dynaforms
      * 
-     * @covers WorkspaceTools::check_queries_incompatibilities
+     * @covers check_queries_incompatibilities
      * @test
      */
     public function it_should_test_the_incompatibilities_in_the_dynaforms_queries()

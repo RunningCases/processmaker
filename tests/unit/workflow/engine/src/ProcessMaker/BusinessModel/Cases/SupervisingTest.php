@@ -21,12 +21,30 @@ use Tests\TestCase;
 class SupervisingTest extends TestCase
 {
     /**
+     * This method is called before the first test of this test class is run.
+     * @return void
+     */
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        self::truncateNonInitialModels();
+    }
+
+    /**
+     * This method is called after the last test of this test class is run.
+     */
+    public static function tearDownAfterClass(): void
+    {
+        parent::tearDownAfterClass();
+        self::truncateNonInitialModels();
+    }
+
+    /**
      * Method set up.
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->truncateNonInitialModels();
     }
 
     /**
@@ -384,6 +402,7 @@ class SupervisingTest extends TestCase
      */
     public function it_filter_by_thread_title()
     {
+        Delegation::truncate();
         // Create factories related to the to_do cases
         $cases = $this->createSupervising();
         $usrUid = $cases->USR_UID;

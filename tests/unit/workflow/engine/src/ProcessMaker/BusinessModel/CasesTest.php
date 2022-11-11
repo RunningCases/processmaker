@@ -26,12 +26,21 @@ use Tests\TestCase;
 class CasesTest extends TestCase
 {
     /**
+     * This method is called before the first test of this test class is run.
+     * @return void
+     */
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        self::truncateNonInitialModels();
+    }
+
+    /**
      * Set up method.
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->truncateNonInitialModels();
         User::where('USR_ID', '=', 1)
             ->where('USR_ID', '=', 2)
             ->delete();
@@ -330,6 +339,7 @@ class CasesTest extends TestCase
      */
     public function it_should_test_get_dynaforms_by_application()
     {
+        Application::truncate();
         // Create a process
         $process = Process::factory()->create();
 
