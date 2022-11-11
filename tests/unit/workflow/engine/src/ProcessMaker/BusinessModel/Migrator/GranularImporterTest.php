@@ -23,12 +23,16 @@ class GranularImporterTest extends TestCase
      * It should return data from addObjectData() method.
      * @test
      * @covers \ProcessMaker\BusinessModel\Migrator\GranularImporter::addObjectData()
-     * @dataProvider importDataObject
      */
-    public function it_should_return_data_from_add_object_data_method($name, $data)
+    public function it_should_return_data_from_add_object_data_method()
     {
-        $granularImporter = new GranularImporter();
-        $result = $granularImporter->addObjectData($name, $data);
-        $this->assertArrayHasKey($name, $result);
+        $data = $this->importDataObject();
+        foreach ($data as $value) {
+            $name = $value[0];
+            $data = $value[1];
+            $granularImporter = new GranularImporter();
+            $result = $granularImporter->addObjectData($name, $data);
+            $this->assertArrayHasKey($name, $result);
+        }
     }
 }

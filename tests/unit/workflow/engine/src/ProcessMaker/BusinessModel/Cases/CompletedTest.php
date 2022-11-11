@@ -15,12 +15,30 @@ use Tests\TestCase;
 class CompletedTest extends TestCase
 {
     /**
+     * This method is called before the first test of this test class is run.
+     * @return void
+     */
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        self::truncateNonInitialModels();
+    }
+
+    /**
+     * This method is called after the last test of this test class is run.
+     */
+    public static function tearDownAfterClass(): void
+    {
+        parent::tearDownAfterClass();
+        self::truncateNonInitialModels();
+    }
+
+    /**
      * Method set up.
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->truncateNonInitialModels();
     }
 
     /**

@@ -22,12 +22,30 @@ use Tests\TestCase;
 class DraftTest extends TestCase
 {
     /**
+     * This method is called before the first test of this test class is run.
+     * @return void
+     */
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        self::truncateNonInitialModels();
+    }
+
+    /**
+     * This method is called after the last test of this test class is run.
+     */
+    public static function tearDownAfterClass(): void
+    {
+        parent::tearDownAfterClass();
+        self::truncateNonInitialModels();
+    }
+
+    /**
      * Method set up.
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->truncateNonInitialModels();
     }
 
     /**
@@ -337,6 +355,7 @@ class DraftTest extends TestCase
      */
     public function it_should_test_get_counters_by_processes_method_no_filter()
     {
+        Delegation::truncate();
         $process = Process::factory()->create();
         $process2 = Process::factory()->create();
         $user = User::factory()->create();
@@ -675,6 +694,7 @@ class DraftTest extends TestCase
      */
     public function it_should_test_get_counters_by_range_method()
     {
+        Delegation::truncate();
         $process1 = Process::factory()->create();
         $process2 = Process::factory()->create();
         $user = User::factory()->create();

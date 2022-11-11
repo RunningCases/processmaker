@@ -21,12 +21,30 @@ use Tests\TestCase;
 class InboxTest extends TestCase
 {
     /**
+     * This method is called before the first test of this test class is run.
+     * @return void
+     */
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        self::truncateNonInitialModels();
+    }
+
+    /**
+     * This method is called after the last test of this test class is run.
+     */
+    public static function tearDownAfterClass(): void
+    {
+        parent::tearDownAfterClass();
+        self::truncateNonInitialModels();
+    }
+
+    /**
      * Method set up.
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->truncateNonInitialModels();
     }
 
     /**
@@ -416,6 +434,7 @@ class InboxTest extends TestCase
      */
     public function it_should_test_get_counters_by_processes_method_no_filter()
     {
+        Delegation::truncate();
         $user = User::factory()->create();
         $process = Process::factory()->create();
         $process2 = Process::factory()->create();
@@ -685,6 +704,7 @@ class InboxTest extends TestCase
      */
     public function it_should_test_get_counters_by_range_method()
     {
+        Delegation::truncate();
         $user = User::factory()->create();
         $process = Process::factory()->create();
         $process2 = Process::factory()->create();

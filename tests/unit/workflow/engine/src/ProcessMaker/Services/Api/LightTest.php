@@ -29,13 +29,22 @@ class LightTest extends TestCase
     private $optionsForConvertDatetime;
 
     /**
+     * This method is called before the first test of this test class is run.
+     * @return void
+     */
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        self::truncateNonInitialModels();
+    }
+
+    /**
      * This is using instead of DatabaseTransactions
      * @todo DatabaseTransactions is having conflicts with propel
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->truncateNonInitialModels();
         $this->workspace = env("DB_DATABASE", "test");
         $this->clientId = config("oauthClients.pm.clientId");
         $this->clientSecret = config("oauthClients.pm.clientSecret");

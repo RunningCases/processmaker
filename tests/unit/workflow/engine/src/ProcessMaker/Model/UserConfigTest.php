@@ -14,15 +14,6 @@ use Tests\TestCase;
 class UserConfigTest extends TestCase
 {
     /**
-     * Setup method,
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
-        $this->truncateNonInitialModels();
-    }
-
-    /**
      * Teardown method.
      */
     public function tearDown(): void
@@ -59,7 +50,7 @@ class UserConfigTest extends TestCase
      */
     public function it_should_test_addSetting()
     {
-        $id = 1;
+        $id = 2;
         $name = "test";
         $setting = ["test" => 1];
 
@@ -79,7 +70,7 @@ class UserConfigTest extends TestCase
      */
     public function it_should_test_editSetting()
     {
-        $id = 1;
+        $id = 3;
         $name = "test";
         $setting = ["test" => 1];
         $result = UserConfig::addSetting($id, $name, $setting);
@@ -102,7 +93,7 @@ class UserConfigTest extends TestCase
      */
     public function it_should_test_deleteSetting()
     {
-        $id = 2;
+        $id = 4;
         $name = "test2";
         $setting = ["test2" => 1];
         $result = UserConfig::addSetting($id, $name, $setting);

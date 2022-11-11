@@ -17,13 +17,22 @@ use Tests\TestCase;
 class ActionsByEmailTest extends TestCase
 {
     /**
+     * This method is called before the first test of this test class is run.
+     * @return void
+     */
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        self::truncateNonInitialModels();
+    }
+
+    /**
      * 
      * @return void
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->truncateNonInitialModels();
     }
 
     /**
@@ -274,6 +283,7 @@ class ActionsByEmailTest extends TestCase
      */
     public function it_should_test_the_load_action_by_email_method()
     {
+        self::truncateNonInitialModels();
         $user = User::factory()->create();
         $application = Application::factory()->create([
             'APP_UID' => '123456asse'
