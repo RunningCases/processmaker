@@ -24,7 +24,7 @@ SELECT LANG_ID, LANG_NAME FROM langOptions
   <BSUBMIT type="button">
     <en><![CDATA[Login]]></en>
   </BSUBMIT>
-  <FORGOT_PASWORD_LINK type="link" link="forgotPassword" onclick="" colAlign="right" colWidth="135" style="display:none;">
+  <FORGOT_PASWORD_LINK type="link" link="forgotPassword" onclick="" colAlign="right" colWidth="135">
     <en><![CDATA[Forgot Password]]></en>
   </FORGOT_PASWORD_LINK>
   <JS type="javascript"><![CDATA[
@@ -95,9 +95,10 @@ window.onload= function(){
   }
 };
 
-// enable/disable forgot password link
-if(flagForgotPassword == 'on' || flagForgotPassword == '1') {
-  document.getElementById("form[FORGOT_PASWORD_LINK]").style.display = 'block';//hideRowById('FORGOT_PASWORD_LINK');
+// delete or not forgot password link
+if(flagForgotPassword != 'on' && flagForgotPassword != '1') {
+  var element = document.getElementById("form[FORGOT_PASWORD_LINK]");
+  element.parentNode.removeChild(element);
 }
 
 var panel;
