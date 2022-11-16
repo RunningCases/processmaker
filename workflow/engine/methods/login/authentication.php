@@ -111,7 +111,7 @@ try {
 
         $_SESSION["USERNAME_PREVIOUS1"] = (isset($_SESSION["USERNAME_PREVIOUS2"]))? $_SESSION["USERNAME_PREVIOUS2"] : "";
         $_SESSION["USERNAME_PREVIOUS2"] = $usr;
-        $_SESSION["FAILED_LOGINS"]      = (isset($frm['FAILED_LOGINS']))? $frm['FAILED_LOGINS'] : 0;
+        $_SESSION["FAILED_LOGINS"] = is_numeric(Cache::get("FAILED_LOGINS{$usr}")) ? Cache::get("FAILED_LOGINS{$usr}") : 0;
 
         if (!isset($uid) || $uid < 0) {
             if ($_SESSION["USERNAME_PREVIOUS1"] != "" && $_SESSION["USERNAME_PREVIOUS2"] != "" && $_SESSION["USERNAME_PREVIOUS1"] != $_SESSION["USERNAME_PREVIOUS2"]) {
@@ -138,6 +138,7 @@ try {
                         $oStatement  = $oConnection->prepareStatement("UPDATE USERS SET USR_STATUS = 'INACTIVE' WHERE USR_UID = '" . $sUserUID . "'");
                         $oStatement->executeQuery();
                         unset($_SESSION['FAILED_LOGINS']);
+                        Cache::forget("FAILED_LOGINS{$usr}");
                         $errLabel = G::LoadTranslation('ID_ACCOUNT') . ' "' . $usr . '" ' . G::LoadTranslation('ID_ACCOUNT_DISABLED_CONTACT_ADMIN');
                     }
                     //Log failed authentications
@@ -266,6 +267,7 @@ try {
     //$_SESSION['USR_ROLENAME'] = $rol['ROL_NAME'];
 
     unset($_SESSION['FAILED_LOGINS']);
+    Cache::forget("FAILED_LOGINS{$usr}");
 
     // Assign the uid of user to userloggedobj
     $RBAC->loadUserRolePermission($RBAC->sSystem, $uid);
