@@ -1068,18 +1068,26 @@ class Cases extends Api
      *
      * @param string $appUid {@min 1}{@max 32}
      * @param string $usrUid {@min 1}{@max 32}
-     * @param integer $index {@from body}
+     * @param int $index {@from body}
+     * @param string $reason {@from body}
+     * @param bool $sendMail {@from body}
      *
      * @throws RestException
      *
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
-    public function doPutAssignCase($appUid, $usrUid, $index)
+    public function doPutAssignCase($appUid, $usrUid, $index, $reason = '', $sendMail = false)
     {
         try {
             $cases = new BmCases();
             $cases->putClaimCase($appUid, $index, $usrUid);
+
+            /** Add the note */
+            if (!empty($reason)) {
+                $currentUserUid = $this->getUserId();
+                $cases->addNote($appUid, $currentUserUid, $reason, $sendMail);
+            }
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
