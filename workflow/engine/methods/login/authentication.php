@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Crypt;
 use ProcessMaker\BusinessModel\User;
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
@@ -150,7 +151,7 @@ try {
 
             if (strpos($_SERVER['HTTP_REFERER'], 'home/login') !== false) {
                 $d = serialize(['u' => $usr, 'p' => $pwd, 'm' => G::LoadTranslation($errLabel)]);
-                $urlLogin = $urlLogin . '?d=' . base64_encode($d);
+                $urlLogin = $urlLogin . '?d=' . Crypt::encryptString($d);
             } else {
                 if (empty($ldapMessageError)) {
                     G::SendTemporalMessage($errLabel, "warning");
