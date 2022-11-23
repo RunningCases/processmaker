@@ -7548,6 +7548,12 @@ msgid "Please enter a valid email address."
 msgstr "Please enter a valid email address."
 
 # TRANSLATION
+# LABEL/ID_EMAIL_EVENT
+#: LABEL/ID_EMAIL_EVENT
+msgid "Email event"
+msgstr "Email event"
+
+# TRANSLATION
 # LABEL/ID_EMAIL_EVENT_CONFIGURATION_EMAIL
 #: LABEL/ID_EMAIL_EVENT_CONFIGURATION_EMAIL
 msgid "Email event: {0}, in process: {1}, cannot send any mail because its configuration needs to be completed."
@@ -19326,6 +19332,12 @@ msgid "There is at least one empty date field in the holiday grid, please check 
 msgstr "There is at least one empty date field in the holiday grid, please check and try again."
 
 # TRANSLATION
+# LABEL/ID_MESSAGE_EVENT
+#: LABEL/ID_MESSAGE_EVENT
+msgid "Message Event"
+msgstr "Message Event"
+
+# TRANSLATION
 # LABEL/ID_MESSAGE_EVENT_DEFINITION_ALREADY_REGISTERED
 #: LABEL/ID_MESSAGE_EVENT_DEFINITION_ALREADY_REGISTERED
 msgid "The Message-Event-Definition with {0}: {1} already registered."
@@ -25087,7 +25099,7 @@ msgstr "Service Task"
 
 # TRANSLATION
 # LABEL/ID_SERVICE_TASK_UNTITLED
-#: LABEL/ID_SERVICE_TASKUNTITLED
+#: LABEL/ID_SERVICE_TASK_UNTITLED
 msgid "Untitled - Service Task"
 msgstr "Untitled - Service Task"
 
