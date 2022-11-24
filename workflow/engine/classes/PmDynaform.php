@@ -2533,13 +2533,13 @@ class PmDynaform
         $message = "";
         if (isset($_SESSION['G_MESSAGE_TYPE']) && isset($_SESSION['G_MESSAGE'])) {
             $color = "green";
-            if ($_SESSION['G_MESSAGE_TYPE'] === "ERROR") {
+            if (strtoupper($_SESSION['G_MESSAGE_TYPE']) === "ERROR") {
                 $color = "red";
             }
-            if ($_SESSION['G_MESSAGE_TYPE'] === "WARNING") {
+            if (strtoupper($_SESSION['G_MESSAGE_TYPE']) === "WARNING") {
                 $color = "#C3C380";
             }
-            if ($_SESSION['G_MESSAGE_TYPE'] === "INFO") {
+            if (strtoupper($_SESSION['G_MESSAGE_TYPE']) === "INFO") {
                 $color = "green";
             }
             $message = "<div style='background-color:" . $color . ";color: white;padding: 1px 2px 1px 5px;' class='userGroupTitle'>" . $_SESSION['G_MESSAGE_TYPE'] . ": " . $_SESSION['G_MESSAGE'] . "</div>";
