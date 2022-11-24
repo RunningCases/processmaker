@@ -9,6 +9,8 @@ use ProcessMaker\Model\AppDelay;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Documents;
+use ProcessMaker\Model\GroupUser;
+use ProcessMaker\Model\Groupwf;
 use ProcessMaker\Model\ListUnassigned;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\ProcessUser;
@@ -482,5 +484,44 @@ class CasesTest extends TestCase
 
         // Asserts
         $this->assertNotTrue($result);
+    }
+
+    /**
+     * It tests get users to reassign 
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases::usersToReassign()
+     * @test
+     */
+    public function it_should_test_users_to_reassign()
+    {
+        $process = Process::factory()->create();
+        $task = Task::factory()->create([
+            'PRO_UID' => $process->PRO_UID,
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+            'TAS_GROUP_VARIABLE' => '@@arrayOfusers'
+        ]);
+        $users = User::factory(3)->create();
+        $groupwf = Groupwf::factory()->create();
+
+        GroupUser::factory()->create([
+            'GRP_UID' => $groupwf->GRP_UID,
+            'GRP_ID' => $groupwf->GRP_ID,
+            'USR_UID' => $users[1]->USR_UID
+        ]);
+        GroupUser::factory()->create([
+            'GRP_UID' => $groupwf->GRP_UID,
+            'GRP_ID' => $groupwf->GRP_ID,
+            'USR_UID' => $users[2]->USR_UID
+        ]);
+        
+        $application = Application::factory()->create([
+            'PRO_UID' => $process->PRO_UID,
+            'APP_DATA' =>  serialize(['arrayOfusers' => [$groupwf->GRP_UID, $users[0]->USR_UID]])
+        ]);
+
+        $cases = new Cases();
+        $result = $cases->usersToReassign($users[0]['USR_UID'], $task->TAS_UID, $application->APP_UID);
+        // Asserts
+        $this->assertCount(3, $result['data']);
     }
 }

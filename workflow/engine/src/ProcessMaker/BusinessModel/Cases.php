@@ -53,9 +53,12 @@ use ProcessMaker\Model\AppNotes as Notes;
 use ProcessMaker\Model\AppTimeoutAction;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Documents;
+use ProcessMaker\Model\Groupwf;
+use ProcessMaker\Model\GroupUser;
 use ProcessMaker\Model\ListUnassigned;
 use ProcessMaker\Model\Triggers;
 use ProcessMaker\Model\ProcessUser;
+use ProcessMaker\Model\Task;
 use ProcessMaker\Model\User;
 use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Services\Api;
@@ -2759,6 +2762,75 @@ class Cases
         } catch (Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
+    }
+
+    /**
+     * Get Users to reassign
+     *
+     * @param string $userUid Unique id of User (User logged)
+     * @param string $taskUid Unique id of Task
+     * @param string $appUid Unique id of Application
+     *
+     * @return array Return Users to reassign
+     * @throws Exception
+     */
+    public function usersToReassign(
+        $userUid,
+        $taskUid,
+        $appUid
+    ) {
+        $task = Task::where('TAS_UID', '=', $taskUid)->first();
+        $type = $task->TAS_ASSIGN_TYPE;
+        $variable = $task->TAS_GROUP_VARIABLE;
+        $result = [];
+
+        if ($type === 'SELF_SERVICE' && $variable !== '') {
+            $variable = substr($variable, 2);
+            $case = new ClassesCases();
+            $app = new ModelApplication();
+            $fields = $app::where('APP_UID', '=', $appUid)->first();
+            $data = $case::unserializeData($fields->APP_DATA);
+
+            $row = [];
+            $groups = new GroupUser();
+            $groupwf = new Groupwf();
+            
+            if (!empty($data[$variable])) {
+                foreach ($data[$variable] as $uid) {
+                    $group = $groupwf::where('GRP_UID', '=', $uid)->first();
+                    if (!empty($group)) {
+                        $users = $groups::where('GRP_UID', '=', $uid)->get()->toArray();
+                        foreach ($users as $data) {
+                            $row[] = $data['USR_UID'];
+                        }
+                    } else {
+                        $row[] = $uid;
+                    }
+                }
+            }
+            
+            $user = new User();
+            $users = [];
+            foreach ($row as $data) {
+                $obj = $user::where('USR_UID', '=', $data)->Active()->first();
+                if (!is_null($obj) && $obj->USR_USERNAME !== "") {
+                    $users[] = $obj;
+                }
+            }
+
+            foreach ($users as $user) {
+                $result[] = [
+                    "USR_UID" => $user->USR_UID,
+                    "USR_USERNAME" => $user->USR_USERNAME,
+                    "USR_FIRSTNAME" => $user->USR_FIRSTNAME,
+                    "USR_LASTNAME"=> $user->USR_LASTNAME
+                ];
+            }
+
+        } else {
+            $result = $this->getUsersToReassign($userUid, $taskUid)['data'];
+        }
+        return ['data' => $result];
     }
 
     /**
