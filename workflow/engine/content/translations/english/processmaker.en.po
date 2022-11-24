@@ -11076,6 +11076,12 @@ msgid "is required"
 msgstr "is required"
 
 # TRANSLATION
+# LABEL/ID_IT_WAS_IDENTIFIED_DUPLICATED_DEPARTMENTS_PLEASE_REMOVE_THESE_DEPARTMENTS
+#: LABEL/ID_IT_WAS_IDENTIFIED_DUPLICATED_DEPARTMENTS_PLEASE_REMOVE_THESE_DEPARTMENTS
+msgid "It was identified in the workspace duplicated departments, please remove manually these departments."
+msgstr "It was identified in the workspace duplicated departments, please remove manually these departments."
+
+# TRANSLATION
 # LABEL/ID_IT_WAS_IDENTIFIED_DUPLICATED_GROUPS_PLEASE_REMOVE_THESE_GROUPS
 #: LABEL/ID_IT_WAS_IDENTIFIED_DUPLICATED_GROUPS_PLEASE_REMOVE_THESE_GROUPS
 msgid "It was identified in the workspace duplicated groups, please remove manually these groups."

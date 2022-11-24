@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use ProcessMaker\BusinessModel\User;
+use ProcessMaker\Model\Department;
 use ProcessMaker\Model\Groupwf;
 
 /**
@@ -2586,6 +2587,45 @@ class LdapAdvanced
             . "select GRP_TITLE,count(GRP_TITLE) "
             . "from GROUPWF "
             . "group by GRP_TITLE having count(GRP_TITLE)>1";
+        $results = DB::select(DB::raw($sql));
+        if (empty($results)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Get department Uid by title.
+     * @param string $title
+     * @return string
+     */
+    public function getDepartmentUidByTitle(string $title): string
+    {
+        try {
+            $department = Department::query()
+                ->where('DEP_STATUS', '=', 'ACTIVE')
+                ->where('DEP_TITLE', '=', $title)
+                ->first();
+            if (!empty($department)) {
+                return $department->DEP_UID;
+            }
+        } catch (Exception $e) {
+            $message = $e->getMessage();
+            Log::channel(':ldapSynchronizeGroups')->error($message, Bootstrap::context());
+        }
+        return "";
+    }
+
+    /**
+     * Check duplicate titles in DEPARTMENT table.
+     * @return bool
+     */
+    public function checkDuplicateDepartmentTitles(): bool
+    {
+        $sql = ""
+            . "select DEP_TITLE,count(DEP_TITLE) "
+            . "from DEPARTMENT "
+            . "group by DEP_TITLE having count(DEP_TITLE)>1";
         $results = DB::select(DB::raw($sql));
         if (empty($results)) {
             return false;
