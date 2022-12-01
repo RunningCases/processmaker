@@ -1093,6 +1093,33 @@ class Cases extends Api
         }
     }
 
+
+
+    /**
+     * Get users to reassign or assign
+     *
+     * @url GET /:task_uid/:app_uid/userstoreassign
+     *
+     * @param string $task_uid
+     * @param string $app_uid
+     *
+     * @return array
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function usersToReasign($task_uid, $app_uid)
+    {
+        try {
+            $usr_uid = $this->getUserId();
+            $cases = new BmCases();
+            return $cases->usersToReassign($usr_uid, $task_uid, $app_uid);
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
     /**
      * Execute trigger in a case.
      *
