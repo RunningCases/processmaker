@@ -12,6 +12,7 @@ use ProcessMaker\Core\JobsManager;
 use ProcessMaker\Core\System;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
+use ProcessMaker\Model\Task;
 
 class WsBase
 {
@@ -2989,8 +2990,21 @@ class WsBase
             }
 
             $tasUid = $aRow['TAS_UID'];
-            $derivation = new Derivation();
-            $userList = $derivation->getAllUsersFromAnyTask($tasUid, true);
+            $task = Task::where('TAS_UID', '=', $tasUid)->first();
+            $type = $task->TAS_ASSIGN_TYPE;
+            $variable = $task->TAS_GROUP_VARIABLE;
+
+            if ($type === 'SELF_SERVICE' && $variable !== '') {
+                $cases = new BmCases();
+                $usersToReasign = $cases->usersToReassign($sessionId, $tasUid, $caseId)['data'];
+                $userList = [];
+                foreach ($usersToReasign as $user){
+                    $userList[] = $user['USR_UID'];
+                }
+            } else {
+                $derivation = new Derivation();
+                $userList = $derivation->getAllUsersFromAnyTask($tasUid, true);
+            }
 
             if (!in_array($userIdTarget, $userList)) {
                 $result = new WsResponse(34, G::loadTranslation('ID_TARGET_USER_DOES_NOT_HAVE_RIGHTS'));
