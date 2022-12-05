@@ -16,12 +16,30 @@ use Tests\TestCase;
 class ParticipatedTest extends TestCase
 {
     /**
+     * This method is called before the first test of this test class is run.
+     * @return void
+     */
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        self::truncateNonInitialModels();
+    }
+
+    /**
+     * This method is called after the last test of this test class is run.
+     */
+    public static function tearDownAfterClass(): void
+    {
+        parent::tearDownAfterClass();
+        self::truncateNonInitialModels();
+    }
+
+    /**
      * Method set up.
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->truncateNonInitialModels();
     }
 
     /**
@@ -424,6 +442,7 @@ class ParticipatedTest extends TestCase
      */
     public function it_filter_by_thread_title()
     {
+        Delegation::truncate();
         // Create factories related to the participated cases
         $cases = $this->createParticipated();
         // We need to commit the records inserted because is needed for the "fulltext" index

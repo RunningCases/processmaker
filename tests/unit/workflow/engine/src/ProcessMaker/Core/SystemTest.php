@@ -10,6 +10,15 @@ use Tests\TestCase;
 
 class SystemTest extends TestCase
 {
+    /**
+     * This method is called before the first test of this test class is run.
+     * @return void
+     */
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        self::truncateNonInitialModels();
+    }
 
     /**
      * Define the required variables
@@ -17,7 +26,6 @@ class SystemTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->truncateNonInitialModels();
     }
 
     /**

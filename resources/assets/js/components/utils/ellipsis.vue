@@ -23,6 +23,7 @@
                             :key="item.name"
                             variant="outline-info"
                             @click="executeFunction(item.fn)"
+                            :aria-label="item.name"
                         >
                             <i class="custom-icon" :class="item.icon" v-bind:style="{color: item.color}"></i>
                         </b-button>

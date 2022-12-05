@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Crypt;
+
 /*----------------------------------********---------------------------------*/
 //Browser Compatibility
 $browserSupported = G::checkBrowserCompatibility();
@@ -10,7 +12,7 @@ if ($browserSupported==false) {
 }
 /*----------------------------------********---------------------------------*/
 if (isset ($_POST['form']['USER_ENV'])) {
-    $data = base64_encode(serialize($_POST));
+    $data = Crypt::encryptString(serialize($_POST));
     $url = sprintf('/sys%s/%s/%s/login/sysLoginVerify?d=%s', $_POST['form']['USER_ENV'], SYS_LANG, SYS_SKIN, $data);
     G::header("location: $url");
     die();

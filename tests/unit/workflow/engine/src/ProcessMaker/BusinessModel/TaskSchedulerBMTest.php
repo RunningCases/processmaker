@@ -9,13 +9,22 @@ use Tests\TestCase;
 class TaskSchedulerBMTest extends TestCase
 {
     /**
+     * This method is called before the first test of this test class is run.
+     * @return void
+     */
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        self::truncateNonInitialModels();
+    }
+
+    /**
      * Set up method.
      * @return void
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->truncateNonInitialModels();
     }
 
     /**
@@ -94,6 +103,7 @@ class TaskSchedulerBMTest extends TestCase
      */
     public function it_should_test_generate_initial_data_method()
     {
+        TaskScheduler::truncate();
         $r = TaskScheduler::all()->toArray();
         $this->assertEmpty($r);
 

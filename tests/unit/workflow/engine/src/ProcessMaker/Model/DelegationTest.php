@@ -30,12 +30,22 @@ use Tests\TestCase;
 class DelegationTest extends TestCase
 {
     /**
+     * This method is called before the first test of this test class is run.
+     * @return void
+     */
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        self::truncateNonInitialModels();
+    }
+
+    /**
      * Set up function.
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->truncateNonInitialModels();
+        Delegation::truncate();
     }
 
     /**
@@ -1173,9 +1183,8 @@ class DelegationTest extends TestCase
     public function it_should_search_and_filter_by_app_title()
     {
         $delegations = Delegation::factory(1)->foreign_keys()->create([
-            'APP_NUMBER' => function () {
-                return Application::factory()->create()->APP_NUMBER;
-            }
+            'DEL_INDEX' => 1,
+            'DEL_PREVIOUS' => 0
         ]);
         $title = $delegations->last()->DEL_TITLE;
         // We need to commit the records inserted because is needed for the "fulltext" index
@@ -3318,7 +3327,7 @@ class DelegationTest extends TestCase
     /**
      * This checks if return the open thread
      *
-     * @covers \ProcessMaker\Model\Delegation::getOpenThreads()
+     * @covers \ProcessMaker\Model\Delegation::getOpenThread()
      * @test
      */
     public function it_should_return_thread_open()
@@ -3332,20 +3341,20 @@ class DelegationTest extends TestCase
         //Create task
         $task = Task::factory()->create();
         //Create a delegation
-        Delegation::factory()->create([
+        $delegation = Delegation::factory()->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_FINISH_DATE' => null,
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_UID' => $task->TAS_UID,
         ]);
-        $result = Delegation::getOpenThreads($application->APP_NUMBER, $task->TAS_UID);
+        $result = Delegation::getOpenThread($application->APP_NUMBER, $delegation->DEL_INDEX);
         $this->assertEquals($application->APP_NUMBER, $result['APP_NUMBER']);
     }
 
     /**
      * This checks if return empty when the thread is CLOSED
      *
-     * @covers \ProcessMaker\Model\Delegation::getOpenThreads()
+     * @covers \ProcessMaker\Model\Delegation::getOpenThread()
      * @test
      */
     public function it_should_return_empty_when_thread_is_closed()
@@ -3357,19 +3366,19 @@ class DelegationTest extends TestCase
         //Create task
         $task = Task::factory()->create();
         //Create a delegation
-        Delegation::factory()->create([
+        $delegation = Delegation::factory()->create([
             'DEL_THREAD_STATUS' => 'CLOSED',
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_UID' => $task->TAS_UID,
         ]);
-        $result = Delegation::getOpenThreads($application->APP_NUMBER, $task->TAS_UID);
+        $result = Delegation::getOpenThread($application->APP_NUMBER, $delegation->DEL_INDEX);
         $this->assertEmpty($result);
     }
 
     /**
      * This checks if return empty when the data is not null
      *
-     * @covers \ProcessMaker\Model\Delegation::getOpenThreads()
+     * @covers \ProcessMaker\Model\Delegation::getOpenThread()
      * @test
      */
     public function it_should_return_empty_when_thread_finish_date_is_not_null()
@@ -3383,12 +3392,12 @@ class DelegationTest extends TestCase
         //Create task
         $task = Task::factory()->create();
         //Create a delegation
-        Delegation::factory()->create([
+        $delegation = Delegation::factory()->create([
             'DEL_THREAD_STATUS' => 'CLOSED',
             'APP_NUMBER' => $application->APP_NUMBER,
             'TAS_UID' => $task->TAS_UID,
         ]);
-        $result = Delegation::getOpenThreads($application->APP_NUMBER, $task->TAS_UID);
+        $result = Delegation::getOpenThread($application->APP_NUMBER, $delegation->DEL_INDEX);
         $this->assertEmpty($result);
     }
 
@@ -3612,7 +3621,10 @@ class DelegationTest extends TestCase
      */
     public function it_get_cases_thread_title()
     {
-        $delegation = Delegation::factory()->foreign_keys()->create();
+        $delegation = Delegation::factory()->foreign_keys()->create([
+            'DEL_INDEX' => 1,
+            'DEL_PREVIOUS' => 0
+        ]);
         $result = Delegation::casesThreadTitle($delegation->DEL_TITLE);
         $this->assertTrue(isset($result[0]));
     }

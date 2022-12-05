@@ -7,6 +7,7 @@
       :src="pageUri"
       :height="height"
       allowfullscreen
+      title="xIFrame"
     ></iframe>
   </div>
 </template>

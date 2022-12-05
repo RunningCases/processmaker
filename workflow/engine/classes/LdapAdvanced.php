@@ -608,7 +608,7 @@ class LdapAdvanced
         if (empty($message)) {
             $message = G::LoadTranslation('ID_LDAP_ERROR_CONNECTION');
         }
-        Cache::put('ldapMessageError', $message, 2);
+        Cache::put('ldapMessageError', $message, 120); //laravel 8.x the time parameter is in seconds.
         $this->log($linkIdentifier, $messageError);
     }
 
@@ -1588,7 +1588,7 @@ class LdapAdvanced
 
             if ($error = ldap_errno($ldapcnn)) {
                 $messageError = ldap_err2str($error);
-                Cache::put('ldapMessageError', $messageError, 2);
+                Cache::put('ldapMessageError', $messageError, 120); //laravel 8.x the time parameter is in seconds.
                 //
             } else {
                 if ($searchResult) {

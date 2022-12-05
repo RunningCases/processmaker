@@ -4,8 +4,7 @@ namespace Tests;
 
 use App\Factories\Factory;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use Illuminate\Support\Facades\DB;
-use Propel;
+use mysqli;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -84,9 +83,8 @@ abstract class TestCase extends BaseTestCase
      * truncate non-initial Models.
      * @return void
      */
-    public function truncateNonInitialModels(): void
+    public static function truncateNonInitialModels(): void
     {
-        DB::statement("set global max_connections = 500;");
         if (empty(static::$truncateInitialTables)) {
             $initialTables = [
                 'RBAC_PERMISSIONS',
@@ -135,12 +133,15 @@ abstract class TestCase extends BaseTestCase
                 }
                 static::$truncateInitialTables = implode(';', $truncates);
             }
-        } else {
-            DB::unprepared(
-                "SET FOREIGN_KEY_CHECKS = 0;" .
-                static::$truncateInitialTables .
-                ";SET FOREIGN_KEY_CHECKS = 1;"
-            );
         }
+        $mysqli = new mysqli(env('DB_HOST'), env('DB_USERNAME'), env('DB_PASSWORD'), env('DB_DATABASE'));
+        $mysqli->multi_query(
+            "set global max_connections = 500;" .
+            "SET FOREIGN_KEY_CHECKS = 0;" .
+            static::$truncateInitialTables .
+            ";SET FOREIGN_KEY_CHECKS = 1;"
+        );
+        // flush multi_queries
+        while ($mysqli->next_result()) {;}
     }
 }

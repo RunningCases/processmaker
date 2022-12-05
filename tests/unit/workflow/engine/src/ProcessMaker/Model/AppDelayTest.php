@@ -13,12 +13,21 @@ use Tests\TestCase;
 class AppDelayTest extends TestCase
 {
     /**
+     * This method is called before the first test of this test class is run.
+     * @return void
+     */
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        self::truncateNonInitialModels();
+    }
+
+    /**
      * Set up function.
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->truncateNonInitialModels();
     }
 
     /**
@@ -41,6 +50,7 @@ class AppDelayTest extends TestCase
      */
     public function it_return_scope_not_action_disable()
     {
+        AppDelay::truncate();
         $table = AppDelay::factory()->paused_foreign_keys()->create();
         $this->assertCount(1, $table->notDisabled()->get());
     }

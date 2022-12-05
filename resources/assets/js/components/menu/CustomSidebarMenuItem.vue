@@ -1,5 +1,5 @@
 <template>
-    <div id="my-container">
+    <div :id="`menu-${item.id}`">
         <div
             v-if="item.header && !isItemHidden"
             class="vsm--header"

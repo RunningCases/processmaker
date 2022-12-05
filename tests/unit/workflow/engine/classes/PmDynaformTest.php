@@ -13,6 +13,16 @@ use Tests\TestCase;
 class PmDynaformTest extends TestCase
 {
     /**
+     * This method is called before the first test of this test class is run.
+     * @return void
+     */
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        self::truncateNonInitialModels();
+    }
+
+    /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
@@ -35,7 +45,6 @@ class PmDynaformTest extends TestCase
         if (!defined("DB_PASS")) {
             define("DB_PASS", env('DB_PASSWORD'));
         }
-        $this->truncateNonInitialModels();
     }
 
     /**

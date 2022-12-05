@@ -13,12 +13,21 @@ class GroupsAjaxTest extends TestCase
     private $groups;
 
     /**
+     * This method is called before the first test of this test class is run.
+     * @return void
+     */
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        self::truncateNonInitialModels();
+    }
+
+    /**
      * Set up function
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->truncateNonInitialModels();
         $this->settingUserLogged();
         $this->createGroups();
     }

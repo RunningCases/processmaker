@@ -3,6 +3,7 @@
     <iframe
       :width="width"
       ref="IFrameProcessMap"
+      title="IFrameProcessMap"
       frameborder="0"
       :src="path"
       :height="height"

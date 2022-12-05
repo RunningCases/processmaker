@@ -11,13 +11,22 @@ class WorkspaceToolsTest extends TestCase
     public $workspace;
 
     /**
+     * This method is called before the first test of this test class is run.
+     * @return void
+     */
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        self::truncateNonInitialModels();
+    }
+
+    /**
      * Set up method.
      * @return void
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->truncateNonInitialModels();
 
         config(["system.workspace" => "new_site"]);
         $this->workspace = config("system.workspace");

@@ -18,13 +18,22 @@ use Tests\TestCase;
 class TaskTest extends TestCase
 {
     /**
+     * This method is called before the first test of this test class is run.
+     * @return void
+     */
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        self::truncateNonInitialModels();
+    }
+
+    /**
      * Set up method.
      * @return void
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->truncateNonInitialModels();
     }
 
     /**
@@ -257,6 +266,7 @@ class TaskTest extends TestCase
      */
     public function it_should_test_get_tasks_for_home_method()
     {
+        Task::truncate();
         $process1 = Process::factory()->create();
         $process2 = Process::factory()->create();
 

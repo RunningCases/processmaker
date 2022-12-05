@@ -6,8 +6,7 @@
             :title="addSearchTitle"
         >
             <template v-slot:body>
-
-                <b-form-group>
+                <b-form-group label-for="myCasesFilter">
                     <b-form-radio-group
                         v-model="selected"
                         :options="filterItems"

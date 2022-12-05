@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Crypt;
 use ProcessMaker\BusinessModel\User;
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
@@ -52,7 +53,7 @@ try {
             $enterprise->setup();
         }
         /*----------------------------------********---------------------------------*/
-        Cache::put('ldapMessageError', '', 2);
+        Cache::put('ldapMessageError', '', 120); //laravel 8.x the time parameter is in seconds.
         $uid = $RBAC->VerifyLogin($usr, $pwd);
         $ldapMessageError = Cache::pull('ldapMessageError');
         $RBAC->cleanSessionFiles(72); //cleaning session files older than 72 hours
@@ -111,7 +112,7 @@ try {
 
         $_SESSION["USERNAME_PREVIOUS1"] = (isset($_SESSION["USERNAME_PREVIOUS2"]))? $_SESSION["USERNAME_PREVIOUS2"] : "";
         $_SESSION["USERNAME_PREVIOUS2"] = $usr;
-        $_SESSION["FAILED_LOGINS"]      = (isset($frm['FAILED_LOGINS']))? $frm['FAILED_LOGINS'] : 0;
+        $_SESSION["FAILED_LOGINS"] = is_numeric(Cache::get("FAILED_LOGINS{$usr}")) ? Cache::get("FAILED_LOGINS{$usr}") : 0;
 
         if (!isset($uid) || $uid < 0) {
             if ($_SESSION["USERNAME_PREVIOUS1"] != "" && $_SESSION["USERNAME_PREVIOUS2"] != "" && $_SESSION["USERNAME_PREVIOUS1"] != $_SESSION["USERNAME_PREVIOUS2"]) {
@@ -138,6 +139,7 @@ try {
                         $oStatement  = $oConnection->prepareStatement("UPDATE USERS SET USR_STATUS = 'INACTIVE' WHERE USR_UID = '" . $sUserUID . "'");
                         $oStatement->executeQuery();
                         unset($_SESSION['FAILED_LOGINS']);
+                        Cache::forget("FAILED_LOGINS{$usr}");
                         $errLabel = G::LoadTranslation('ID_ACCOUNT') . ' "' . $usr . '" ' . G::LoadTranslation('ID_ACCOUNT_DISABLED_CONTACT_ADMIN');
                     }
                     //Log failed authentications
@@ -150,7 +152,7 @@ try {
 
             if (strpos($_SERVER['HTTP_REFERER'], 'home/login') !== false) {
                 $d = serialize(['u' => $usr, 'p' => $pwd, 'm' => G::LoadTranslation($errLabel)]);
-                $urlLogin = $urlLogin . '?d=' . base64_encode($d);
+                $urlLogin = $urlLogin . '?d=' . Crypt::encryptString($d);
             } else {
                 if (empty($ldapMessageError)) {
                     G::SendTemporalMessage($errLabel, "warning");
@@ -266,6 +268,7 @@ try {
     //$_SESSION['USR_ROLENAME'] = $rol['ROL_NAME'];
 
     unset($_SESSION['FAILED_LOGINS']);
+    Cache::forget("FAILED_LOGINS{$usr}");
 
     // Assign the uid of user to userloggedobj
     $RBAC->loadUserRolePermission($RBAC->sSystem, $uid);
@@ -404,7 +407,7 @@ try {
                 "browserTimeZoneOffset" => $_POST['form']['BROWSER_TIME_ZONE_OFFSET']
             ];
             $messPassword['__USR_PASSWORD_CHANGE__'] = G::generateUniqueID();
-            Cache::put($messPassword['__USR_PASSWORD_CHANGE__'], $values, 2);
+            Cache::put($messPassword['__USR_PASSWORD_CHANGE__'], $values, 120); //laravel 8.x the time parameter is in seconds.
             $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/changePasswordpm3', '', $messPassword, 'sysLoginVerify');
             G::RenderPage('publish');
             session_destroy();

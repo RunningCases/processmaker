@@ -14,12 +14,21 @@ use Tests\TestCase;
 class CaseListTest extends TestCase
 {
     /**
+     * This method is called before the first test of this test class is run.
+     * @return void
+     */
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        self::truncateNonInitialModels();
+    }
+
+    /**
      * setUp method.
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->truncateNonInitialModels();
     }
 
     /**
@@ -263,6 +272,7 @@ class CaseListTest extends TestCase
      */
     public function it_should_test_getSetting()
     {
+        CaseList::truncate();
         $data = [
             'type' => 'inbox',
             'name' => 'test1',
@@ -369,6 +379,7 @@ class CaseListTest extends TestCase
      */
     public function it_should_test_export()
     {
+        CaseList::truncate();
         $data = [
             'type' => 'inbox',
             'name' => 'test export',
@@ -488,6 +499,7 @@ class CaseListTest extends TestCase
      */
     public function it_should_test_getReportTables()
     {
+        AdditionalTables::truncate();
         $additionalTables = AdditionalTables::factory(10)->create();
 
         $search = '';

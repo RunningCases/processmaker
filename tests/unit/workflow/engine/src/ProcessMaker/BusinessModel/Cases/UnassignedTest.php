@@ -28,12 +28,30 @@ use Tests\TestCase;
 class UnassignedTest extends TestCase
 {
     /**
+     * This method is called before the first test of this test class is run.
+     * @return void
+     */
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        self::truncateNonInitialModels();
+    }
+
+    /**
+     * This method is called after the last test of this test class is run.
+     */
+    public static function tearDownAfterClass(): void
+    {
+        parent::tearDownAfterClass();
+        self::truncateNonInitialModels();
+    }
+
+    /**
      * Method set up.
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->truncateNonInitialModels();
     }
 
     /**
@@ -495,6 +513,8 @@ class UnassignedTest extends TestCase
      */
     public function it_filter_by_thread_title()
     {
+        Delegation::truncate();
+        Application::truncate();
         // Create factories related to the unassigned cases
         $cases = $this->createSelfServiceUserOrGroup();
         $usrUid = $cases['taskUser']->USR_UID;
@@ -573,6 +593,7 @@ class UnassignedTest extends TestCase
      */
     public function it_should_test_get_counters_by_processes_method_no_filter()
     {
+        Delegation::truncate();
         $cases = $this->createMultipleUnassigned(3);
         $unassigned = new Unassigned();
         $unassigned->setUserId($cases['taskUser']->USR_ID);
@@ -735,6 +756,7 @@ class UnassignedTest extends TestCase
      */
     public function it_should_test_get_counters_by_range_method()
     {
+        Delegation::truncate();
         $user = User::factory()->create();
         $process1 = Process::factory()->create([
             'CATEGORY_ID' => 2

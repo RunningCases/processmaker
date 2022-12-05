@@ -181,7 +181,7 @@ Ext.onReady(function(){
     },
     columns: [
               {id:'CATEGORY_UID', dataIndex: 'CATEGORY_UID', hidden:true, hideable:false},
-              {header: _('ID_CATEGORY_NAME'), dataIndex: 'CATEGORY_NAME', width: 500, hidden:false, align:'left'},
+              {header: _('ID_CATEGORY_NAME'), dataIndex: 'CATEGORY_NAME', width: 500, hidden:false, renderer: categoryNameRenderer, align:'left'},
               {header: _('ID_PROCESSES'), dataIndex: 'TOTAL_PROCESSES', width: 100, hidden: false, align: 'center'}
               ]
   });
@@ -281,6 +281,11 @@ Ext.onReady(function(){
             ]
   });
 });
+
+//Sanitize output
+categoryNameRenderer = function (value) {
+  return Ext.util.Format.htmlEncode(value);
+};
 
 //Funtion Handles Context Menu Opening
 onMessageContextMenu = function (grid, rowIndex, e) {

@@ -6,7 +6,7 @@
             :title="addSearchTitle"
         >
             <template v-slot:body>
-                <b-form-group>
+                <b-form-group label-for="customFilter">
                     <b-form-radio-group
                         v-model="selectedRadio"
                         :options="getFilterColletion('radio')"
@@ -15,7 +15,7 @@
                         name="flavour-2a"
                         stacked
                     ></b-form-radio-group>
-                    <b-form-group> </b-form-group>
+                    <p></p>
                     <b-form-checkbox-group
                         id="checkbox-custom-filter"
                         v-model="selectedCheckbox"

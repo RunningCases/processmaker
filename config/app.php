@@ -9,7 +9,7 @@ return [
     'url' => env('APP_URL', 'http://localhost'),
     'env' => env('APP_ENV', 'production'),
     'debug' => env('APP_DEBUG', false),
-    'cache_lifetime' => env('APP_CACHE_LIFETIME', 60),
+    'cache_lifetime' => env('APP_CACHE_LIFETIME', 3600), //laravel 8.x the time parameter is in seconds.
     'key' => env('APP_KEY', 'base64:rU28h/tElUn/eiLY0qC24jJq1rakvAFRoRl1DWxj/kM='),
     'cipher' => 'AES-256-CBC',
     'timezone' => 'UTC',

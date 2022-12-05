@@ -17,12 +17,21 @@ class BpmnWorkflowTest extends TestCase
     private $user;
 
     /**
+     * This method is called before the first test of this test class is run.
+     * @return void
+     */
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        self::truncateNonInitialModels();
+    }
+
+    /**
      * Set up testing.
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->truncateNonInitialModels();
         $this->user = User::factory()->create();
     }
 
@@ -106,6 +115,7 @@ class BpmnWorkflowTest extends TestCase
      */
     public function it_should_create_from_structure()
     {
+        Process::truncate();
         $faker = Factory::create();
 
         $projectDataFilename = PATH_TRUNK . "tests/resources/projectData.json";

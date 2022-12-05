@@ -23,7 +23,7 @@
                                 </div>
                             </template>
                             <template v-slot:body>
-                                <b-form-group>
+                                <b-form-group label-for="advancedFilter">
                                     <b-form-checkbox-group
                                         v-model="selected"
                                         :options="filterItems"
@@ -82,7 +82,9 @@
                                 <b-form-group
                                     :state="caseNumberState"
                                     :invalid-feedback="$t('ID_INVALID_APPLICATION_NUMBER')"
+                                    label-for="caseNumber"
                                 >
+                                    <label for="case-number-input"></label>
                                     <b-form-input
                                         id="case-number-input"
                                         v-model="caseNumber"
@@ -90,6 +92,7 @@
                                         :placeholder="$t('ID_CASE_NUMBER_CAPITALIZED')"
                                         required
                                         type="number"
+                                        aria-label="case_number"
                                     ></b-form-input>
                                 </b-form-group>
                             </form>
@@ -147,6 +150,7 @@
                                         variant="outline-secondary"
                                         class="pull-right"
                                         @click="onSearch"
+                                        aria-label="search"
                                     >
                                     <b-icon icon="search"></b-icon>
                                     </b-button>

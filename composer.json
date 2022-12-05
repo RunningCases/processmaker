@@ -96,7 +96,6 @@
             "thirdparty/pear",
             "thirdparty/phing",
             "thirdparty/pake",
-            "thirdparty/wizard",
             "rbac/engine/classes/"
         ],
         "files": [

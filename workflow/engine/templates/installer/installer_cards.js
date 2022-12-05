@@ -633,7 +633,7 @@ Ext.onReady(function () {
                                         value: 'root',
                                         allowBlank: false,
                                         validator: function (v) {
-                                            var t = /^[.a-zA-Z_\-]+$/;
+                                            var t = /^[0-9\.a-zA-Z_\-]+$/;
                                             return t.test(v);
                                         },
                                         listeners: {
