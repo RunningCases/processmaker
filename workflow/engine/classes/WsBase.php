@@ -3007,11 +3007,14 @@ class WsBase
             }
 
             if (!in_array($userIdTarget, $userList)) {
-                $result = new WsResponse(34, G::loadTranslation('ID_TARGET_USER_DOES_NOT_HAVE_RIGHTS'));
-
-                $g->sessionVarRestore();
-
-                return $result;
+                $bmCase = new BmCases();
+                if (!$bmCase->isSupervisor($userIdTarget, $rows['APP_NUMBER'])){
+                    $result = new WsResponse(34, G::loadTranslation('ID_TARGET_USER_DOES_NOT_HAVE_RIGHTS'));
+    
+                    $g->sessionVarRestore();
+    
+                    return $result;
+                }
             }
 
             /**

@@ -1162,16 +1162,17 @@ class Cases
         $appDelegation = new AppDelegation();
         $delegation = $appDelegation->load($appUid, $index);
         if (empty($delegation['USR_UID'])) {
-            $case = new ClassesCases();
-            $case->loadCase($appUid);
+            $classesCase = new ClassesCases();
+            $case = $classesCase->loadCase($appUid);
 
             //Review if the user can be claim the case
-            if (!$case->isSelfService($userUid, $delegation['TAS_UID'], $appUid)) {
-                $message = preg_replace("#<br\s*/?>#i", "", G::LoadTranslation("ID_NO_PERMISSION_NO_PARTICIPATED"));
-                throw new Exception($message);
+            if (!$classesCase->isSelfService($userUid, $delegation['TAS_UID'], $appUid)) {
+                if (!$this->isSupervisor($userUid, $case['APP_NUMBER'])){
+                    $message = preg_replace("#<br\s*/?>#i", "", G::LoadTranslation("ID_NO_PERMISSION_NO_PARTICIPATED"));
+                    throw new Exception($message);
+                }
             }
-
-            $case->setCatchUser($appUid, $index, $userUid);
+            $classesCase->setCatchUser($appUid, $index, $userUid);
         } else {
             throw new Exception(G::LoadTranslation("ID_CASE_USER_INVALID_CLAIM_CASE", [$userUid]));
         }
