@@ -2420,6 +2420,12 @@ msgid "Assign"
 msgstr "Assign"
 
 # TRANSLATION
+# LABEL/ID_ASSIGN_CASE
+#: LABEL/ID_ASSIGN_CASE
+msgid "Assign Case"
+msgstr "Assign Case"
+
+# TRANSLATION
 # LABEL/ID_ASSIGNED_FIEDS
 #: LABEL/ID_ASSIGNED_FIEDS
 msgid "ASSIGNED FIELDS"
@@ -24016,6 +24022,12 @@ msgstr "Resume"
 #: LABEL/ID_RETURN_ADVANCED_SEARCH
 msgid "Return"
 msgstr "Return"
+
+# TRANSLATION
+# LABEL/ID_REVIEW_CASE
+#: LABEL/ID_REVIEW_CASE
+msgid "Review Case"
+msgstr "Review Case"
 
 # TRANSLATION
 # LABEL/ID_RIGHT
