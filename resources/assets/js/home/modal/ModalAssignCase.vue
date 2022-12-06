@@ -121,7 +121,7 @@ export default {
      */
     getUsers() {
       let that = this;
-      api.cases.getUserToReassign(this.data).then((response) => {
+      api.cases.getUsersToReassign(this.data).then((response) => {
         var users = response.data.data,
           i;
         if (response.statusText == "OK" || response.status === 200) {
