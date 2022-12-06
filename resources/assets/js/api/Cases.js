@@ -240,7 +240,7 @@ export let cases = {
         });
     },
     /**
-     * get the list of users to re-assign
+     * Get the list of users to re-assign
      * @param {*} data 
      * @returns
      */

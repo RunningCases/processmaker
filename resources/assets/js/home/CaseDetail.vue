@@ -727,9 +727,7 @@ export default {
      * @param {string} data
      */
      changeFlagSupervising(data) {
-      if (data === 'SUPERVISING'){
-        this.flagSupervising = true;
-      }
+        this.flagSupervising = (data === 'SUPERVISING');
     },  
     /**
      * Claim case

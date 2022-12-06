@@ -1038,7 +1038,7 @@ class Cases extends Api
     }
     
     /**
-     * User case supervisor permissions
+     * Verify if current user is a supervisor
      *
      * @url GET /:appNumber/supervisor
      *
@@ -1092,8 +1092,6 @@ class Cases extends Api
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
-
-
 
     /**
      * Get users to reassign or assign

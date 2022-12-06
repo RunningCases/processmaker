@@ -2787,21 +2787,17 @@ class Cases
 
         if ($type === 'SELF_SERVICE' && $variable !== '') {
             $variable = substr($variable, 2);
-            $case = new ClassesCases();
-            $app = new ModelApplication();
-            $fields = $app::where('APP_UID', '=', $appUid)->first();
-            $data = $case::unserializeData($fields->APP_DATA);
+            $fields = ModelApplication::where('APP_UID', '=', $appUid)->first();
+            $data = ClassesCases::unserializeData($fields->APP_DATA);
 
             $row = [];
-            $groups = new GroupUser();
-            $groupwf = new Groupwf();
             
             if (!empty($data[$variable])) {
                 foreach ($data[$variable] as $uid) {
-                    $group = $groupwf::where('GRP_UID', '=', $uid)->first();
+                    $group = Groupwf::where('GRP_UID', '=', $uid)->first();
                     if (!empty($group)) {
-                        $users = $groups::where('GRP_UID', '=', $uid)->get()->toArray();
-                        foreach ($users as $data) {
+                        $usersOfGroup = GroupUser::where('GRP_UID', '=', $uid)->get()->toArray();
+                        foreach ($usersOfGroup as $data) {
                             $row[] = $data['USR_UID'];
                         }
                     } else {
@@ -2810,10 +2806,9 @@ class Cases
                 }
             }
             
-            $user = new User();
             $users = [];
             foreach ($row as $data) {
-                $obj = $user::where('USR_UID', '=', $data)->Active()->first();
+                $obj = User::where('USR_UID', '=', $data)->Active()->first();
                 if (!is_null($obj) && $obj->USR_USERNAME !== "") {
                     $users[] = $obj;
                 }
