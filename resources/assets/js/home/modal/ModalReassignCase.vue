@@ -150,7 +150,7 @@ export default {
       let that = this;
       this.data.userSelected = this.userSelected;
       this.data.reasonReassign = this.reasonReassign;
-      this.notifyUser = this.notifyUser;
+      this.data.notifyUser = this.notifyUser;
       if (!this.data.FLAG){
         api.cases.reassingCase(this.data).then((response) => {
           if (response.statusText == "OK" || response.status === 200) {
