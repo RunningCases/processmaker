@@ -934,7 +934,7 @@ class Cases
      * @param string $usrUid Unique id of User
      * @param int $delIndex
      * @param string $userSource Unique id of User Source
-     * @param string $userTarget $userUidTarget id of User Target
+     * @param string $userTarget id of User Target
      * @param string $reason
      * @param boolean $sendMail
      *
@@ -967,6 +967,18 @@ class Cases
                 $cases = new BmCases();
                 $response = $cases->addNote($appUid, $usrUid, $noteContent, $sendMail);
             }
+
+            // Log
+            $message = 'Reassign case';
+            $context = $data = [
+                "appUid" => $appUid,
+                "usrUidSupervisor" => $usrUid,
+                "userSource" => $userSource,
+                "userTarget" => $userTarget,
+                "reason" => $reason,
+                "delIndex" => $delIndex
+            ];
+            Log::channel(':ReassignCase')->info($message, Bootstrap::context($context));
         } catch (Exception $e) {
             throw $e;
         }
@@ -1143,13 +1155,15 @@ class Cases
      * @param string $appUid
      * @param integer $index
      * @param string $userUid
+     * @param string $action
+     * @param string $reason
      *
      * @return void
      * @throws Exception
      *
      * @access public
      */
-    public function putClaimCase($appUid, $index, $userUid)
+    public function putClaimCase($appUid, $index, $userUid, $action, $reason = '')
     {
         // Validate the parameters
         Validator::isString($appUid, '$appUid');
@@ -1176,6 +1190,19 @@ class Cases
         } else {
             throw new Exception(G::LoadTranslation("ID_CASE_USER_INVALID_CLAIM_CASE", [$userUid]));
         }
+
+        $usrUidSupervisor = (Server::getUserId() === $userUid) ? '' : Server::getUserId();
+
+        // Log
+        $message = $action . ' case';
+        $context = $data = [
+            "appUid" => $appUid,
+            "usrUidSupervisor" => $usrUidSupervisor,
+            "userTarget" => $userUid,
+            "reason" => $reason,
+            "delIndex" => $index
+        ];
+        Log::channel(':' . $action . 'Case')->info($message, Bootstrap::context($context));
     }
 
     /**

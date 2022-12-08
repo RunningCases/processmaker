@@ -1031,7 +1031,7 @@ class Cases extends Api
         try {
             $userUid = $this->getUserId();
             $cases = new BmCases();
-            $cases->putClaimCase($appUid, $index, $userUid);
+            $cases->putClaimCase($appUid, $index, $userUid, 'Claim');
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -1081,7 +1081,7 @@ class Cases extends Api
     {
         try {
             $cases = new BmCases();
-            $cases->putClaimCase($appUid, $index, $usrUid);
+            $cases->putClaimCase($appUid, $index, $usrUid, 'Assign', $reason);
 
             /** Add the note */
             if (!empty($reason)) {
