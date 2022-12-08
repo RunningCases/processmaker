@@ -1086,7 +1086,7 @@ class Cases extends Api
             /** Add the note */
             if (!empty($reason)) {
                 $currentUserUid = $this->getUserId();
-                $cases->addNote($appUid, $currentUserUid, $reason, $sendMail);
+                $cases->sendMail($appUid, $currentUserUid, $reason, $sendMail, $usrUid);
             }
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());

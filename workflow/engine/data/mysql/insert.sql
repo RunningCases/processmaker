@@ -57226,6 +57226,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_ASSIGN_GROUP_TASK','en','Assign Group Task','2015-02-20') ,
 ( 'LABEL','ID_ASSIGN_GROUP_TO','en','Assign group to','2014-01-15') ,
 ( 'LABEL','ID_ASSIGN_MANAGER_TO_DEPARTAMENT','en','Assign Manager To Department','2014-10-21') ,
+( 'LABEL','ID_ASSIGN_NOTIFICATION','en','You were assigned to case #{0}.','2022-12-08') ,
 ( 'LABEL','ID_ASSIGN_ROLE','en','Assign user','2014-01-15') ,
 ( 'LABEL','ID_ASSIGN_RULES','en','Error: There is a problem with the next tasks of this process. One of them has manual assignment. Manual assignment shouldn''t be used with sub-processes','2015-02-24') ,
 ( 'LABEL','ID_ASSIGN_SCREEN','en','Assign Screen','2014-01-15') ,

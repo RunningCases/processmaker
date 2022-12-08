@@ -962,10 +962,7 @@ class Cases
 
             /** Add the note */
             if (!empty($reason)) {
-                $noteContent = $reason;
-                // Define the Case for register a case note
-                $cases = new BmCases();
-                $response = $cases->addNote($appUid, $usrUid, $noteContent, $sendMail);
+                $this->sendMail($appUid, $usrUid, $reason, $sendMail, $userTarget);
             }
 
             // Log
@@ -4057,6 +4054,47 @@ class Cases
         $result['attachment_errors'] = [];
 
         return $result;
+    }
+
+    /**
+     * Send mail to notify and Add a case note
+     *
+     * @param string $appUid
+     * @param string $userUid
+     * @param string $note
+     * @param bool $sendMail
+     * @param string $toUser
+     *
+     */
+    public function sendMail($appUid, $userUid, $note, $sendMail = false, $toUser = '')
+    {
+        
+        $appNumber = ModelApplication::getCaseNumber($appUid);
+
+        // Register the note
+        $attributes = [
+            "APP_UID" => $appUid,
+            "APP_NUMBER" => $appNumber,
+            "USR_UID" => $userUid,
+            "NOTE_DATE" => date("Y-m-d H:i:s"),
+            "NOTE_CONTENT" => $note,
+            "NOTE_TYPE" => "USER",
+            "NOTE_AVAILABILITY" => "PUBLIC",
+            "NOTE_RECIPIENTS" => ""
+        ];
+        $newNote = Notes::create($attributes);
+        
+        // Send the email
+        if ($sendMail) {
+            // Get the FK
+            $noteId = $newNote->NOTE_ID;
+            
+            $note = G::LoadTranslation('ID_ASSIGN_NOTIFICATION', [$appNumber]) . '<br />' . G::LoadTranslation('ID_REASON') . ': ' . stripslashes($note);
+
+            // Send the notification
+            $appNote = new AppNotes();
+            $appNote->sendNoteNotification($appUid, $userUid, $note, $toUser, '', 0, $noteId);
+        }
     }
 
     /**

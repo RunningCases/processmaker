@@ -2534,6 +2534,12 @@ msgid "Assign Manager To Department"
 msgstr "Assign Manager To Department"
 
 # TRANSLATION
+# LABEL/ID_ASSIGN_NOTIFICATION
+#: LABEL/ID_ASSIGN_NOTIFICATION
+msgid "You were assigned to case #{0}."
+msgstr "You were assigned to case #{0}."
+
+# TRANSLATION
 # LABEL/ID_ASSIGN_ROLE
 #: LABEL/ID_ASSIGN_ROLE
 msgid "Assign user"

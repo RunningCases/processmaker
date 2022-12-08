@@ -146,7 +146,7 @@ export default {
       let that = this;
       this.data.userSelected = this.userSelected;
       this.data.reasonAssign = this.reasonAssign;
-      this.notifyUser = this.notifyUser;
+      this.data.notifyUser = this.notifyUser;
       api.cases.assignCase(this.data).then((response) => {
         if (response.statusText == "OK" || response.status === 200) {
           that.$refs["modal-assign-case"].hide();
