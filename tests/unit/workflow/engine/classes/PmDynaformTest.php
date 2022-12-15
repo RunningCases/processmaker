@@ -1,8 +1,11 @@
 <?php
 
 use Faker\Factory;
+use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Dynaform;
+use ProcessMaker\Model\InputDocument;
 use ProcessMaker\Model\Process;
+use ProcessMaker\Model\StepSupervisor;
 use Tests\TestCase;
 
 /**
@@ -1202,6 +1205,39 @@ class PmDynaformTest extends TestCase
 
         // Session variable for "USER_LOGGED" should be empty
         $this->assertTrue(empty($_SESSION['USER_LOGGED']));
+    }
+
+    /**
+     * @test
+     * @covers PmDynaform::navigationBarForStepsToRevise
+     */
+    public function it_should_test_navigationBarForStepsToRevise()
+    {
+        //definition data
+        $dynaform = Dynaform::factory()->create();
+        $inputDocument = InputDocument::factory()->create();
+        $application = Application::factory()->create([
+            'PRO_UID' => $dynaform->PRO_UID
+        ]);
+        StepSupervisor::factory()->create([
+            'PRO_UID' => $application->PRO_UID,
+            'STEP_TYPE_OBJ' => 'DYNAFORM',
+            'STEP_UID_OBJ' => $dynaform->DYN_UID
+        ]);
+        StepSupervisor::factory()->create([
+            'PRO_UID' => $application->PRO_UID,
+            'STEP_TYPE_OBJ' => 'DYNAFORM',
+            'STEP_UID_OBJ' => $dynaform->DYN_UID
+        ]);
+        StepSupervisor::factory()->create([
+            'PRO_UID' => $application->PRO_UID,
+            'STEP_TYPE_OBJ' => 'INPUT_DOCUMENT',
+            'STEP_UID_OBJ' => $inputDocument->INP_DOC_UID
+        ]);
+        
+        //assertion
+        $result = PmDynaform::navigationBarForStepsToRevise($application->APP_UID, $dynaform->DYN_UID, 2);
+        $this->assertNotEmpty($result);
     }
 }
 

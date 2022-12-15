@@ -8,13 +8,16 @@ use Illuminate\Support\Facades\DB;
 use ProcessMaker\Model\AppDelay;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
+use ProcessMaker\Model\Dynaform;
 use ProcessMaker\Model\Documents;
 use ProcessMaker\Model\GroupUser;
 use ProcessMaker\Model\Groupwf;
+use ProcessMaker\Model\InputDocument;
 use ProcessMaker\Model\ListUnassigned;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\ProcessUser;
 use ProcessMaker\Model\Step;
+use ProcessMaker\Model\StepSupervisor;
 use ProcessMaker\Model\Task;
 use ProcessMaker\Model\Triggers;
 use ProcessMaker\Model\User;
@@ -533,5 +536,60 @@ class CasesTest extends TestCase
         $result = $cases->usersToReassign($users[0]['USR_UID'], $task->TAS_UID, $application->APP_UID);
         // Asserts
         $this->assertCount(3, $result['data']);
+    }
+
+    /**
+     * This test the method getStepsToRevise.
+     * @test
+     * @covers ProcessMaker\BusinessModel\Cases::getStepsToRevise
+     */
+    public function it_should_test_getStepsToRevise()
+    {
+        //definition data
+        $dynaform = Dynaform::factory()->create();
+        $application = Application::factory()->create([
+            'PRO_UID' => $dynaform->PRO_UID
+        ]);
+        $stepSupervisor = StepSupervisor::factory()->create([
+            'PRO_UID' => $application->PRO_UID,
+            'STEP_TYPE_OBJ' => 'DYNAFORM',
+            'STEP_UID_OBJ' => $dynaform->DYN_UID
+        ]);
+
+        //assertion
+        $cases = new Cases();
+        $result = $cases->getStepsToRevise($application->APP_UID, 'DYNAFORM');
+        $this->assertEquals($stepSupervisor->PRO_UID, $result[0]['PRO_UID']);
+    }
+
+    /**
+     * This test the method getAllUrlStepsToRevise.
+     * @test
+     * @covers ProcessMaker\BusinessModel\Cases::getAllUrlStepsToRevise
+     */
+    public function it_should_test_getAllUrlStepsToRevise()
+    {
+        //definition data
+        $dynaform = Dynaform::factory()->create();
+        $inputDocument = InputDocument::factory()->create();
+        $application = Application::factory()->create([
+            'PRO_UID' => $dynaform->PRO_UID
+        ]);
+        $stepSupervisor = StepSupervisor::factory()->create([
+            'PRO_UID' => $application->PRO_UID,
+            'STEP_TYPE_OBJ' => 'DYNAFORM',
+            'STEP_UID_OBJ' => $dynaform->DYN_UID
+        ]);
+        $stepSupervisor = StepSupervisor::factory()->create([
+            'PRO_UID' => $application->PRO_UID,
+            'STEP_TYPE_OBJ' => 'INPUT_DOCUMENT',
+            'STEP_UID_OBJ' => $inputDocument->INP_DOC_UID
+        ]);
+
+        //assertion
+        $cases = new Cases();
+        $result = $cases->getAllUrlStepsToRevise($application->APP_UID, 2);
+        $this->assertEquals($dynaform->DYN_UID, $result[0]['uid']);
+        $this->assertEquals($inputDocument->INP_DOC_UID, $result[1]['uid']);
     }
 }

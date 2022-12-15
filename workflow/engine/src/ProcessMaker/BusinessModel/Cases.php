@@ -58,6 +58,7 @@ use ProcessMaker\Model\GroupUser;
 use ProcessMaker\Model\ListUnassigned;
 use ProcessMaker\Model\Triggers;
 use ProcessMaker\Model\ProcessUser;
+use ProcessMaker\Model\StepSupervisor;
 use ProcessMaker\Model\Task;
 use ProcessMaker\Model\User;
 use ProcessMaker\Plugins\PluginRegistry;
@@ -4388,4 +4389,70 @@ class Cases
         // Return results
         return $dynaForms;
     }
+    
+    /**
+     * Get objects that they have send it.
+     * @param string $appUid
+     * @param string $typeObject
+     * @return array
+     */
+    public function getStepsToRevise(string $appUid, string $typeObject): array
+    {
+        $application = ModelApplication::where('APP_UID', '=', $appUid)
+                ->first();
+        $result = StepSupervisor::where('PRO_UID', '=', $application['PRO_UID'])->
+                where('STEP_TYPE_OBJ', '=', $typeObject)->
+                orderBy('STEP_POSITION', 'ASC')->
+                get()->
+                toArray();
+        return $result;
+    }
+
+    /**
+     * Get all url steps to revise.
+     * @param string $appUid
+     * @param int $delIndex
+     * @return array
+     */
+    public function getAllUrlStepsToRevise(string $appUid, int $delIndex): array
+    {
+        $result = [];
+        $dynaformStep = $this->getStepsToRevise($appUid, 'DYNAFORM');
+        $i = 0;
+        foreach ($dynaformStep as $step) {
+            $url = "cases_StepToRevise?"
+                    . "type=DYNAFORM&"
+                    . "ex={$i}&"
+                    . "PRO_UID={$step["PRO_UID"]}&"
+                    . "DYN_UID={$step['STEP_UID_OBJ']}&"
+                    . "APP_UID={$appUid}&"
+                    . "position={$step['STEP_POSITION']}&"
+                    . "DEL_INDEX={$delIndex}";
+            $result[] = [
+                'uid' => $step['STEP_UID_OBJ'],
+                'url' => $url
+            ];
+            $i++;
+        }
+
+        $inputDocumentStep = $this->getStepsToRevise($appUid, 'INPUT_DOCUMENT');
+        $i = 0;
+        foreach ($inputDocumentStep as $step) {
+            $url = "cases_StepToReviseInputs?"
+                    . "type=INPUT_DOCUMENT&"
+                    . "ex={$i}&"
+                    . "PRO_UID={$step["PRO_UID"]}&"
+                    . "INP_DOC_UID={$step['STEP_UID_OBJ']}&"
+                    . "APP_UID={$appUid}&"
+                    . "position={$step['STEP_POSITION']}&"
+                    . "DEL_INDEX={$delIndex}";
+            $result[] = [
+                'uid' => $step['STEP_UID_OBJ'],
+                'url' => $url
+            ];
+            $i++;
+        }
+        return $result;
+    }
+
 }
