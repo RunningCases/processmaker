@@ -24,11 +24,17 @@ if ($TYPE_DATA == 'show') {
 }
 
 $rows = [];
-$per = new RolesPermissions();
+$rolesPermissions = new RolesPermissions();
+$permissionsAdmin = $RBAC->loadPermissionAdmin();
+
 while ($oDataset->next()) {
     $row = $oDataset->getRow();
-    $per->setPerUid($row['PER_UID']);
-    $row['PER_NAME'] = $per->getPermissionName();
+    $rolesPermissions->setPerUid($row['PER_UID']);
+    // Get permission name
+    $row['PER_NAME'] = $rolesPermissions->getPermissionName();
+    // Define permission type
+    $row['TYPE'] = array_search($row['PER_UID'], array_column($permissionsAdmin, 'PER_UID')) !== false ? 'ADMIN' : 'CUSTOM';
+
     $rows[] = $row;
 }
 
