@@ -4,7 +4,7 @@
       :width="width"
       ref="IFrameCaseHistory"
       frameborder="0"
-      :src="path"
+      :src="url"
       :height="height"
       allowfullscreen
     ></iframe>
@@ -15,7 +15,7 @@
 export default {
   name: "CaseHistory",
   props: {
-    data: Object,
+    historyData: Object,
   },
   data() {
     return {
@@ -24,16 +24,12 @@ export default {
       diffHeight: 10,
     };
   },
-  computed: {
-    path() {
-      let url =
-        window.config.SYS_SERVER_AJAX +
-        window.config.SYS_URI +
-        `cases/ajaxListener?action=caseHistory`;
-      return url;
-    },
+  computed: {},
+  mounted() {
+    this.url = window.config.SYS_SERVER_AJAX +
+      window.config.SYS_URI +
+      `cases/ajaxListener?action=caseHistory`;
   },
-  mounted() {},
   methods: {
     classBtn(cls) {
       return "btn v-btn-request " + cls;
