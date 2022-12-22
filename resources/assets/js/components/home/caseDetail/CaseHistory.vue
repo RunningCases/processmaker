@@ -19,6 +19,7 @@ export default {
   },
   data() {
     return {
+      url: "",
       height: "500px",
       width: "100%",
       diffHeight: 10,
