@@ -1352,7 +1352,8 @@ class ProcessMap
              * Task Notifications *
              */
             if ($iForm == 7 || $iForm == 1) {
-                $files = Processes::getProcessFiles($aFields['PRO_UID'], 'mail');
+                $processes = new Processes();
+                $files = $processes->getProcessFiles($aFields['PRO_UID'], 'mail');
 
                 $templates = array();
                 $templates[] = 'dummy';
