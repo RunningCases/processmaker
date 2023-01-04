@@ -353,23 +353,32 @@ class DynaformEditorAjax extends DynaformEditor implements IDynaformEditorAjax
     /**
      * Get properties of the dynaForm
      *
-     * @param file $A
-     * @param string $DYN_UID
+     * @param file $fileA
+     * @param string $dynUid
      * @return array
      */
-    public function get_properties($A, $DYN_UID)
+    public static function get_properties($fileA, $dynUid)
     {
-        $file = G::decrypt($A, URL_KEY);
+        $file = G::decrypt($fileA, URL_KEY);
         $tmp = self::_getTmpData();
         if (!(isset($tmp['Properties']) && isset($tmp['useTmpCopy']))) {
             $dynaform = new Dynaform();
-            $dynaform->load($DYN_UID);
+            $dynaform->load($dynUid);
             $form = new Form($file, PATH_DYNAFORM, SYS_LANG, true);
-            $Properties = array('A' => $A, 'DYN_UID' => $dynaform->getDynUid(), 'PRO_UID' => $dynaform->getProUid(), 'DYN_TITLE' => $dynaform->getDynTitle(), 'DYN_TYPE' => $dynaform->getDynType(), 'DYN_DESCRIPTION' => $dynaform->getDynDescription(), 'WIDTH' => $form->width,
-                //'ENABLETEMPLATE'=> $form->enableTemplate,
-                'MODE' => $form->mode, 'PRINTDYNAFORM' => $form->printdynaform, 'ADJUSTGRIDSWIDTH' => $form->adjustgridswidth, 'NEXTSTEPSAVE' => $form->nextstepsave
-            );
-            $tmp['Properties'] = $Properties;
+            $properties = [
+                'A' => $fileA,
+                'DYN_UID' => $dynaform->getDynUid(),
+                'PRO_UID' => $dynaform->getProUid(),
+                'DYN_TITLE' => $dynaform->getDynTitle(),
+                'DYN_TYPE' => $dynaform->getDynType(),
+                'DYN_DESCRIPTION' => $dynaform->getDynDescription(),
+                'WIDTH' => $form->width,
+                'MODE' => $form->mode,
+                'PRINTDYNAFORM' => $form->printdynaform,
+                'ADJUSTGRIDSWIDTH' => $form->adjustgridswidth,
+                'NEXTSTEPSAVE' => $form->nextstepsave
+            ];
+            $tmp['Properties'] = $properties;
             self::_setTmpData($tmp);
         } else {
             $form = new Form($file, PATH_DYNAFORM, SYS_LANG, true);
