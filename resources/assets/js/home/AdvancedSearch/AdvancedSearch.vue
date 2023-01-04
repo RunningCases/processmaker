@@ -25,6 +25,7 @@
 
         <modal-new-request ref="newRequest"></modal-new-request>
         <settings-popover :options="formatColumnSettings(options.headings)" target="pm-dr-column-settings" @onUpdateColumnSettings="onUpdateColumnSettings" :key="random+1" :selected="formatColumnSelected(columns)"/>
+        <b-overlay :show="showOverlay" rounded="sm">
         <v-server-table
             :data="tableData"
             :columns="columns"
@@ -79,6 +80,7 @@
                 </div>
             </div>
         </v-server-table>
+        </b-overlay>
         <vue-simple-context-menu
             :elementId="idContextMenu"
             :options="contextMenuItems"
@@ -200,7 +202,7 @@ export default {
                 },
                 sortable: ["case_number"],
                 requestFunction(data) {
-                    return this.$parent.$parent.getCasesForVueTable(data);
+                    return this.$parent.$parent.$parent.getCasesForVueTable(data);
                 },
                 customFilters: ["myfilter"]
             },
@@ -213,7 +215,8 @@ export default {
                 "DRAFT": this.$i18n.t("ID_IN_DRAFT"),
                 "PAUSED": this.$i18n.t("ID_PAUSED"),
                 "UNASSIGNED": this.$i18n.t("ID_UNASSIGNED")
-            }
+            },
+            showOverlay: false,
         };
     },
     mounted() {
@@ -238,6 +241,7 @@ export default {
                 }, 400);
             } else if (self.clickCount === 2) {
                 clearTimeout(self.singleClickTimer);
+                self.showOverlay = true;
                 self.clickCount = 0;
                 self.openCaseDetail(event.row);
             }
