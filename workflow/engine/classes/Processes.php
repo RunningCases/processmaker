@@ -6286,9 +6286,17 @@ class Processes
         return $result;
     }
 
-    public function getProcessFiles($proUid, $type)
+    /**
+     * Get process files
+     *
+     * @param string $proUid
+     * @param string $type
+     * 
+     * @return array
+     */
+    public static function getProcessFiles($proUid, $type)
     {
-        $filesList = array();
+        $filesList = [];
 
         switch ($type) {
             case "mail":
@@ -6327,7 +6335,7 @@ class Processes
             $fileName = basename($file);
 
             if ($fileName != "alert_message.html" && $fileName != G::LoadTranslation('ID_UNASSIGNED_MESSAGE')) {
-                $filesList[] = array("filepath" => $file, "filename" => $fileName);
+                $filesList[] = ["filepath" => $file, "filename" => $fileName];
             }
         }
         return $filesList;
