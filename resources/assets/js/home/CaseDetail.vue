@@ -10,12 +10,20 @@
       >
         {{ dataAlert.message }}
       </b-alert>
-      <p class="">
+      <p class="d-flex">
+        <div class="mr-2 d-flex justify-content-between">
+          <div class="d-flex">
+            <h5 class="v-search-title">{{ $t("ID_CASE_DETAILS") }}</h5>
+            <div class="pm-in-text-icon">
+              <i class="fas fa-info-circle"></i>
+            </div>
+          </div>
+          <button-fleft :data="newCase"></button-fleft>
+        </div>
         <b-icon icon="arrow-left"></b-icon>
         <button type="button" class="btn btn-link" @click="$emit('onLastPage')">
           {{ $t("ID_BACK") }}
         </button>
-        <button-fleft :data="newCase"></button-fleft>
       </p>
       <modal-new-request ref="newRequest"></modal-new-request>
     </div>
@@ -46,7 +54,7 @@
             </div>
             <div slot="actions" slot-scope="props">
               <b-button
-                v-if="props.row.STATUS === 'OPEN'"
+                v-if="props.row.STATUS === 'OPEN' && !supervisor || !flagSupervising"
                 @click="onClick(props)"
                 variant="outline-success"
                 >{{ $t("ID_CONTINUE") }}</b-button
@@ -57,8 +65,34 @@
                 variant="outline-primary"
                 >{{ $t("ID_UNPAUSE") }}</b-button
               >
+              <b-button
+                v-if="props.row.USR_UID === '' && props.row.STATUS !== 'CLOSED' && supervisor && flagSupervising"
+                @click="onClickAssign(props.row)"
+                variant="primary"
+                >
+                <i class="fa fa-users"></i>
+                {{ $t("ID_ASSIGN") }}
+              </b-button>
+              <b-button
+                v-if="props.row.USR_UID !== '' && props.row.STATUS !== 'CLOSED' && supervisor && flagSupervising"
+                @click="onClickReassign(props.row)"
+                variant="success"
+                >
+                <i class="fas fa-exchange-alt"></i>
+                {{ $t("ID_REASSIGN") }}
+              </b-button>
             </div>
           </v-server-table>
+        </div>
+        <div class="text-right">
+          <b-button
+            v-if="supervisor && flagSupervising"
+            @click="onClickReview(dataCaseReview)"
+            variant="primary"
+          >
+            <i class="far fa-edit"></i>
+            {{ $t("ID_REVIEW_CASE") }}
+          </b-button>
         </div>
         <TabsCaseDetail 
           ref="tabsCaseDetail" 
@@ -105,6 +139,9 @@
       </div>
     </div>
     <ModalClaimCase ref="modal-claim-case" @claimCatch="claimCatch"></ModalClaimCase>
+    <ModalReassignCase ref="modal-reassign-case" @claimCatch="claimCatch"></ModalReassignCase>
+    <ModalAssignCase ref="modal-assign-case" @claimCatch="claimCatch"></ModalAssignCase>
+
   </div>
 </template>
 
@@ -117,9 +154,11 @@ import CaseComment from "../components/home/caseDetail/CaseComment";
 import CaseComments from "../components/home/caseDetail/CaseComments";
 import TabsCaseDetail from "../home/TabsCaseDetail.vue";
 import ButtonFleft from "../components/home/ButtonFleft.vue";
+import ModalAssignCase from "./modal/ModalAssignCase.vue";
 import ModalCancelCase from "../home/modal/ModalCancelCase.vue";
 import ModalNewRequest from "./ModalNewRequest.vue";
 import ModalClaimCase from "./modal/ModalClaimCase.vue";
+import ModalReassignCase from "./modal/ModalReassignCase.vue";
 import TaskCell from "../components/vuetable/TaskCell.vue";
 import CurrentUserCell from "../components/vuetable/CurrentUserCell.vue"
 import utils from "./../utils/utils";
@@ -135,10 +174,12 @@ export default {
     AttachedDocumentsEdit,
     CaseComment,
     CaseComments,
+    ModalAssignCase,
     ModalCancelCase,
     ButtonFleft,
     ModalNewRequest,
     ModalClaimCase,
+    ModalReassignCase,
     TaskCell,
     CurrentUserCell
   },
@@ -222,7 +263,11 @@ export default {
       dataComments: {
         title: "Comments",
         items: []
-      }
+      },
+      dataCaseReview: {},
+      app_num: this.$parent.dataCase.APP_NUMBER,
+      supervisor: false,
+      flagSupervising: false
     };
   },
 
@@ -234,6 +279,7 @@ export default {
     //set dataCase
     this.dataCase = this.$parent.dataCase;
     this.$el.getElementsByClassName("VuePagination__count")[0].remove();
+    this.changeFlagSupervising(this.dataCase.FLAG);
     this.getDataCaseSummary();
     this.getInputDocuments();
     this.getOutputDocuments();
@@ -498,6 +544,8 @@ export default {
           .pendingtask(that.$parent.dataCase)
           .then((response) => {
             dt = that.formatDataResponse(response.data);
+            this.dataCaseReview = dt[0];
+            this.supervisor = that.isSupervisor();
             resolutionFunc({
               data: dt,
               count: response.data.length,
@@ -530,7 +578,8 @@ export default {
           PRO_UID: v.PRO_UID,
           TAS_UID: v.TAS_UID,
           UNASSIGNED: v.UNASSIGNED,
-          USR_ID: v.USR_ID
+          USR_ID: v.USR_ID,
+          USR_UID: v.USR_UID
         });
       });
       return data;
@@ -599,6 +648,21 @@ export default {
       }
     },
     /**
+     * Review case Click handler
+     *
+     * @param {object} data
+     */
+    onClickReview(data) {
+      this.$emit("onUpdateDataCase", {
+        APP_UID: data.APP_UID,
+        DEL_INDEX: data.DEL_INDEX,
+        PRO_UID: data.PRO_UID,
+        TAS_UID: data.TAS_UID,
+        ACTION: "to_revise"
+      });
+      this.$emit("onUpdatePage", "XCase");
+    },
+    /**
      * Unpause click handler
      *
      * @param {object} data
@@ -614,6 +678,56 @@ export default {
         .catch((error) => {
           that.showAlert(error.response.data.error.message, 'danger');
         });
+    },
+    /**
+     * Assign click handler
+     *
+     * @param {object} item
+     */
+    onClickAssign(item) {
+      let that = this;
+      Api.cases.open(_.extend({ ACTION: "assign" }, item)).then(() => {
+        Api.cases.cases_open(_.extend({ ACTION: "todo" }, item)).then(() => {
+          that.$refs["modal-assign-case"].data = item;
+          that.$refs["modal-assign-case"].show();
+        });
+      });
+    },
+    /**
+     * Reassign click handler
+     *
+     * @param {object} item
+     */
+    onClickReassign(item) {
+      let that = this;
+      item.FLAG = this.flagSupervising;
+      Api.cases.open(_.extend({ ACTION: "reassign" }, item)).then(() => {
+        Api.cases.cases_open(_.extend({ ACTION: "todo" }, item)).then(() => {
+          that.$refs["modal-reassign-case"].data = item;
+          that.$refs["modal-reassign-case"].show();
+        });
+      });
+    }, 
+    /**
+     * Is supervisor
+     *
+     * @return {bool} response
+     */
+    isSupervisor() {
+      Api.cases.getIsSupervisor(this.app_num).then((response) => {
+        let res = false;
+        if (response.statusText === "OK" || response.status === 200) {
+          this.supervisor = response.data;
+        }
+      })
+    }, 
+    /**
+     * Change the flag supervisor
+     *
+     * @param {string} data
+     */
+     changeFlagSupervising(data) {
+        this.flagSupervising = (data === 'SUPERVISING');
     },  
     /**
      * Claim case
@@ -661,5 +775,13 @@ export default {
   padding-bottom: 20px;
   padding-left: 50px;
   padding-right: 20px;
+}
+.pm-in-text-icon {
+  font-size: 1.4rem;
+  padding-right: 10px;
+  line-height: 40px;
+}
+.table td, .table th {
+  vertical-align: middle;
 }
 </style>

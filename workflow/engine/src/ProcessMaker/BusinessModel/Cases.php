@@ -53,9 +53,13 @@ use ProcessMaker\Model\AppNotes as Notes;
 use ProcessMaker\Model\AppTimeoutAction;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Documents;
+use ProcessMaker\Model\Groupwf;
+use ProcessMaker\Model\GroupUser;
 use ProcessMaker\Model\ListUnassigned;
 use ProcessMaker\Model\Triggers;
 use ProcessMaker\Model\ProcessUser;
+use ProcessMaker\Model\StepSupervisor;
+use ProcessMaker\Model\Task;
 use ProcessMaker\Model\User;
 use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Services\Api;
@@ -905,13 +909,33 @@ class Cases
     }
 
     /**
+     * Review if the user is supervisor
+     *
+     * @param string $usrUid
+     * @param int $caseNumber
+     *
+     * @return bool
+    */
+    public function isSupervisor(string $usrUid, int $caseNumber)
+    {
+        $result = [];
+        $user = new BmUser();
+        if ($user->checkPermission($usrUid, 'PM_SUPERVISOR')) {
+            $processes = ProcessUser::getProcessesOfSupervisor($usrUid);
+            $query = Delegation::query()->select(['APP_NUMBER'])->case($caseNumber)->processInList($processes);
+            $result = $query->get()->values()->toArray();
+        }
+        return !empty($result);
+    }
+
+    /**
      * Reassign Case
      *
      * @param string $appUid Unique id of Case
      * @param string $usrUid Unique id of User
      * @param int $delIndex
      * @param string $userSource Unique id of User Source
-     * @param string $userTarget $userUidTarget id of User Target
+     * @param string $userTarget id of User Target
      * @param string $reason
      * @param boolean $sendMail
      *
@@ -939,11 +963,20 @@ class Cases
 
             /** Add the note */
             if (!empty($reason)) {
-                $noteContent = $reason;
-                // Define the Case for register a case note
-                $cases = new BmCases();
-                $response = $cases->addNote($appUid, $usrUid, $noteContent, $sendMail);
+                $this->sendMail($appUid, $usrUid, $reason, $sendMail, $userTarget);
             }
+
+            // Log
+            $message = 'Reassign case';
+            $context = $data = [
+                "appUid" => $appUid,
+                "usrUidSupervisor" => $usrUid,
+                "userSource" => $userSource,
+                "userTarget" => $userTarget,
+                "reason" => $reason,
+                "delIndex" => $delIndex
+            ];
+            Log::channel(':ReassignCase')->info($message, Bootstrap::context($context));
         } catch (Exception $e) {
             throw $e;
         }
@@ -1120,13 +1153,15 @@ class Cases
      * @param string $appUid
      * @param integer $index
      * @param string $userUid
+     * @param string $action
+     * @param string $reason
      *
      * @return void
      * @throws Exception
      *
      * @access public
      */
-    public function putClaimCase($appUid, $index, $userUid)
+    public function putClaimCase($appUid, $index, $userUid, $action, $reason = '')
     {
         // Validate the parameters
         Validator::isString($appUid, '$appUid');
@@ -1139,19 +1174,33 @@ class Cases
         $appDelegation = new AppDelegation();
         $delegation = $appDelegation->load($appUid, $index);
         if (empty($delegation['USR_UID'])) {
-            $case = new ClassesCases();
-            $case->loadCase($appUid);
+            $classesCase = new ClassesCases();
+            $case = $classesCase->loadCase($appUid);
 
             //Review if the user can be claim the case
-            if (!$case->isSelfService($userUid, $delegation['TAS_UID'], $appUid)) {
-                $message = preg_replace("#<br\s*/?>#i", "", G::LoadTranslation("ID_NO_PERMISSION_NO_PARTICIPATED"));
-                throw new Exception($message);
+            if (!$classesCase->isSelfService($userUid, $delegation['TAS_UID'], $appUid)) {
+                if (!$this->isSupervisor($userUid, $case['APP_NUMBER'])){
+                    $message = preg_replace("#<br\s*/?>#i", "", G::LoadTranslation("ID_NO_PERMISSION_NO_PARTICIPATED"));
+                    throw new Exception($message);
+                }
             }
-
-            $case->setCatchUser($appUid, $index, $userUid);
+            $classesCase->setCatchUser($appUid, $index, $userUid);
         } else {
             throw new Exception(G::LoadTranslation("ID_CASE_USER_INVALID_CLAIM_CASE", [$userUid]));
         }
+
+        $usrUidSupervisor = (Server::getUserId() === $userUid) ? '' : Server::getUserId();
+
+        // Log
+        $message = $action . ' case';
+        $context = $data = [
+            "appUid" => $appUid,
+            "usrUidSupervisor" => $usrUidSupervisor,
+            "userTarget" => $userUid,
+            "reason" => $reason,
+            "delIndex" => $index
+        ];
+        Log::channel(':' . $action . 'Case')->info($message, Bootstrap::context($context));
     }
 
     /**
@@ -2746,6 +2795,70 @@ class Cases
      *
      * @param string $userUid Unique id of User (User logged)
      * @param string $taskUid Unique id of Task
+     * @param string $appUid Unique id of Application
+     *
+     * @return array Return Users to reassign
+     * @throws Exception
+     */
+    public function usersToReassign(
+        $userUid,
+        $taskUid,
+        $appUid
+    ) {
+        $task = Task::where('TAS_UID', '=', $taskUid)->first();
+        $type = $task->TAS_ASSIGN_TYPE;
+        $variable = $task->TAS_GROUP_VARIABLE;
+        $result = [];
+
+        if ($type === 'SELF_SERVICE' && $variable !== '') {
+            $variable = substr($variable, 2);
+            $fields = ModelApplication::where('APP_UID', '=', $appUid)->first();
+            $data = ClassesCases::unserializeData($fields->APP_DATA);
+
+            $row = [];
+            
+            if (!empty($data[$variable])) {
+                foreach ($data[$variable] as $uid) {
+                    $group = Groupwf::where('GRP_UID', '=', $uid)->first();
+                    if (!empty($group)) {
+                        $usersOfGroup = GroupUser::where('GRP_UID', '=', $uid)->get()->toArray();
+                        foreach ($usersOfGroup as $data) {
+                            $row[] = $data['USR_UID'];
+                        }
+                    } else {
+                        $row[] = $uid;
+                    }
+                }
+            }
+            
+            $users = [];
+            foreach ($row as $data) {
+                $obj = User::where('USR_UID', '=', $data)->Active()->first();
+                if (!is_null($obj) && $obj->USR_USERNAME !== "") {
+                    $users[] = $obj;
+                }
+            }
+
+            foreach ($users as $user) {
+                $result[] = [
+                    "USR_UID" => $user->USR_UID,
+                    "USR_USERNAME" => $user->USR_USERNAME,
+                    "USR_FIRSTNAME" => $user->USR_FIRSTNAME,
+                    "USR_LASTNAME"=> $user->USR_LASTNAME
+                ];
+            }
+
+        } else {
+            $result = $this->getUsersToReassign($userUid, $taskUid)['data'];
+        }
+        return ['data' => $result];
+    }
+
+    /**
+     * Get Users to reassign
+     *
+     * @param string $userUid Unique id of User (User logged)
+     * @param string $taskUid Unique id of Task
      * @param array $arrayFilterData Data of the filters
      * @param string $sortField Field name to sort
      * @param string $sortDir Direction of sorting (ASC, DESC)
@@ -3945,6 +4058,47 @@ class Cases
     }
 
     /**
+     * Send mail to notify and Add a case note
+     *
+     * @param string $appUid
+     * @param string $userUid
+     * @param string $note
+     * @param bool $sendMail
+     * @param string $toUser
+     *
+     */
+    public function sendMail($appUid, $userUid, $note, $sendMail = false, $toUser = '')
+    {
+        
+        $appNumber = ModelApplication::getCaseNumber($appUid);
+
+        // Register the note
+        $attributes = [
+            "APP_UID" => $appUid,
+            "APP_NUMBER" => $appNumber,
+            "USR_UID" => $userUid,
+            "NOTE_DATE" => date("Y-m-d H:i:s"),
+            "NOTE_CONTENT" => $note,
+            "NOTE_TYPE" => "USER",
+            "NOTE_AVAILABILITY" => "PUBLIC",
+            "NOTE_RECIPIENTS" => ""
+        ];
+        $newNote = Notes::create($attributes);
+        
+        // Send the email
+        if ($sendMail) {
+            // Get the FK
+            $noteId = $newNote->NOTE_ID;
+            
+            $note = G::LoadTranslation('ID_ASSIGN_NOTIFICATION', [$appNumber]) . '<br />' . G::LoadTranslation('ID_REASON') . ': ' . stripslashes($note);
+
+            // Send the notification
+            $appNote = new AppNotes();
+            $appNote->sendNoteNotification($appUid, $userUid, $note, $toUser, '', 0, $noteId);
+        }
+    }
+
+    /**
      * Upload file related to the case notes
      *
      * @param string $userUid
@@ -4300,4 +4454,68 @@ class Cases
         // Return results
         return $dynaForms;
     }
+    
+    /**
+     * Get objects that they have send it.
+     * @param string $appUid
+     * @param string $typeObject
+     * @return array
+     */
+    public function getStepsToRevise(string $appUid, string $typeObject): array
+    {
+        $application = ModelApplication::where('APP_UID', '=', $appUid)
+                ->first();
+        $result = StepSupervisor::where('PRO_UID', '=', $application['PRO_UID'])->
+                where('STEP_TYPE_OBJ', '=', $typeObject)->
+                orderBy('STEP_POSITION', 'ASC')->
+                get()->
+                toArray();
+        return $result;
+    }
+
+    /**
+     * Get all url steps to revise.
+     * @param string $appUid
+     * @param int $delIndex
+     * @return array
+     */
+    public function getAllUrlStepsToRevise(string $appUid, int $delIndex): array
+    {
+        $result = [];
+        $dynaformStep = $this->getStepsToRevise($appUid, 'DYNAFORM');
+        $inputDocumentStep = $this->getStepsToRevise($appUid, 'INPUT_DOCUMENT');
+        $objects = array_merge($dynaformStep, $inputDocumentStep);
+        usort($objects, function ($a, $b) {
+            return $a['STEP_POSITION'] > $b['STEP_POSITION'];
+        });
+        $i = 0;
+        $endPoint = '';
+        $uidName = '';
+        foreach ($objects as $step) {
+            if ($step['STEP_TYPE_OBJ'] === 'DYNAFORM') {
+                $endPoint = 'cases_StepToRevise';
+                $uidName = 'DYN_UID';
+            }
+            if ($step['STEP_TYPE_OBJ'] === 'INPUT_DOCUMENT') {
+                $endPoint = 'cases_StepToReviseInputs';
+                $uidName = 'INP_DOC_UID';
+            }
+            $url = "{$endPoint}?"
+                    . "type={$step['STEP_TYPE_OBJ']}&"
+                    . "ex={$i}&"
+                    . "PRO_UID={$step["PRO_UID"]}&"
+                    . "{$uidName}={$step['STEP_UID_OBJ']}&"
+                    . "APP_UID={$appUid}&"
+                    . "position={$step['STEP_POSITION']}&"
+                    . "DEL_INDEX={$delIndex}";
+            $result[] = [
+                'uid' => $step['STEP_UID_OBJ'],
+                'type' => $step['STEP_TYPE_OBJ'],
+                'url' => $url
+            ];
+            $i++;
+        }
+        return $result;
+    }
+
 }

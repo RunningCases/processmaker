@@ -2420,6 +2420,12 @@ msgid "Assign"
 msgstr "Assign"
 
 # TRANSLATION
+# LABEL/ID_ASSIGN_CASE
+#: LABEL/ID_ASSIGN_CASE
+msgid "Assign Case"
+msgstr "Assign Case"
+
+# TRANSLATION
 # LABEL/ID_ASSIGNED_FIEDS
 #: LABEL/ID_ASSIGNED_FIEDS
 msgid "ASSIGNED FIELDS"
@@ -2526,6 +2532,12 @@ msgstr "Assign group to"
 #: LABEL/ID_ASSIGN_MANAGER_TO_DEPARTAMENT
 msgid "Assign Manager To Department"
 msgstr "Assign Manager To Department"
+
+# TRANSLATION
+# LABEL/ID_ASSIGN_NOTIFICATION
+#: LABEL/ID_ASSIGN_NOTIFICATION
+msgid "You were assigned to case #{0}."
+msgstr "You were assigned to case #{0}."
 
 # TRANSLATION
 # LABEL/ID_ASSIGN_ROLE
@@ -4018,6 +4030,12 @@ msgstr "The case {0}: {1} with {2}: {3} does not exist."
 #: LABEL/ID_CASE_DESCRIPTION
 msgid "Case Description"
 msgstr "Case Description"
+
+# TRANSLATION
+# LABEL/ID_CASE_DETAILS
+#: LABEL/ID_CASE_DETAILS
+msgid "Case Details"
+msgstr "Case Details"
 
 # TRANSLATION
 # LABEL/ID_CASE_DOES_NOT_EXIST
@@ -24010,6 +24028,12 @@ msgstr "Resume"
 #: LABEL/ID_RETURN_ADVANCED_SEARCH
 msgid "Return"
 msgstr "Return"
+
+# TRANSLATION
+# LABEL/ID_REVIEW_CASE
+#: LABEL/ID_REVIEW_CASE
+msgid "Review Case"
+msgstr "Review Case"
 
 # TRANSLATION
 # LABEL/ID_RIGHT

@@ -239,6 +239,21 @@ export let cases = {
             }
         });
     },
+    /**
+     * Get the list of users to re-assign
+     * @param {*} data 
+     * @returns
+     */
+    getUsersToReassign(data) {
+        return Api.get({
+            service: "GET_USERS_TO_REASSIGN",
+            data: {},
+            keys: {
+                task_uid: data.TAS_UID,
+                app_uid: data.APP_UID
+            }
+        });
+    },
     reassingCase(data) {
         return Api.update({
             service: "REASSIGN_CASE",
@@ -248,6 +263,25 @@ export let cases = {
                 reason: data.reasonReassign,
                 sendMail: data.notifyUser,
                 usr_uid_source: window.config.userConfig.usr_uid
+            },
+            keys: {
+                app_uid: data.APP_UID
+            }
+        });
+    },
+    /**
+     * Reassign a case to a new user
+     * @param {*} data
+     */
+    reassingCaseSupervisor(data) {
+        return Api.update({
+            service: "REASSIGN_CASE",
+            data: {
+                usr_uid_target: data.userSelected,
+                del_index: data.DEL_INDEX,
+                reason: data.reasonReassign,
+                sendMail: data.notifyUser,
+                usr_uid_source: data.USR_UID
             },
             keys: {
                 app_uid: data.APP_UID
@@ -267,6 +301,38 @@ export let cases = {
             },
             keys: {
                 app_uid: data.APP_UID
+            }
+        });
+    },
+    /**
+     * Assign case with endpoint
+     * @param {*} data 
+     * @returns 
+     */
+    assignCase(data) {
+        return Api.update({
+            service: "ASSIGN_CASE",
+            data: {
+                reason: data.reasonReassign,
+                sendMail: data.notifyUser,
+                index: data.DEL_INDEX
+            },
+            keys: {
+                app_uid: data.APP_UID,
+                usr_uid: data.userSelected  
+            }
+        });
+    },
+    /**
+     * Verify if the user is Supervisor
+     * @param {*} data 
+     * @returns 
+     */
+    getIsSupervisor(data) {
+        return Api.get({
+            service: "IS_SUPERVISOR",
+            keys: {
+                app_num: data 
             }
         });
     },
