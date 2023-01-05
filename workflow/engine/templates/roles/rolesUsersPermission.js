@@ -915,12 +915,16 @@ AssignPermissionAction = function(){
  * @returns {void}
  */
 RemovePermissionAction = function () {
-    if (ROLES.ROL_UID === pm_admin) {
-        var message = _('ID_THE_PERMISSION_CAN_NOT_BE_UNASSIGNED_FROM_THIS_ROLE');
-        Ext.Msg.alert(_('ID_INFORMATION'), message);
-        return;
-    }
     rowsSelected = assignedGrid.getSelectionModel().getSelections();
+    for (var a = 0; a < rowsSelected.length; a++) {
+        if (ROLES.ROL_UID === pm_admin) {
+            if (rowsSelected[a].json.TYPE !== 'CUSTOM') {
+                var message = _('ID_THE_PERMISSION_CAN_NOT_BE_UNASSIGNED_FROM_THIS_ROLE');
+                Ext.Msg.alert(_('ID_INFORMATION'), message);
+                return;
+            }
+        }
+    }
     var arrAux = new Array();
     var sw;
     for (var a = 0; a < rowsSelected.length; a++) {
