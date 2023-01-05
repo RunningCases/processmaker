@@ -192,6 +192,9 @@ export default {
                 if ( e.data === "redirect=todo" || e.message === "redirect=todo"){
                     that.OnClickSidebarItem(that.getItemMenuByValue("page","inbox"));
                 }
+                if ( e.data === "redirect=MyCases" || e.message === "redirect=MyCases"){
+                    that.OnClickSidebarItem(that.getItemMenuByValue("page","MyCases"));
+                }
                 if ( e.data === "update=debugger" || e.message === "update=debugger"){
                     if(that.$refs["component"].updateView){
                         that.$refs["component"].updateView();
@@ -616,6 +619,9 @@ export default {
          */
         getItemMenuByValue(key, value) {
             let obj = _.find(this.menu, function(o) {
+                if(o[key] == value){
+                    return true;
+                }
                 if(o.component){
                   return o.props.item[key] == value;
                 }
@@ -623,6 +629,9 @@ export default {
             });
             if(obj.component){
               return obj.props;
+            }
+            if(obj.page){
+                return {item : obj};
             }
             return obj;
         },
