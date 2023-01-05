@@ -8,10 +8,16 @@ use Illuminate\Support\Facades\DB;
 use ProcessMaker\Model\AppDelay;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
+use ProcessMaker\Model\Dynaform;
 use ProcessMaker\Model\Documents;
+use ProcessMaker\Model\GroupUser;
+use ProcessMaker\Model\Groupwf;
+use ProcessMaker\Model\InputDocument;
 use ProcessMaker\Model\ListUnassigned;
 use ProcessMaker\Model\Process;
+use ProcessMaker\Model\ProcessUser;
 use ProcessMaker\Model\Step;
+use ProcessMaker\Model\StepSupervisor;
 use ProcessMaker\Model\Task;
 use ProcessMaker\Model\Triggers;
 use ProcessMaker\Model\User;
@@ -434,4 +440,156 @@ class CasesTest extends TestCase
         $this->assertArrayHasKey('PRO_UID', $result);
     }
 
+    /**
+     * It tests the response true of supervisor function
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases::isSupervisor()
+     * @test
+     */
+    public function it_should_test_supervisor_true()
+    {
+        $process = Process::factory()->create();
+        ProcessUser::factory()->create([
+            'PU_TYPE' => 'SUPERVISOR',
+            'PRO_UID' => $process->PRO_UID,
+            'USR_UID' => $process->PRO_CREATE_USER
+        ]);
+        $application = Application::factory()->create([
+            'PRO_UID' => $process->PRO_UID
+        ]);
+        Delegation::factory()->create([
+            'APP_UID' => $application->APP_UID,
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'PRO_UID' => $process->PRO_UID,
+            'PRO_ID' => $process->PRO_ID
+        ]);
+
+        $process = Process::factory()->create();
+
+        $cases = new Cases();
+        $result = $cases->isSupervisor($process->PRO_CREATE_USER, $application->APP_NUMBER);
+
+        // Asserts
+        $this->assertTrue($result);
+    }
+
+    /**
+     * It tests the response false of supervisor function
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases::isSupervisor()
+     * @test
+     */
+    public function it_should_test_supervisor_false()
+    {
+        $process = Process::factory()->create();
+        $application = Application::factory()->create([
+            'PRO_UID' => $process->PRO_UID
+        ]);
+        Delegation::factory()->create([
+            'APP_UID' => $application->APP_UID,
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'PRO_UID' => $process->PRO_UID,
+            'PRO_ID' => $process->PRO_ID
+        ]);
+
+        $cases = new Cases();
+        $result = $cases->isSupervisor($process->PRO_CREATE_USER, $application->APP_NUMBER);
+
+        // Asserts
+        $this->assertNotTrue($result);
+    }
+
+    /**
+     * It tests get users to reassign 
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases::usersToReassign()
+     * @test
+     */
+    public function it_should_test_users_to_reassign()
+    {
+        $process = Process::factory()->create();
+        $task = Task::factory()->create([
+            'PRO_UID' => $process->PRO_UID,
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+            'TAS_GROUP_VARIABLE' => '@@arrayOfusers'
+        ]);
+        $users = User::factory(3)->create();
+        $groupwf = Groupwf::factory()->create();
+
+        GroupUser::factory()->create([
+            'GRP_UID' => $groupwf->GRP_UID,
+            'GRP_ID' => $groupwf->GRP_ID,
+            'USR_UID' => $users[1]->USR_UID
+        ]);
+        GroupUser::factory()->create([
+            'GRP_UID' => $groupwf->GRP_UID,
+            'GRP_ID' => $groupwf->GRP_ID,
+            'USR_UID' => $users[2]->USR_UID
+        ]);
+        
+        $application = Application::factory()->create([
+            'PRO_UID' => $process->PRO_UID,
+            'APP_DATA' =>  serialize(['arrayOfusers' => [$groupwf->GRP_UID, $users[0]->USR_UID]])
+        ]);
+
+        $cases = new Cases();
+        $result = $cases->usersToReassign($users[0]['USR_UID'], $task->TAS_UID, $application->APP_UID);
+        // Asserts
+        $this->assertCount(3, $result['data']);
+    }
+
+    /**
+     * This test the method getStepsToRevise.
+     * @test
+     * @covers ProcessMaker\BusinessModel\Cases::getStepsToRevise
+     */
+    public function it_should_test_getStepsToRevise()
+    {
+        //definition data
+        $dynaform = Dynaform::factory()->create();
+        $application = Application::factory()->create([
+            'PRO_UID' => $dynaform->PRO_UID
+        ]);
+        $stepSupervisor = StepSupervisor::factory()->create([
+            'PRO_UID' => $application->PRO_UID,
+            'STEP_TYPE_OBJ' => 'DYNAFORM',
+            'STEP_UID_OBJ' => $dynaform->DYN_UID
+        ]);
+
+        //assertion
+        $cases = new Cases();
+        $result = $cases->getStepsToRevise($application->APP_UID, 'DYNAFORM');
+        $this->assertEquals($stepSupervisor->PRO_UID, $result[0]['PRO_UID']);
+    }
+
+    /**
+     * This test the method getAllUrlStepsToRevise.
+     * @test
+     * @covers ProcessMaker\BusinessModel\Cases::getAllUrlStepsToRevise
+     */
+    public function it_should_test_getAllUrlStepsToRevise()
+    {
+        //definition data
+        $dynaform = Dynaform::factory()->create();
+        $inputDocument = InputDocument::factory()->create();
+        $application = Application::factory()->create([
+            'PRO_UID' => $dynaform->PRO_UID
+        ]);
+        $stepSupervisor = StepSupervisor::factory()->create([
+            'PRO_UID' => $application->PRO_UID,
+            'STEP_TYPE_OBJ' => 'DYNAFORM',
+            'STEP_UID_OBJ' => $dynaform->DYN_UID
+        ]);
+        $stepSupervisor = StepSupervisor::factory()->create([
+            'PRO_UID' => $application->PRO_UID,
+            'STEP_TYPE_OBJ' => 'INPUT_DOCUMENT',
+            'STEP_UID_OBJ' => $inputDocument->INP_DOC_UID
+        ]);
+
+        //assertion
+        $cases = new Cases();
+        $result = $cases->getAllUrlStepsToRevise($application->APP_UID, 2);
+        $this->assertEquals($dynaform->DYN_UID, $result[0]['uid']);
+        $this->assertEquals($inputDocument->INP_DOC_UID, $result[1]['uid']);
+    }
 }

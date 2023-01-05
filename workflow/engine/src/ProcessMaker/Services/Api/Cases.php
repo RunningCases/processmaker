@@ -1031,7 +1031,88 @@ class Cases extends Api
         try {
             $userUid = $this->getUserId();
             $cases = new BmCases();
-            $cases->putClaimCase($appUid, $index, $userUid);
+            $cases->putClaimCase($appUid, $index, $userUid, 'Claim');
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+    
+    /**
+     * Verify if current user is a supervisor
+     *
+     * @url GET /:appNumber/supervisor
+     *
+     * @param int $appNumber
+     *
+     * @return boolean
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function isSupervisor(int $appNumber)
+    {
+        try {
+            $userUid = $this->getUserId();
+            $cases = new BmCases();
+            return $cases->isSupervisor($userUid, $appNumber);
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
+    /**
+     * Assign Case
+     *
+     * @url PUT /:appUid/:usrUid/assign
+     *
+     * @param string $appUid {@min 1}{@max 32}
+     * @param string $usrUid {@min 1}{@max 32}
+     * @param int $index {@from body}
+     * @param string $reason {@from body}
+     * @param bool $sendMail {@from body}
+     *
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function doPutAssignCase($appUid, $usrUid, $index, $reason = '', $sendMail = false)
+    {
+        try {
+            $cases = new BmCases();
+            $cases->putClaimCase($appUid, $index, $usrUid, 'Assign', $reason);
+
+            /** Add the note */
+            if (!empty($reason)) {
+                $currentUserUid = $this->getUserId();
+                $cases->sendMail($appUid, $currentUserUid, $reason, $sendMail, $usrUid);
+            }
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
+    /**
+     * Get users to reassign or assign
+     *
+     * @url GET /:task_uid/:app_uid/userstoreassign
+     *
+     * @param string $task_uid
+     * @param string $app_uid
+     *
+     * @return array
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function usersToReasign($task_uid, $app_uid)
+    {
+        try {
+            $usr_uid = $this->getUserId();
+            $cases = new BmCases();
+            return $cases->usersToReassign($usr_uid, $task_uid, $app_uid);
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }

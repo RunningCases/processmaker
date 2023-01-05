@@ -1377,8 +1377,16 @@ class PmDynaform
         exit();
     }
 
-    public function printEditSupervisor()
+    /**
+     * Print edit supervisor forms.
+     * @param array $param
+     */
+    public function printEditSupervisor(array $param = [])
     {
+        $navbar = '';
+        if (isset($param['DEL_INDEX'])) {
+            $navbar = self::navigationBarForStepsToRevise($this->fields["APP_UID"], $this->fields["CURRENT_DYNAFORM"], $param['DEL_INDEX']);
+        }
         ob_clean();
         $json = G::json_decode($this->record["DYN_CONTENT"]);
         $this->jsonr($json);
@@ -1405,6 +1413,7 @@ class PmDynaform
             " . $this->getTheStringVariableForGoogleMaps() . "
         </script>
         <script type=\"text/javascript\" src=\"/jscore/cases/core/pmDynaform.js\"></script>
+        {$navbar}
         <div>
             " . $this->getSessionMessageForSupervisor() . "
             <div style=\"display: none;\">
@@ -2628,5 +2637,55 @@ class PmDynaform
                 $this->onAfterPropertyRead = $backup;
             }
         };
+    }
+
+    /**
+     * Get html navigation bar for steps to revise.
+     * @param string $appUid
+     * @param string $uid
+     * @param int $delIndex
+     * @return string
+     */
+    public static function navigationBarForStepsToRevise(string $appUid, string $uid, int $delIndex): string
+    {
+        $navbar = '';
+        $cases = new Cases();
+        $steps = $cases->getAllUrlStepsToRevise($appUid, $delIndex);
+        $n = count($steps);
+        foreach ($steps as $key => $step) {
+            if ($step['uid'] === $uid) {
+                $previousLabel = '';
+                $previousUrl = '';
+                $nextLabel = '';
+                $nextUrl = '';
+                if ($key - 1 >= 0) {
+                    $previousLabel = G::LoadTranslation('ID_PREVIOUS');
+                    $previousUrl = $steps[$key - 1]['url'];
+                }
+                if ($key + 1 < $n) {
+                    $nextLabel = G::LoadTranslation('ID_NEXT');
+                    $nextUrl = $steps[$key + 1]['url'];
+                }
+                if (empty($nextUrl)) {
+                    $nextLabel = G::LoadTranslation('ID_FINISH');
+                    $nextUrl = 'javascript:if(window.parent && window.parent.parent){window.parent.parent.postMessage("redirect=MyCases","*");}';
+                }
+                //this condition modify the next Url for submit action
+                if ($step['type'] === 'DYNAFORM') {
+                    $nextUrl = 'javascript:document.querySelector(".pmdynaform-container .pmdynaform-form").submit();';
+                }
+                $navbar = "<div style='width:100%;padding:0px 10px 0px 10px;margin:15px 0px 0px 0px;'>" .
+                        "    <img src='/images/bulletButtonLeft.gif' style='float:left;'>&nbsp;" .
+                        "    <a href='{$previousUrl}' style='float:left;font-size:12px;line-height:1;margin:0px 0px 1px 5px;text-decoration:none;!important;'>" .
+                        "    {$previousLabel}" .
+                        "    </a>" .
+                        "    <img src='/images/bulletButton.gif' style='float:right;'>&nbsp;" .
+                        "    <a href='{$nextUrl}' style='float:right;font-size:12px;line-height:1;margin:0px 5px 1px 0px;text-decoration:none;!important;'>" .
+                        "    {$nextLabel}" .
+                        "    </a>" .
+                        "</div>";
+            }
+        }
+        return $navbar;
     }
 }

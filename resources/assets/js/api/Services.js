@@ -1,4 +1,6 @@
  export default {
+    ASSIGN_CASE: "/cases/{app_uid}/{usr_uid}/assign",
+    IS_SUPERVISOR: "/cases/{app_num}/supervisor",
     AUTHENTICATE_USER: "/oauth2/token",
     USER_DATA: "/light/user/data",
     GET_MAIN_MENU_COUNTERS: "/light/counters",
@@ -10,6 +12,7 @@
     GET_LISTS_PAUSED: "/light/paused",
     GET_LISTS_COMPLETED: "/light/completed",
     GET_USERS_PICTURES: "/light/users/data",
+    GET_USERS_TO_REASSIGN: "/cases/{task_uid}/{app_uid}/userstoreassign",
     FORMS_ARRAY: "/light/project/{pro_uid}/activity/{act_uid}/steps",
     GET_NEW_CASES: "/case/start-cases?type_view=category",
     GET_HISTORY_CASES: "/light/history/{app_uid}",

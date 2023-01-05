@@ -1,13 +1,13 @@
 <template>
   <div>
     <b-modal
-      ref="modal-reassign-case"
+      ref="modal-assign-case"
       hide-footer
       size="lg"
     >
       <template v-slot:modal-title>
-        {{ $t('ID_REASSIGN_CASE') }}
-        <i :class="icon"></i>
+        {{ $t('ID_ASSIGN_CASE') }}
+        <i class="fas fa-users"></i>
       </template>
       <b-alert
         :show="dataAlert.dismissCountDown"
@@ -21,21 +21,21 @@
       <b-container fluid>
         <b-row class="my-1">
           <b-col sm="3">
-            <label aria-label="selectUser">{{ $t('ID_SELECT_USER') }}</label>
+            <label for="selectUser">{{ $t('ID_SELECT_USER') }}</label>
           </b-col>
           <b-col sm="9">
-            <b-form-select id="selectUser" v-model="userSelected" :options="users" aria-label="selectUser"></b-form-select>
+            <b-form-select v-model="userSelected" :options="users"></b-form-select>
           </b-col>
         </b-row>
 
         <b-row class="my-1">
           <b-col sm="3">
-            <label for="reasonReassign">{{ $t('ID_REASON_REASSIGN') }}</label>
+            <label for="reasonAssign">{{ $t('ID_REASON') }}</label>
           </b-col>
           <b-col sm="9">
             <b-form-textarea
-              id="reasonReassign"
-              v-model="reasonReassign"              
+              id="reasonAssign"
+              v-model="reasonAssign"              
               rows="3"
               max-rows="6"
             ></b-form-textarea>
@@ -63,9 +63,9 @@
           </b-button>
           <b-button 
             variant="success" 
-            @click="reassignCase"
+            @click="assignCase"
           >
-            {{ $t("ID_REASSIGN") }}
+            {{ $t("ID_ASSIGN") }}
           </b-button>
         </div>
       </div>
@@ -74,11 +74,11 @@
 </template>
 
 <script>
-import api from "./../../api/index";
+import api from "../../api/index";
 import utils from "../../utils/utils";
 
 export default {
-  name: "ModalReassignCase",
+  name: "ModalAssignCase",
   components: {},
   props: {},
   mounted() {},
@@ -93,10 +93,9 @@ export default {
       data: null,
       locale: 'en-US',
       users: [],
-      reasonReassign: null,
+      reasonAssign: null,
       userSelected: null,
-      notifyUser: false,
-      icon: "fas fa-undo"
+      notifyUser: false
     };
   },
   methods: {
@@ -108,22 +107,19 @@ export default {
      */
     show() {
       this.users = [];
-      this.getUsersReassign();
-      this.$refs["modal-reassign-case"].show();
-      if (this.data.FLAG){
-        this.icon = "fas fa-exchange-alt";
-      }
+      this.getUsers();
+      this.$refs["modal-assign-case"].show();
     },
     /**
      * Button cancel
      */
     cancel() {
-      this.$refs["modal-reassign-case"].hide();
+      this.$refs["modal-assign-case"].hide();
     },
     /**
-     * Service to get user reassign
+     * Service to get users
      */
-    getUsersReassign() {
+    getUsers() {
       let that = this;
       api.cases.getUsersToReassign(this.data).then((response) => {
         var users = response.data.data,
@@ -144,58 +140,36 @@ export default {
       });
     },
     /**
-     * Service reassign case
+     * Service assign case, using reassign api service
      */
-    reassignCase() {
+    assignCase() {
       let that = this;
       this.data.userSelected = this.userSelected;
-      this.data.reasonReassign = this.reasonReassign;
+      this.data.reasonAssign = this.reasonAssign;
       this.data.notifyUser = this.notifyUser;
-      if (!this.data.FLAG){
-        api.cases.reassingCase(this.data).then((response) => {
-          if (response.statusText == "OK" || response.status === 200) {
-            that.$refs["modal-reassign-case"].hide();
-            if (that.$parent.$refs["vueTable"] !== undefined) {
-              that.$parent.$refs["vueTable"].getData();
-            }
-            if (that.$parent.$refs["vueListView"] !== undefined) {
-              that.$parent.$refs["vueListView"].getData();
-            }
-            if (that.$parent.$refs["vueCardView"] !== undefined) {
-              that.$parent.$refs["vueCardView"].getData();
-            }
+      api.cases.assignCase(this.data).then((response) => {
+        if (response.statusText == "OK" || response.status === 200) {
+          that.$refs["modal-assign-case"].hide();
+          if (that.$parent.$refs["vueTable"] !== undefined) {
+            that.$parent.$refs["vueTable"].getData();
           }
-        })
-        .catch((e) => {
-          if(e.response.data && e.response.data.error){
-            that.showAlert(e.response.data.error.message, "danger");
+          if (that.$parent.$refs["vueListView"] !== undefined) {
+            that.$parent.$refs["vueListView"].getData();
           }
-        });
-      } else {
-        api.cases.reassingCaseSupervisor(this.data).then((response) => {
-          if (response.statusText == "OK" || response.status === 200) {
-            that.$refs["modal-reassign-case"].hide();
-            if (that.$parent.$refs["vueTable"] !== undefined) {
-              that.$parent.$refs["vueTable"].getData();
-            }
-            if (that.$parent.$refs["vueListView"] !== undefined) {
-              that.$parent.$refs["vueListView"].getData();
-            }
-            if (that.$parent.$refs["vueCardView"] !== undefined) {
-              that.$parent.$refs["vueCardView"].getData();
-            }
+          if (that.$parent.$refs["vueCardView"] !== undefined) {
+            that.$parent.$refs["vueCardView"].getData();
           }
-        })
-        .catch((e) => {
-          if(e.response.data && e.response.data.error){
-            that.showAlert(e.response.data.error.message, "danger");
-          }
-        });
-      }
+        }
+      })
+      .catch((e) => {
+        if(e.response.data && e.response.data.error){
+          that.showAlert(e.response.data.error.message, "danger");
+        }
+      });
     },
     /**
      * Show the alert message
-     * @param {string} message - message to be displayen in the body
+     * @param {string} message - message to be displayed in the body
      * @param {string} type - alert type
      */
     showAlert(message, type) {
