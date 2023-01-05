@@ -531,7 +531,8 @@ Ext.onReady(function(){
             },
             iconCls: 'ICON_STEPS',
             toggleHandler: togglePreview,
-            disabled: true
+            disabled: true,
+            hidden: true
         }, {
             id: 'informationMenu',
             text: _('ID_INFORMATION'),

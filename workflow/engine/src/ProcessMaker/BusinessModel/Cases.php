@@ -4483,36 +4483,34 @@ class Cases
     {
         $result = [];
         $dynaformStep = $this->getStepsToRevise($appUid, 'DYNAFORM');
-        $i = 0;
-        foreach ($dynaformStep as $step) {
-            $url = "cases_StepToRevise?"
-                    . "type=DYNAFORM&"
-                    . "ex={$i}&"
-                    . "PRO_UID={$step["PRO_UID"]}&"
-                    . "DYN_UID={$step['STEP_UID_OBJ']}&"
-                    . "APP_UID={$appUid}&"
-                    . "position={$step['STEP_POSITION']}&"
-                    . "DEL_INDEX={$delIndex}";
-            $result[] = [
-                'uid' => $step['STEP_UID_OBJ'],
-                'url' => $url
-            ];
-            $i++;
-        }
-
         $inputDocumentStep = $this->getStepsToRevise($appUid, 'INPUT_DOCUMENT');
+        $objects = array_merge($dynaformStep, $inputDocumentStep);
+        usort($objects, function ($a, $b) {
+            return $a['STEP_POSITION'] > $b['STEP_POSITION'];
+        });
         $i = 0;
-        foreach ($inputDocumentStep as $step) {
-            $url = "cases_StepToReviseInputs?"
-                    . "type=INPUT_DOCUMENT&"
+        $endPoint = '';
+        $uidName = '';
+        foreach ($objects as $step) {
+            if ($step['STEP_TYPE_OBJ'] === 'DYNAFORM') {
+                $endPoint = 'cases_StepToRevise';
+                $uidName = 'DYN_UID';
+            }
+            if ($step['STEP_TYPE_OBJ'] === 'INPUT_DOCUMENT') {
+                $endPoint = 'cases_StepToReviseInputs';
+                $uidName = 'INP_DOC_UID';
+            }
+            $url = "{$endPoint}?"
+                    . "type={$step['STEP_TYPE_OBJ']}&"
                     . "ex={$i}&"
                     . "PRO_UID={$step["PRO_UID"]}&"
-                    . "INP_DOC_UID={$step['STEP_UID_OBJ']}&"
+                    . "{$uidName}={$step['STEP_UID_OBJ']}&"
                     . "APP_UID={$appUid}&"
                     . "position={$step['STEP_POSITION']}&"
                     . "DEL_INDEX={$delIndex}";
             $result[] = [
                 'uid' => $step['STEP_UID_OBJ'],
+                'type' => $step['STEP_TYPE_OBJ'],
                 'url' => $url
             ];
             $i++;

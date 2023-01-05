@@ -2642,18 +2642,18 @@ class PmDynaform
     /**
      * Get html navigation bar for steps to revise.
      * @param string $appUid
-     * @param string $dynUid
+     * @param string $uid
      * @param int $delIndex
      * @return string
      */
-    public static function navigationBarForStepsToRevise(string $appUid, string $dynUid, int $delIndex): string
+    public static function navigationBarForStepsToRevise(string $appUid, string $uid, int $delIndex): string
     {
         $navbar = '';
         $cases = new Cases();
         $steps = $cases->getAllUrlStepsToRevise($appUid, $delIndex);
         $n = count($steps);
         foreach ($steps as $key => $step) {
-            if ($step['uid'] === $dynUid) {
+            if ($step['uid'] === $uid) {
                 $previousLabel = '';
                 $previousUrl = '';
                 $nextLabel = '';
@@ -2665,6 +2665,14 @@ class PmDynaform
                 if ($key + 1 < $n) {
                     $nextLabel = G::LoadTranslation('ID_NEXT');
                     $nextUrl = $steps[$key + 1]['url'];
+                }
+                if (empty($nextUrl)) {
+                    $nextLabel = G::LoadTranslation('ID_FINISH');
+                    $nextUrl = 'javascript:if(window.parent && window.parent.parent){window.parent.parent.postMessage("redirect=MyCases","*");}';
+                }
+                //this condition modify the next Url for submit action
+                if ($step['type'] === 'DYNAFORM') {
+                    $nextUrl = 'javascript:document.querySelector(".pmdynaform-container .pmdynaform-form").submit();';
                 }
                 $navbar = "<div style='width:100%;padding:0px 10px 0px 10px;margin:15px 0px 0px 0px;'>" .
                         "    <img src='/images/bulletButtonLeft.gif' style='float:left;'>&nbsp;" .
