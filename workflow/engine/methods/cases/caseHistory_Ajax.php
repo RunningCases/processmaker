@@ -8,7 +8,7 @@ $actionAjax = isset($_REQUEST['actionAjax']) ? $_REQUEST['actionAjax'] : null;
 switch ($actionAjax) {
     case 'historyGridList_JXP':
         global $G_PUBLISH;
-        $appUid = $_SESSION['APPLICATION'];
+        $appUid = isset($_REQUEST['appUid']) ? $_REQUEST['appUid'] : $_SESSION['APPLICATION'];
         $case = new ClassesCases();
         $fields = $case->loadCase($appUid);
         $criteria = Cases::getTransferHistoryCriteria($fields['APP_NUMBER']);

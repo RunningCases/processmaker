@@ -172,11 +172,12 @@
   //!!historyGridList|changeLog
 
   function historyGridList(){
+      var appUid = this.window.location.search.substr(27);
       store = new Ext.data.GroupingStore({
         proxy : new Ext.data.HttpProxy
         (
           {
-            url: 'caseHistory_Ajax.php?actionAjax=historyGridList_JXP'
+            url: 'caseHistory_Ajax.php?actionAjax=historyGridList_JXP&appUid=' + appUid
           }
         ),
 
