@@ -313,7 +313,7 @@ export let cases = {
         return Api.update({
             service: "ASSIGN_CASE",
             data: {
-                reason: data.reasonReassign,
+                reason: data.reasonAssign,
                 sendMail: data.notifyUser,
                 index: data.DEL_INDEX
             },
