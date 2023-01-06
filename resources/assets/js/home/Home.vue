@@ -41,6 +41,7 @@
                 @onRemoveFilter="onRemoveFilter"
                 @onUpdatePage="onUpdatePage"
                 @onUpdateDataCase="onUpdateDataCase"
+                @onOpenCaseDetail="onOpenCaseDetail"
                 @onLastPage="onLastPage"
                 @onUpdateFilters="onUpdateFilters"
                 @cleanDefaultOption="cleanDefaultOption"
@@ -95,6 +96,7 @@ export default {
             page: null,
             menu: [],
             dataCase: {},
+            selectedItem: {},
             hideToggle: true,
             collapsed: false,
             selectedTheme: "",
@@ -193,7 +195,16 @@ export default {
                     that.OnClickSidebarItem(that.getItemMenuByValue("page","inbox"));
                 }
                 if ( e.data === "redirect=MyCases" || e.message === "redirect=MyCases"){
-                    that.OnClickSidebarItem(that.getItemMenuByValue("page","MyCases"));
+                    that.onUpdateDataCase({
+                        APP_UID: that.selectedItem.APP_UID,
+                        DEL_INDEX: that.selectedItem.DEL_INDEX,
+                        PRO_UID: that.selectedItem.PRO_UID,
+                        TAS_UID: that.selectedItem.TAS_UID,
+                        APP_NUMBER: that.selectedItem.CASE_NUMBER,
+                        FLAG: "SUPERVISING",
+                        ACTION:"to_revise"
+                    });
+                    that.onUpdatePage("case-detail");
                 }
                 if ( e.data === "update=debugger" || e.message === "update=debugger"){
                     if(that.$refs["component"].updateView){
@@ -563,6 +574,9 @@ export default {
         },
         onUpdateDataCase(data) {
             this.dataCase = data;
+        },
+        onOpenCaseDetail(item){
+            this.selectedItem = item;
         },
         onLastPage() {
             this.page = this.lastPage;
