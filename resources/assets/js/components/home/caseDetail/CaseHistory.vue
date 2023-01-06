@@ -29,7 +29,7 @@ export default {
   mounted() {
     this.url = window.config.SYS_SERVER_AJAX +
       window.config.SYS_URI +
-      `cases/ajaxListener?action=caseHistory&appUid=` + this.data.APP_UID;
+      `cases/ajaxListener?action=caseHistory&appUid=` + this.historyData.APP_UID;
   },
   methods: {
     classBtn(cls) {
