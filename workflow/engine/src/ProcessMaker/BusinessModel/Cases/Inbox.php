@@ -164,9 +164,9 @@ class Inbox extends AbstractCases
             $dummyInfo = [];
             if (!empty($previousThread)) {
                 // When the task has an user
-                $userInfo = ($previousThread['USR_ID'] !== 0) ? User::getInformation($previousThread['USR_ID']) : [];
+                $userInfo = (intval($previousThread['USR_ID']) !== 0) ? User::getInformation($previousThread['USR_ID']) : [];
                 // When the task does not have users refers to dummy task
-                $taskInfo = ($previousThread['USR_ID'] === 0) ? Task::title($previousThread['TAS_ID']) : [];
+                $taskInfo = (intval($previousThread['USR_ID']) === 0) ? Task::title($previousThread['TAS_ID']) : [];
                 if (!empty($taskInfo)) {
                     $dummyInfo = [
                         'task_id' => $previousThread['TAS_ID'],
