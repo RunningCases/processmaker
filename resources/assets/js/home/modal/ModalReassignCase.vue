@@ -108,6 +108,9 @@ export default {
      */
     show() {
       this.users = [];
+      this.reasonReassign = null;
+      this.userSelected = null;
+      this.notifyUser = false;
       this.getUsersReassign();
       this.$refs["modal-reassign-case"].show();
       if (this.data.FLAG){
