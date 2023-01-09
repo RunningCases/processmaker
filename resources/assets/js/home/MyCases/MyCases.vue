@@ -348,6 +348,7 @@ export default {
          */
         openCaseDetail(item) {
             let that = this;
+            that.$emit("onOpenCaseDetail", item);
             api.cases.open(_.extend({ ACTION: "todo" }, item)).then(() => {
                 api.cases
                     .cases_open(_.extend({ ACTION: "todo" }, item))
