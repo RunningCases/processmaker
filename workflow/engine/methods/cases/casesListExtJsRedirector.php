@@ -30,15 +30,7 @@ if (isset($_GET['ux'])) {
 if (isset($_GET['ux'])) {
     echo 'if (typeof window.parent.ux_env != \'undefined\') {';
 }
-/*----------------------------------********---------------------------------*/
-if (true) {
-    echo '  parent.parent.postMessage("redirect=todo","*");';
-} else {
-/*----------------------------------********---------------------------------*/
-    echo "  window.parent.location.href = '$url';";
-/*----------------------------------********---------------------------------*/
-}
-/*----------------------------------********---------------------------------*/
+echo '  parent.parent.postMessage("redirect=todo","*");';
 if (isset($_GET['ux'])) {
     /*----------------------------------********---------------------------------*/
     if (PMLicensedFeatures::getSingleton()->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09') && $statusPMGmail) {
