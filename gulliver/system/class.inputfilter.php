@@ -430,7 +430,7 @@ class InputFilter
         if (is_array($input)) {
             if (count($input)) {
                 foreach ($input as $i => $val) {
-                    if (is_array($val) || is_object($val) && count($val)) {
+                    if (is_array($val) || is_object($val) && is_countable($val) && count($val)) {
                         $input[$i] = $this->xssFilterHard($val);
                     } else {
                         if (!empty($val)) {
