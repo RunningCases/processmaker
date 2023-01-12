@@ -179,7 +179,7 @@ $headPublisher->assign('_WORKSPACE', config("system.workspace"));
 $headPublisher->assign('_DEL_INDEX_DELEGATE', $delIndex);
 $headPublisher->assign('_USR_DELEGATE', $case['CURRENT_USER_UID']);
 
-if (!isset($_SESSION['APPLICATION']) || !isset($_SESSION['TASK']) || !isset($_SESSION['INDEX'])) {
+if (!isset($_SESSION['APPLICATION']) || !isset($_SESSION['TASK']) || !isset($_SESSION['INDEX']) || !isset($_SESSION['PROCESS'])) {
     $_SESSION['PROCESS'] = $case['PRO_UID'];
     $_SESSION['APPLICATION'] = $case['APP_UID'];
     $_SESSION['TASK'] = $case['TAS_UID'];
