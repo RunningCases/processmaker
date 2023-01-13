@@ -2570,6 +2570,12 @@ msgid "Assign Supervisor Input"
 msgstr "Assign Supervisor Input"
 
 # TRANSLATION
+# LABEL/ID_NO_ASSOCIATED_INPUT_DOCUMENT_DYN
+#: LABEL/ID_NO_ASSOCIATED_INPUT_DOCUMENT_DYN
+msgid "There are no associated Input Documents or Dynaforms"
+msgstr "There are no associated Input Documents or Dynaforms"
+
+# TRANSLATION
 # LABEL/ID_ASSIGN_TASK
 #: LABEL/ID_ASSIGN_TASK
 msgid "Assign Task/Event"

@@ -61691,6 +61691,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_USER_INEFFICIENCE','en','Inefficience Cost By User','2015-03-09') ,
 ( 'LABEL','ID_USER_INFORMATION','en','User Information','2014-01-15') ,
 ( 'LABEL','ID_USER_IS_SUPERVISOR_DOES_NOT_ASSOCIATED_INPUT_DOCUMENT','en','The user is supervisor, but it does not have an associated input document','2016-07-06') ,
+( 'LABEL','ID_NO_ASSOCIATED_INPUT_DOCUMENT_DYN','en','There are no associated Input Documents or Dynaforms','2023-01-12') ,
 ( 'LABEL','ID_USER_LIST','en','User List','2014-01-15') ,
 ( 'LABEL','ID_USER_MUST_CHANGE_PASSWORD_AT_NEXT_LOGON','en','User must change password at next logon','2014-05-16') ,
 ( 'LABEL','ID_USER_NAME','en','User Name','2014-01-15') ,
