@@ -364,7 +364,7 @@ try {
     //The other authentication methods should not be validated by password security policies.
     if (!empty($aUser['USR_AUTH_TYPE'])) {
         $authType = $aUser['USR_AUTH_TYPE'];
-        if ($authType != "mysql" && $authType != "") {
+        if (strtolower($authType) != "mysql" && $authType != "") {
             $policiesToExclude = [
                 'ID_PPP_MINIMUM_LENGTH',
                 'ID_PPP_MAXIMUM_LENGTH',
