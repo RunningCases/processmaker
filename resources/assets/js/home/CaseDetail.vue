@@ -77,6 +77,7 @@
                 v-if="props.row.USR_UID !== '' && props.row.STATUS !== 'CLOSED' && supervisor && flagSupervising"
                 @click="onClickReassign(props.row)"
                 variant="success"
+                :disabled="props.row.TASK[0].TAS_TYPE === 'MULTIPLE_INSTANCE_VALUE_BASED' || props.row.TASK[0].TAS_TYPE === 'MULTIPLE_INSTANCE'"
                 >
                 <i class="fas fa-exchange-alt"></i>
                 {{ $t("ID_REASSIGN") }}
@@ -565,7 +566,8 @@ export default {
             {
               TITLE: v.TAS_TITLE,
               CODE_COLOR: v.TAS_COLOR,
-              COLOR: v.TAS_COLOR_LABEL
+              COLOR: v.TAS_COLOR_LABEL,
+              TAS_TYPE: v.TAS_ASSIGN_TYPE
             },
           ],
           THREAD_TITLE: v.DEL_TITLE,
