@@ -1988,7 +1988,7 @@ function PMFGenerateOutputDocument($outputID, $sApplication = null, $index = nul
         $oData['ATTACHMENT_FOLDER'] = true;
         switch ($aOD['OUT_DOC_GENERATE']) {
             case "BOTH":
-                $documentData = new uploadDocumentData($sApplication, $sUserLogged, $pathOutput . $sFilename . '.pdf', $sFilename . '.pdf', $sDocUID, $oAppDocument->getDocVersion());
+                $documentData = new uploadDocumentData($sApplication, $sUserLogged, $pathOutput . $sFilename . '.pdf', $oAppDocument->getAppDocFilename() . '.pdf', $sDocUID, $oAppDocument->getDocVersion());
 
                 $documentData->sFileType = "PDF";
                 $documentData->bUseOutputFolder = true;
@@ -1998,7 +1998,7 @@ function PMFGenerateOutputDocument($outputID, $sApplication = null, $index = nul
                     unlink($pathOutput . $sFilename . '.pdf');
                 }
 
-                $documentData = new uploadDocumentData($sApplication, $sUserLogged, $pathOutput . $sFilename . '.doc', $sFilename . '.doc', $sDocUID, $oAppDocument->getDocVersion());
+                $documentData = new uploadDocumentData($sApplication, $sUserLogged, $pathOutput . $sFilename . '.doc', $oAppDocument->getAppDocFilename() . '.doc', $sDocUID, $oAppDocument->getDocVersion());
 
                 $documentData->sFileType = "DOC";
                 $documentData->bUseOutputFolder = true;
@@ -2010,7 +2010,7 @@ function PMFGenerateOutputDocument($outputID, $sApplication = null, $index = nul
 
                 break;
             case "PDF":
-                $documentData = new uploadDocumentData($sApplication, $sUserLogged, $pathOutput . $sFilename . '.pdf', $sFilename . '.pdf', $sDocUID, $oAppDocument->getDocVersion());
+                $documentData = new uploadDocumentData($sApplication, $sUserLogged, $pathOutput . $sFilename . '.pdf', $oAppDocument->getAppDocFilename() . '.pdf', $sDocUID, $oAppDocument->getDocVersion());
 
                 $documentData->sFileType = "PDF";
                 $documentData->bUseOutputFolder = true;
@@ -2021,7 +2021,7 @@ function PMFGenerateOutputDocument($outputID, $sApplication = null, $index = nul
                 }
                 break;
             case "DOC":
-                $documentData = new uploadDocumentData($sApplication, $sUserLogged, $pathOutput . $sFilename . '.doc', $sFilename . '.doc', $sDocUID, $oAppDocument->getDocVersion());
+                $documentData = new uploadDocumentData($sApplication, $sUserLogged, $pathOutput . $sFilename . '.doc', $oAppDocument->getAppDocFilename() . '.doc', $sDocUID, $oAppDocument->getDocVersion());
 
                 $documentData->sFileType = "DOC";
                 $documentData->bUseOutputFolder = true;
