@@ -540,7 +540,7 @@ class OutputDocument
                 $oData['ATTACHMENT_FOLDER'] = true;
                 switch ($aOD['OUT_DOC_GENERATE']) {
                     case "BOTH":
-                        $documentData = new \uploadDocumentData($sApplication, $sUserLogged, $pathOutput . $sFilename . '.pdf', $sFilename . '.pdf', $sDocUID, $oAppDocument->getDocVersion());
+                        $documentData = new \uploadDocumentData($sApplication, $sUserLogged, $pathOutput . $sFilename . '.pdf', $oAppDocument->getAppDocFilename() . '.pdf', $sDocUID, $oAppDocument->getDocVersion());
                         $documentData->sFileType = "PDF";
                         $documentData->bUseOutputFolder = true;
                         $uploadReturn = $oPluginRegistry->executeTriggers(PM_UPLOAD_DOCUMENT, $documentData);
@@ -548,7 +548,7 @@ class OutputDocument
                             //Only delete if the file was saved correctly
                             unlink($pathOutput . $sFilename . '.pdf');
                         }
-                        $documentData = new \uploadDocumentData($sApplication, $sUserLogged, $pathOutput . $sFilename . '.doc', $sFilename . '.doc', $sDocUID, $oAppDocument->getDocVersion());
+                        $documentData = new \uploadDocumentData($sApplication, $sUserLogged, $pathOutput . $sFilename . '.doc', $oAppDocument->getAppDocFilename() . '.doc', $sDocUID, $oAppDocument->getDocVersion());
                         $documentData->sFileType = "DOC";
                         $documentData->bUseOutputFolder = true;
                         $uploadReturn = $oPluginRegistry->executeTriggers(PM_UPLOAD_DOCUMENT, $documentData);
@@ -558,7 +558,7 @@ class OutputDocument
                         }
                         break;
                     case "PDF":
-                        $documentData = new \uploadDocumentData($sApplication, $sUserLogged, $pathOutput . $sFilename . '.pdf', $sFilename . '.pdf', $sDocUID, $oAppDocument->getDocVersion());
+                        $documentData = new \uploadDocumentData($sApplication, $sUserLogged, $pathOutput . $sFilename . '.pdf', $oAppDocument->getAppDocFilename() . '.pdf', $sDocUID, $oAppDocument->getDocVersion());
                         $documentData->sFileType = "PDF";
                         $documentData->bUseOutputFolder = true;
                         $uploadReturn = $oPluginRegistry->executeTriggers(PM_UPLOAD_DOCUMENT, $documentData);
@@ -568,7 +568,7 @@ class OutputDocument
                         }
                         break;
                     case "DOC":
-                        $documentData = new \uploadDocumentData($sApplication, $sUserLogged, $pathOutput . $sFilename . '.doc', $sFilename . '.doc', $sDocUID, $oAppDocument->getDocVersion());
+                        $documentData = new \uploadDocumentData($sApplication, $sUserLogged, $pathOutput . $sFilename . '.doc', $oAppDocument->getAppDocFilename() . '.doc', $sDocUID, $oAppDocument->getDocVersion());
                         $documentData->sFileType = "DOC";
                         $documentData->bUseOutputFolder = true;
                         $uploadReturn = $oPluginRegistry->executeTriggers(PM_UPLOAD_DOCUMENT, $documentData);
