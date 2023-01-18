@@ -532,7 +532,7 @@ Ext.onReady(function(){
             iconCls: 'ICON_STEPS',
             toggleHandler: togglePreview,
             disabled: true,
-            hidden: true
+            hidden: (typeof (treeToReviseTitle) == 'undefined' ? false : true)
         }, {
             id: 'informationMenu',
             text: _('ID_INFORMATION'),
