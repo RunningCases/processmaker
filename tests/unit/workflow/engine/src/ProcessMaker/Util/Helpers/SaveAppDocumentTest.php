@@ -22,7 +22,7 @@ class SaveAppDocumentTest extends TestCase
         $appDocUid  = G::generateUniqueID();
         $pathCase = PATH_DB . config('system.workspace') . PATH_SEP . 'files' . PATH_SEP . G::getPathFromUID($appUid) . PATH_SEP;
         $res = saveAppDocument($files, $appUid, $appDocUid, 1, false);
-        $this->assertTrue($res);
+        $this->assertNotEmpty($res);
         G::rm_dir($pathCase);
     }
 
@@ -41,7 +41,7 @@ class SaveAppDocumentTest extends TestCase
         $appDocUid  = G::generateUniqueID();
         $pathCase = PATH_DB . config('system.workspace') . PATH_SEP . 'files' . PATH_SEP . G::getPathFromUID($appUid) . PATH_SEP;
         $res = saveAppDocument($files, $appUid, $appDocUid, 1, false);
-        $this->assertTrue($res);
+        $this->assertNotEmpty($res);
         G::rm_dir($pathCase);
     }
 }

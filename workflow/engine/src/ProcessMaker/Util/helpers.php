@@ -676,23 +676,23 @@ function saveAppDocument($file, $appUid, $appDocUid, $version = 1, $upload = tru
         $info = pathinfo($file["name"]);
         $extension = ((isset($info["extension"])) ? $info["extension"] : "");
         $fileName = $appDocUid . "_" . $version . "." . $extension;
-
         $pathCase = PATH_DATA_SITE . 'files' . PATH_SEP . G::getPathFromUID($appUid) . PATH_SEP;
+        $pathFile = $pathCase . $fileName;
 
-        $response = false;
         if ($upload) {
             G::uploadFile(
                 $file["tmp_name"],
                 $pathCase,
                 $fileName
             );
-            $response = true;
         } else {
             G::verifyPath($pathCase, true);
-            $response = copy($file["tmp_name"], $pathCase . $fileName);
+            if (!copy($file["tmp_name"], $pathCase . $fileName)) {
+                $pathFile = '';
+            }
         }
 
-        return $response;
+        return $pathFile;
     } catch (Exception $e) {
         throw $e;
     }
