@@ -1,27 +1,4 @@
 <?php
-/**
- * authSourcesSynchronizeAjax.php
- *
- * ProcessMaker Open Source Edition
- * Copyright (C) 2004 - 2011 Colosa Inc.23
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
- * Coral Gables, FL, 33134, USA, or email info@colosa.com.
- *
- **/
 
 class treeNode extends stdclass
 {
@@ -62,87 +39,82 @@ try {
 
             foreach ($depsToCheck as $departmentDn) {
                 $departmentUid = $ldapAdvanced->getDepUidIfExistsDN($departmentDn);
-
                 if ($departmentUid == '') {
                     if (strcasecmp($departmentDn, $authenticationSource['AUTH_SOURCE_BASE_DN']) == 0) {
                         $departmentTitle = 'ROOT (' . $authenticationSource['AUTH_SOURCE_BASE_DN'] . ')';
                         $parentUid = '';
                     } else {
-                        $arrayAux = custom_ldap_explode_dn($departmentDn);
-                        $departmentCurrent = array_shift($arrayAux);
-                        $parentDn = implode(',', $arrayAux);
-
-                        $arrayAux = explode('=', $departmentCurrent);
-                        $departmentTitle = trim($arrayAux[1]);
+                        $ous = custom_ldap_explode_dn($departmentDn);
+                        $departmentCurrent = array_shift($ous);
+                        $parentDn = implode(',', $ous);
+                        $ous = explode('=', $departmentCurrent);
+                        $departmentTitle = trim($ous[1]);
                         $parentUid = $ldapAdvanced->getDepUidIfExistsDN($parentDn);
-
-                        if (str_ireplace($authenticationSource['AUTH_SOURCE_BASE_DN'], '', $parentDn) != '' &&
-                            $parentUid == ''
-                        ) {
+                        if (str_ireplace($authenticationSource['AUTH_SOURCE_BASE_DN'], '', $parentDn) != '' && $parentUid == '') {
                             $response = new stdClass();
                             $response->status = 'ERROR';
                             $response->message = G::LoadTranslation(
                                 'ID_DEPARTMENT_CHECK_PARENT_DEPARTMENT',
                                 [$parentDn, $departmentTitle]
                             );
-
                             echo json_encode($response);
                             exit(0);
                         }
                     }
 
+                    $departmentUid = $ldapAdvanced->getDepartmentUidByTitle($departmentTitle);
                     $department = new Department();
-
-                    $departmentUid = $department->create([
-                        'DEP_TITLE' => stripslashes($departmentTitle),
-                        'DEP_PARENT' => $parentUid,
-                        'DEP_LDAP_DN' => $departmentDn,
-                        'DEP_REF_CODE' => ''
-                    ]);
-
-                    if ($departmentUid === false) {
-                        $response = new stdClass();
-                        $response->status = 'ERROR';
-                        $response->message = G::LoadTranslation('ID_DEPARTMENT_ERROR_CREATE');
-
-                        echo json_encode($response);
-                        exit(0);
+                    if ($departmentUid === '') {
+                        $data = [
+                            'DEP_TITLE' => stripslashes($departmentTitle),
+                            'DEP_PARENT' => $parentUid,
+                            'DEP_LDAP_DN' => $departmentDn,
+                            'DEP_REF_CODE' => ''
+                        ];
+                        $departmentUid = $department->create($data);
+                        if ($departmentUid === false) {
+                            $response = new stdClass();
+                            $response->status = 'ERROR';
+                            $response->message = G::LoadTranslation('ID_DEPARTMENT_ERROR_CREATE');
+                            echo json_encode($response);
+                            exit(0);
+                        }
+                    } else {
+                        $data = $department->Load($departmentUid);
+                        $data['DEP_LDAP_DN'] = $departmentDn;
+                        $department->update($data);
                     }
                 }
             }
 
-            if (!empty($depsToUncheck)) {
+            if (count($depsToUncheck) > 0) {
                 $baseDnLength = strlen($authenticationSource['AUTH_SOURCE_BASE_DN']);
-
                 foreach ($depsToUncheck as $departmentDn) {
                     $departmentUid = $ldapAdvanced->getDepUidIfExistsDN($departmentDn);
-
-                    if ($departmentUid != '' &&
+                    if ($departmentUid != '' && 
                         strcasecmp(
-                            substr($departmentDn, strlen($departmentDn) - $baseDnLength),
+                            substr($departmentDn, strlen($departmentDn) - $baseDnLength), 
                             $authenticationSource['AUTH_SOURCE_BASE_DN']
                         ) == 0
                     ) {
                         $department = new Department();
-
-                        $arrayDepartmentData = $department->Load($departmentUid);
-                        $arrayDepartmentData['DEP_LDAP_DN'] = '';
-
-                        $result = $department->update($arrayDepartmentData);
-
+                        $data = $department->Load($departmentUid);
+                        $data['DEP_LDAP_DN'] = '';
+                        $department->update($data);
                         if (!isset($authenticationSource['AUTH_SOURCE_DATA']['DEPARTMENTS_TO_UNASSIGN'])) {
                             $authenticationSource['AUTH_SOURCE_DATA']['DEPARTMENTS_TO_UNASSIGN'] = [];
                         }
-
                         $authenticationSource['AUTH_SOURCE_DATA']['DEPARTMENTS_TO_UNASSIGN'][] = $departmentUid;
                     }
                 }
-
                 $RBAC->authSourcesObj->update($authenticationSource);
             }
 
             $response = new stdclass();
             $response->status = "OK";
+            if ($ldapAdvanced->checkDuplicateDepartmentTitles()) {
+                $response->warning = G::LoadTranslation("ID_IT_WAS_IDENTIFIED_DUPLICATED_DEPARTMENTS_PLEASE_REMOVE_THESE_DEPARTMENTS");
+            }
             die(json_encode($response));
             break;
         case "loadGroups":
@@ -203,7 +175,7 @@ try {
                         $group["GRP_LDAP_DN"] = "";
                         $groupwf->update($group);
                         if (!isset($authenticationSource["AUTH_SOURCE_DATA"]["GROUPS_TO_UNASSIGN"])) {
-                            $authenticationSource["AUTH_SOURCE_DATA"]["GROUPS_TO_UNASSIGN"] = array();
+                            $authenticationSource["AUTH_SOURCE_DATA"]["GROUPS_TO_UNASSIGN"] = [];
                         }
                         $authenticationSource["AUTH_SOURCE_DATA"]["GROUPS_TO_UNASSIGN"][] = $groupUid;
                     }
