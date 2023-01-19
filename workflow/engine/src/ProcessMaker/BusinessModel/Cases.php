@@ -77,6 +77,7 @@ use Task as ModelTask;
 use TaskPeer;
 use Tasks as ClassesTasks;
 use TaskUserPeer;
+use uploadDocumentData;
 use Users as ModelUsers;
 use UsersPeer;
 use WsBase;
@@ -4173,10 +4174,10 @@ class Cases
                     $appDocUid = G::generateUniqueID();
 
                     // Upload or move the file
-                    $isUploaded = saveAppDocument($fileName, $appUid, $appDocUid, 1, $upload);
+                    $pathFile = saveAppDocument($fileName, $appUid, $appDocUid, 1, $upload);
 
                     // If the file was uploaded correctly we will to register in the DB
-                    if ($isUploaded) {
+                    if (!empty($pathFile)) {
                         $attributes = [
                             "DOC_ID" => $noteId,
                             "APP_DOC_UID" => $appDocUid,
@@ -4193,6 +4194,29 @@ class Cases
 
                         // List of files uploaded or copy
                         $response['attachments'][$i++] = $attributes;
+
+                        //Plugin Hook PM_UPLOAD_DOCUMENT for upload document
+                        $pluginRegistry = PluginRegistry::loadSingleton();
+
+                        // If the hook exists try to execute
+                        if ($pluginRegistry->existsTrigger(PM_UPLOAD_DOCUMENT) && class_exists('uploadDocumentData')) {
+                            // Get hook details
+                            $triggerDetail = $pluginRegistry->getTriggerInfo(PM_UPLOAD_DOCUMENT);
+
+                            // Instance object used by the hook
+                            $documentData = new uploadDocumentData($appUid, $userUid, $pathFile, $attributes['APP_DOC_FILENAME'], $appDocUid, 1);
+
+                            // Execute hook
+                            $uploadReturn = $pluginRegistry->executeTriggers(PM_UPLOAD_DOCUMENT, $documentData);
+
+                            // If the executions is correct, update the record related to the document
+                            if ($uploadReturn) {
+                                Documents::where('APP_DOC_UID', $appDocUid)->update(['APP_DOC_PLUGIN' => $triggerDetail->getNamespace()]);
+
+                                // Remove the file from the server
+                                unlink($pathFile);
+                            }
+                        }
                     } else {
                         $response['attachment_errors'][$j++] = [
                             'error' => 'error',
