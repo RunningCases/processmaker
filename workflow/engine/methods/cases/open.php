@@ -24,11 +24,11 @@ if (isset($_GET['gmail']) && $_GET['gmail'] == 1) {
     $tBarGmail = true;
 }
 
-//Check if we have the information for open the case
+// Check if we have the information for open the case
 if (!isset($_GET['APP_UID']) && !isset($_GET['APP_NUMBER']) && !isset($_GET['DEL_INDEX'])) {
     throw new Exception(G::LoadTranslation('ID_APPLICATION_OR_INDEX_MISSING'));
 }
-//Get the APP_UID related to APP_NUMBER
+// Get the APP_UID related to APP_NUMBER
 if (!isset($_GET['APP_UID']) && isset($_GET['APP_NUMBER'])) {
     $caseInstance = new Cases();
     $appUid = $caseInstance->getApplicationUIDByNumber(htmlspecialchars($_GET['APP_NUMBER']));
@@ -38,7 +38,7 @@ if (!isset($_GET['APP_UID']) && isset($_GET['APP_NUMBER'])) {
 } else {
     $appUid = htmlspecialchars($_GET['APP_UID']);
 }
-//If we don't have the DEL_INDEX we get the current delIndex for example data reporting tool and jump to
+// If we don't have the DEL_INDEX we get the current delIndex for example data reporting tool and jump to
 if (!isset($_GET['DEL_INDEX'])) {
     $caseInstance = new Cases();
     $delIndex = $caseInstance->getCurrentDelegation($appUid, $_SESSION['USER_LOGGED']);
@@ -80,7 +80,6 @@ foreach ($_GET as $k => $v) {
 /**
  * @todo, the action over the case from Open Case, Case Link and jump to needs to work similar, we need to have a PRD
  */
-
 $case = $caseInstance->loadCase($appUid, $delIndex);
 $canClaimCase = false;
 $caseCanBeReview = false;
@@ -92,11 +91,11 @@ if (isset($_GET['action'])) {
         case 'unassigned': //Unassigned
         case 'paused': //Paused
         case 'search': //Advanced search
-            //For add the validation in the others list we need to a have a PRD, because is change of the functionality
+            // For add the validation in the others list we need to a have a PRD, because is change of the functionality
             break;
         case 'to_reassign': //Reassign
-            //From reassign: Review if the user can be claim the case
-            if ($caseInstance->isSelfService($_SESSION['USER_LOGGED'], $case['TAS_UID'], $appUid)) {
+            // From reassign: Review if the user can be claim the case
+            if (empty($case['CURRENT_USER_UID']) && $caseInstance->isSelfService($_SESSION['USER_LOGGED'], $case['TAS_UID'], $appUid)) {
                 $canClaimCase = true;
             }
             break;
@@ -105,16 +104,16 @@ if (isset($_GET['action'])) {
             $caseCanBeReview = $proSupervisor->reviewCaseStatusForSupervisor($appUid, $delIndex);
             break;
         case 'jump': //Jump To action
-            //From Review: Review if the user is supervisor
+            // From Review: Review if the user is supervisor
             if (isset($_GET['actionFromList']) && ($_GET['actionFromList'] === 'to_revise')) {
                 $proSupervisor = new ProcessSupervisor();
                 $caseCanBeReview = $proSupervisor->reviewCaseStatusForSupervisor($appUid, $delIndex);
             }
-            //From Unassigned: Review if the user can be claim the case
-            if ($caseInstance->isSelfService($_SESSION['USER_LOGGED'], $case['TAS_UID'], $appUid)) {
+            // From Unassigned: Review if the user can be claim the case
+            if (empty($case['CURRENT_USER_UID']) && $caseInstance->isSelfService($_SESSION['USER_LOGGED'], $case['TAS_UID'], $appUid)) {
                 $canClaimCase = true;
             }
-            //From Paused: Get the last index OPEN or CLOSED (by Paused cases)
+            // From Paused: Get the last index OPEN or CLOSED (by Paused cases)
             $bmCases = new BmCases();
             $delIndex = $bmCases->getOneLastThread($appUid, true);
             $case = $caseInstance->loadCase($appUid, $delIndex, $_GET['action']);
@@ -127,10 +126,10 @@ if (isset($_GET['action'])) {
  * @link https://wiki.processmaker.com/3.2/Cases/Process_Supervisor#Review
  */
 if (!$caseCanBeReview) {
-    //The supervisor can not edit the information
+    // The supervisor can not edit the information
     $script = 'cases_Open?';
 } else {
-    //The supervisor can edit the information, the case are in TO_DO
+    // The supervisor can edit the information, the case are in TO_DO
     $script = 'cases_OpenToRevise?APP_UID=' . $appUid . '&DEL_INDEX=' . $delIndex . '&TAS_UID=' . $tasUid;
     $headPublisher->assign('treeToReviseTitle', G::loadtranslation('ID_STEP_LIST'));
     $casesPanelUrl = 'casesToReviseTreeContent?APP_UID=' . $appUid . '&DEL_INDEX=' . $delIndex;
@@ -158,7 +157,7 @@ if ($isBpmn && $viewSummaryForm && $isNoEmpty) {
 }
 /*----------------------------------********---------------------------------*/
 
-$pmDynaform = new PmDynaform();     
+$pmDynaform = new PmDynaform();
 $step = new Step();
 $step = $step->loadByProcessTaskPosition($case['PRO_UID'], $case['TAS_UID'], 1);
 $headPublisher->assign('uri', $script . $uri);
