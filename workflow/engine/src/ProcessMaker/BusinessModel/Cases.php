@@ -3962,6 +3962,35 @@ class Cases
                         ];
 
                         $i++;
+
+                        //Plugin Hook PM_UPLOAD_DOCUMENT for upload document
+                        $pluginRegistry = PluginRegistry::loadSingleton();
+
+                        // If the hook exists try to execute
+                        if ($pluginRegistry->existsTrigger(PM_UPLOAD_DOCUMENT) && class_exists('uploadDocumentData')) {
+                            // Get hook details
+                            $triggerDetail = $pluginRegistry->getTriggerInfo(PM_UPLOAD_DOCUMENT);
+
+                            // Build path file
+                            $info = pathinfo($arrayFileName['name']);
+                            $extension = (isset($info['extension'])) ? $info['extension'] : '';
+                            $pathCase = G::getPathFromUID($appUid);
+                            $pathFile = PATH_DOCUMENT . $pathCase . PATH_SEP . $objCreated->getAppDocUid() . '_1.' . $extension;
+
+                            // Instance object used by the hook
+                            $documentData = new uploadDocumentData($appUid, $userUid, $pathFile, $objCreated->getAppDocFilename(), $objCreated->getAppDocUid(), 1);
+
+                            // Execute hook
+                            $uploadReturn = $pluginRegistry->executeTriggers(PM_UPLOAD_DOCUMENT, $documentData);
+
+                            // If the executions is correct, update the record related to the document
+                            if ($uploadReturn) {
+                                Documents::where('APP_DOC_UID', $objCreated->getAppDocUid())->update(['APP_DOC_PLUGIN' => $triggerDetail->getNamespace()]);
+
+                                // Remove the file from the server
+                                unlink($pathFile);
+                            }
+                        }
                     } else {
                         throw new UploadException($arrayFileName['error']);
                     }
