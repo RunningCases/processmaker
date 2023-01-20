@@ -31,7 +31,9 @@ use ProcessMaker\ChangeLog\ChangeLog;
 /*----------------------------------********---------------------------------*/
 use ProcessMaker\Core\RoutingScreen;
 use ProcessMaker\Core\System;
+use ProcessMaker\Model\Documents;
 use ProcessMaker\Model\Process as ProcessEloquent;
+use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Services\Api\Project\Activity\Step as ActivityStep;
 use ProcessMaker\Util\DateTime;
 use ProcessMaker\Validation\ExceptionRestApi;
@@ -42,6 +44,7 @@ use RBAC;
 use ResultSet;
 use StepPeer;
 use TaskPeer;
+use uploadDocumentData;
 use Users;
 use UsersPeer;
 
@@ -1186,8 +1189,32 @@ class Light
                         $pathUID = G::getPathFromUID($app_uid);
                         $sPathName = PATH_DOCUMENT . $pathUID . PATH_SEP;
                         $sFileName = $sAppDocUid . "_" . $iDocVersion . "." . $sExtension;
+                        $pathFile = $sPathName . $sFileName;
                         G::uploadFile($arrayFileTmpName[$i], $sPathName, $sFileName);
                         $response = array("status" => "ok");
+
+                        //Plugin Hook PM_UPLOAD_DOCUMENT for upload document
+                        $pluginRegistry = PluginRegistry::loadSingleton();
+
+                        // If the hook exists try to execute
+                        if ($pluginRegistry->existsTrigger(PM_UPLOAD_DOCUMENT) && class_exists('uploadDocumentData')) {
+                            // Get hook details
+                            $triggerDetail = $pluginRegistry->getTriggerInfo(PM_UPLOAD_DOCUMENT);
+
+                            // Instance object used by the hook
+                            $documentData = new uploadDocumentData($app_uid, $userUid, $pathFile, $oAppDocument->getAppDocFilename(), $app_doc_uid, $iDocVersion);
+
+                            // Execute hook
+                            $uploadReturn = $pluginRegistry->executeTriggers(PM_UPLOAD_DOCUMENT, $documentData);
+
+                            // If the executions is correct, update the record related to the document
+                            if ($uploadReturn) {
+                                Documents::where('APP_DOC_UID', $app_doc_uid)->update(['APP_DOC_PLUGIN' => $triggerDetail->getNamespace()]);
+
+                                // Remove the file from the server
+                                unlink($pathFile);
+                            }
+                        }
                     }
                 }
             }
