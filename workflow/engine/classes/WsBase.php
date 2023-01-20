@@ -2646,11 +2646,10 @@ class WsBase
                     $currentUserName = '';
                 }
 
-                $oTask = new Task();
-
+                $task = new Task();
                 try {
-                    $uFields = $oTask->load($aAppDel['TAS_UID']);
-                    $taskName = $uFields['TAS_TITLE'];
+                    $taskFields = $task->load($aAppDel['TAS_UID']);
+                    $taskName = !empty($taskFields['TAS_TITLE']) ? $taskFields['TAS_TITLE'] : '';
                 } catch (Exception $e) {
                     $taskName = '';
                 }
