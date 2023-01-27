@@ -6,7 +6,9 @@ use ProcessMaker\Core\System;
 use ProcessMaker\BusinessModel\DynaForm\SuggestTrait;
 use ProcessMaker\BusinessModel\Cases;
 use ProcessMaker\BusinessModel\DynaForm\ValidatorFactory;
+use ProcessMaker\Model\Documents;
 use ProcessMaker\Model\Dynaform as ModelDynaform;
+use ProcessMaker\Plugins\PluginRegistry;
 
 /**
  * Implementing pmDynaform library in the running case.
@@ -25,6 +27,7 @@ class PmDynaform
     private $propertiesToExclude = [];
     private $sysSys = null;
     private $fieldsAppData;
+    private $filesFromPlugin = [Documents::DOC_TYPE_ATTACHED => null, Documents::DOC_TYPE_INPUT => null];
     public $credentials = null;
     public $displayMode = null;
     public $fields = null;
@@ -567,6 +570,7 @@ class PmDynaform
                     $oCriteriaAppDocument = new Criteria("workflow");
                     $oCriteriaAppDocument->addSelectColumn(AppDocumentPeer::APP_DOC_UID);
                     $oCriteriaAppDocument->addSelectColumn(AppDocumentPeer::DOC_VERSION);
+                    $oCriteriaAppDocument->addSelectColumn(AppDocumentPeer::APP_DOC_TYPE);
                     $oCriteriaAppDocument->add(AppDocumentPeer::APP_UID, $this->fields["APP_DATA"]["APPLICATION"]);
                     $oCriteriaAppDocument->add(AppDocumentPeer::APP_DOC_FIELDNAME, $json->name);
                     $oCriteriaAppDocument->add(AppDocumentPeer::APP_DOC_STATUS, 'ACTIVE');
@@ -582,8 +586,44 @@ class PmDynaform
                     $oAppDocument = new AppDocument();
 
                     if ($row = $rs->getRow()) {
+                        // Only get the information from the plugin once
+                        if (is_null($this->filesFromPlugin[$row['APP_DOC_TYPE']])) {
+                            // Plugin Hook PM_CASE_DOCUMENT_LIST to get the files uploaded as attachments
+                            $pluginRegistry = PluginRegistry::loadSingleton();
+
+                            // If the hook exists try to execute
+                            if ($pluginRegistry->existsTrigger(PM_CASE_DOCUMENT_LIST) && class_exists('folderData')) {
+                                // Build the required object
+                                $folderData = new folderData(null, null, $this->fields['APP_DATA']['APPLICATION'], null, null);
+                                $folderData->PMType = $row['APP_DOC_TYPE'];
+                                $folderData->returnList = true;
+
+                                // Get elements
+                                $this->filesFromPlugin[$row['APP_DOC_TYPE']] = $pluginRegistry->executeTriggers(PM_CASE_DOCUMENT_LIST, $folderData);
+                            } else {
+                                // If not exist, set an empty array
+                                $this->filesFromPlugin[$row['APP_DOC_TYPE']] = [];
+                            }
+                        }
+                        // Load document data
                         $oAppDocument->load($row["APP_DOC_UID"], $row["DOC_VERSION"]);
-                        $links[] = "../cases/cases_ShowDocument?a=" . $row["APP_DOC_UID"] . "&v=" . $row["DOC_VERSION"];
+
+                        // Build the default link
+                        $link = "../cases/cases_ShowDocument?a=" . $row["APP_DOC_UID"] . "&v=" . $row["DOC_VERSION"];
+
+                        // If exist related file in the plugin, check if the file is the same
+                        if (is_array($this->filesFromPlugin[$row['APP_DOC_TYPE']])) {
+                            foreach ($this->filesFromPlugin[$row['APP_DOC_TYPE']] as $file) {
+                                // If exists the same file, replace the download link
+                                if ($file->filename === $row['APP_DOC_UID']) {
+                                    $link = $file->downloadScript;
+                                    continue;
+                                }
+                            }
+                        }
+
+                        // Set the link and another related information
+                        $links[] = $link;
                         $labelsFromDb[] = $oAppDocument->getAppDocFilename();
                         $appDocUids[] = $row["APP_DOC_UID"];
                     }

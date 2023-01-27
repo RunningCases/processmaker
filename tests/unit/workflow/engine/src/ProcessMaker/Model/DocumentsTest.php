@@ -61,7 +61,7 @@ class DocumentsTest extends TestCase
         $appDocument =Documents::factory()->create([
             'DOC_ID' => $appNote->NOTE_ID
         ]);
-        $result = Documents::getFiles($appDocument->DOC_ID);
+        $result = Documents::getFiles($appDocument->DOC_ID, $appDocument->APP_UID);
 
         $this->assertNotEmpty($result);
     }

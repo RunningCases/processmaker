@@ -185,8 +185,11 @@ try {
                 $filesPluginArray = $oPluginRegistry->executeTriggers(PM_CASE_DOCUMENT_LIST_ARR, $aFields['APP_UID']);
                 //Now search for the file, if exists the change the download URL
                 foreach ($filesPluginArray as $file) {
-                    if ($file->filename == $_POST['APP_DOC_UID']) {
-                        $aFields['FILE2'] = $file->downloadScript; // The PDF is the only one uploaded to KT
+                    if ($file->filename == $_POST['APP_DOC_UID'] && $file->type === 'DOC') {
+                        $aFields['FILE1'] = $file->downloadScript;
+                    }
+                    if ($file->filename == $_POST['APP_DOC_UID'] && $file->type === 'PDF') {
+                        $aFields['FILE2'] = $file->downloadScript;
                     }
                 }
             }
