@@ -9,9 +9,11 @@ use Illuminate\Support\Facades\DB;
 use ProcessMaker\Core\System;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\WebEntry as WebEntryModel;
+use ProcessMaker\Plugins\PluginRegistry;
 use Publisher;
 use RBAC;
 use ResultSet;
+use stdClass;
 use WebEntryPeer;
 
 class WebEntry
@@ -1208,7 +1210,7 @@ class WebEntry
     public function swapTemporaryAppNumber($appUid)
     {
         // Get the application
-        $application = Application::query()->select(['APP_NUMBER'])->where('APP_UID', '=', $appUid)->first()->toArray();
+        $application = Application::query()->select(['PRO_UID', 'APP_NUMBER'])->where('APP_UID', '=', $appUid)->first()->toArray();
 
         // If application exists, swap the number
         if (!empty($application)) {
@@ -1232,6 +1234,21 @@ class WebEntry
 
             // Execute the query
             DB::connection('workflow')->unprepared($query);
+
+            // Plugin Hook PM_SWAP_TEMPORARY_APP_NUMBER for upload document
+            $pluginRegistry = PluginRegistry::loadSingleton();
+
+            // If the hook exists try to execute
+            if ($pluginRegistry->existsTrigger(PM_SWAP_TEMPORARY_APP_NUMBER)) {
+                // Build the object to send
+                $data = new stdClass();
+                $data->sProcessUid = $application['PRO_UID'];
+                $data->appUid = $appUid;
+                $data->appNumber = $appNumber;
+
+                // Execute hook
+                $pluginRegistry->executeTriggers(PM_SWAP_TEMPORARY_APP_NUMBER, $data);
+            }
 
             // Return new application number
             return $appNumber;
