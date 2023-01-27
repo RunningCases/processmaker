@@ -128,7 +128,7 @@ class AppProxy extends HttpProxyController
         $iterator = 0;
         foreach ($response['notes'] as $value) {
             $response['notes'][$iterator]['NOTE_DATE'] = DateTime::convertUtcToTimeZone($value['NOTE_DATE']);
-            $response['notes'][$iterator]['attachments'] = $documents->getFiles($value['NOTE_ID']);
+            $response['notes'][$iterator]['attachments'] = $documents->getFiles($value['NOTE_ID'], $appUid);
             $iterator++;
         }
         // Get the total of cases notes by case

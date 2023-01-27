@@ -2161,7 +2161,7 @@ class Cases
             $data[$iterator] = array_change_key_case($value, CASE_LOWER);
             $data[$iterator]['note_date'] = UtilDateTime::convertUtcToTimeZone($value['NOTE_DATE']);
             if ($files) {
-                $data[$iterator]['attachments'] = $documents->getFiles($value['NOTE_ID']);
+                $data[$iterator]['attachments'] = $documents->getFiles($value['NOTE_ID'], $appUid);
             }
             $iterator++;
         }

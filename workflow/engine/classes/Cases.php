@@ -3730,6 +3730,7 @@ class Cases
                         if ($folderitem->filename == $aRow['APP_DOC_UID']) {
                             $aFields['DOWNLOAD_LABEL'] = G::LoadTranslation('ID_GET_EXTERNAL_FILE');
                             $aFields['DOWNLOAD_LINK'] = $folderitem->downloadScript;
+                            unset($aFields['NEWVERSION_LABEL'], $aFields['VERSIONHISTORY_LABEL']);
                             continue;
                         }
                     }
@@ -3997,7 +3998,7 @@ class Cases
             $uploadReturn = $pluginRegistry->executeTriggers(PM_UPLOAD_DOCUMENT, $documentData);
 
             if ($uploadReturn) {
-                $arrayField["APP_DOC_PLUGIN"] = $triggerDetail->sNamespace;
+                $arrayField["APP_DOC_PLUGIN"] = $triggerDetail->getNamespace();
 
                 if (!isset($arrayField["APP_DOC_UID"])) {
                     $arrayField["APP_DOC_UID"] = $appDocUid;

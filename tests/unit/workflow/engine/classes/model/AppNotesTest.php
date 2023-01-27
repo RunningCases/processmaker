@@ -215,9 +215,8 @@ class AppNotesTest extends TestCase
             'DOC_ID' => $appNote->NOTE_ID
         ]);
 
-        $appUid = $appDocument->APP_UID;
         $appNotes = new ModelAppNotes();
-        $result = $appNotes->getAttachedFilesFromTheCaseNote($appNote->NOTE_ID);
+        $result = $appNotes->getAttachedFilesFromTheCaseNote($appNote->NOTE_ID, $appDocument->APP_UID);
 
         $this->assertNotEmpty($result);
     }
