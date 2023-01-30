@@ -6166,6 +6166,7 @@ class G
         define('PM_SCHEDULER_CREATE_CASE_BEFORE', 1019);
         define('PM_SCHEDULER_CREATE_CASE_AFTER', 1020);
         define('PM_SWAP_TEMPORARY_APP_NUMBER', 1021);
+        define('PM_REDIRECT', 1022);
     }
 
     /**

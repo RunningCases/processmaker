@@ -3,6 +3,7 @@ namespace ProcessMaker\BusinessModel\Cases;
 
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
+use stdClass;
 
 class OutputDocument
 {
@@ -371,6 +372,21 @@ class OutputDocument
         $download = $outputDocument->Fields['OUT_DOC_OPEN_TYPE'];
 
         $pathInfo = pathinfo($appDocument->getAppDocFilename());
+
+        // Plugin Hook PM_REDIRECT to redirect to a custom page
+        $pluginRegistry = PluginRegistry::loadSingleton();
+
+        // If the hook exists try to execute
+        if ($pluginRegistry->existsTrigger(PM_REDIRECT)) {
+            // Build the object to send
+            $data = new stdClass();
+            $data->sApplicationUid = $appDocument->getAppUid();
+            $data->appDocUid = $appDocument->getAppDocUid();
+            $data->docType = $ext;
+
+            // Execute hook
+            $pluginRegistry->executeTriggers(PM_REDIRECT, $data);
+        }
 
         $extensionDoc = $ext;
 
