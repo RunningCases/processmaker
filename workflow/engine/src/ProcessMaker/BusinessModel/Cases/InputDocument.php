@@ -22,6 +22,7 @@ use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Validation\ValidationUploadedFiles;
 use ProcessUserPeer;
 use ResultSet;
+use stdClass;
 use StepPeer;
 use StepSupervisorPeer;
 use Users;
@@ -540,6 +541,21 @@ class InputDocument
             $sAppDocUid = $oAppDocument->getAppDocUid();
             $iDocVersion = $oAppDocument->getDocVersion();
             $info = pathinfo($oAppDocument->getAppDocFilename());
+
+            // Plugin Hook PM_REDIRECT to redirect to a custom page
+            $pluginRegistry = PluginRegistry::loadSingleton();
+
+            // If the hook exists try to execute
+            if ($pluginRegistry->existsTrigger(PM_REDIRECT)) {
+                // Build the object to send
+                $data = new stdClass();
+                $data->sApplicationUid = $oAppDocument->getAppUid();
+                $data->appDocUid = $oAppDocument->getAppDocUid();
+                $data->docType = '';
+
+                // Execute hook
+                $pluginRegistry->executeTriggers(PM_REDIRECT, $data);
+            }
 
             $app_uid = G::getPathFromUID($oAppDocument->Fields['APP_UID']);
             $file = G::getPathFromFileUID($oAppDocument->Fields['APP_UID'], $sAppDocUid);
