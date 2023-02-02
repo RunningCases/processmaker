@@ -469,8 +469,7 @@ try {
             if (is_array($row) || $_POST['NEW_USERNAME'] == '') {
                 $color = 'red';
                 $img = '/images/delete.png';
-                $dataVar = ['USER_ID' => $_POST['NEW_USERNAME']];
-                $text = G::LoadTranslation('ID_USERNAME_ALREADY_EXISTS', $dataVar);
+                $text = G::LoadTranslation('ID_INVALID_USERNAME');
                 $text = ($_POST['NEW_USERNAME'] == '') ? G::LoadTranslation('ID_MSG_ERROR_USR_USERNAME') : $text;
                 $response['exists'] = true;
             } else {

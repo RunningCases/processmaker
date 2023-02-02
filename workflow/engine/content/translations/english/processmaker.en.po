@@ -10956,6 +10956,12 @@ msgid "Invalid trigger '{TRIGGER_INDEX}'"
 msgstr "Invalid trigger '{TRIGGER_INDEX}'"
 
 # TRANSLATION
+# LABEL/ID_INVALID_USERNAME
+#: LABEL/ID_INVALID_USERNAME
+msgid "Invalid username"
+msgstr "Invalid username"
+
+# TRANSLATION
 # LABEL/ID_INVALID_VALUE
 #: LABEL/ID_INVALID_VALUE
 msgid "Invalid value for \"{0}\"."
