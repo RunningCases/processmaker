@@ -58694,6 +58694,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_INVALID_START_HOURS','en','The following start hours rows are invalid:','2014-01-15') ,
 ( 'LABEL','ID_INVALID_STARTING_TIME','en','Starting time','2014-01-15') ,
 ( 'LABEL','ID_INVALID_TRIGGER','en','Invalid trigger ''{TRIGGER_INDEX}''','2014-01-15') ,
+( 'LABEL','ID_INVALID_USERNAME','en','Invalid username','2023-02-02') ,
 ( 'LABEL','ID_INVALID_VALUE','en','Invalid value for "{0}".','2014-05-20') ,
 ( 'LABEL','ID_INVALID_VALUE_ARRAY','en','Invalid value for ''{0}''. It must be an array.','2014-10-21') ,
 ( 'LABEL','ID_INVALID_VALUE_BOOLEAN','en','Invalid value for ''{0}''. It must be a boolean.','2014-10-21') ,
