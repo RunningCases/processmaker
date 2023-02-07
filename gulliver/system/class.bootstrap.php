@@ -478,6 +478,7 @@ class Bootstrap
         if (!is_file(PATH_LANGUAGECONT . 'translation.en')) {
             return null;
         }
+        global $translation;
         // load the translations table
         require_once(PATH_LANGUAGECONT . 'translation.en');
         $defaultTranslations = $translation;
@@ -489,7 +490,6 @@ class Bootstrap
             $foreignTranslations = $translation;
         }
 
-        global $translation;
         if (defined("SHOW_UNTRANSLATED_AS_TAG") && SHOW_UNTRANSLATED_AS_TAG != 0) {
             $translation = $foreignTranslations;
         } else {
