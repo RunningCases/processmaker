@@ -35,6 +35,7 @@
             :columns="columns"
             :options="options"
             v-show="showTable"
+            @row-click="onRowClick"
             ref="vueTable"
           >
             <div slot="task" slot-scope="props">
@@ -54,7 +55,7 @@
             </div>
             <div slot="actions" slot-scope="props">
               <b-button
-                v-if="props.row.STATUS === 'OPEN' && !supervisor || !flagSupervising"
+                v-if="props.row.STATUS === 'OPEN' && (!supervisor || !flagSupervising)"
                 @click="onClick(props)"
                 variant="outline-success"
                 >{{ $t("ID_CONTINUE") }}</b-button
@@ -142,7 +143,7 @@
     <ModalClaimCase ref="modal-claim-case" @claimCatch="claimCatch"></ModalClaimCase>
     <ModalReassignCase ref="modal-reassign-case" @claimCatch="claimCatch"></ModalReassignCase>
     <ModalAssignCase ref="modal-assign-case" @claimCatch="claimCatch"></ModalAssignCase>
-
+    <ModalUnpauseCase ref="modal-unpause-case"></ModalUnpauseCase>
   </div>
 </template>
 
@@ -159,6 +160,7 @@ import ModalAssignCase from "./modal/ModalAssignCase.vue";
 import ModalCancelCase from "../home/modal/ModalCancelCase.vue";
 import ModalNewRequest from "./ModalNewRequest.vue";
 import ModalClaimCase from "./modal/ModalClaimCase.vue";
+import ModalUnpauseCase from "./modal/ModalUnpauseCase.vue";
 import ModalReassignCase from "./modal/ModalReassignCase.vue";
 import TaskCell from "../components/vuetable/TaskCell.vue";
 import CurrentUserCell from "../components/vuetable/CurrentUserCell.vue"
@@ -175,6 +177,7 @@ export default {
     AttachedDocumentsEdit,
     CaseComment,
     CaseComments,
+    ModalUnpauseCase,
     ModalAssignCase,
     ModalCancelCase,
     ButtonFleft,
@@ -268,7 +271,9 @@ export default {
       dataCaseReview: {},
       app_num: this.$parent.dataCase.APP_NUMBER,
       supervisor: false,
-      flagSupervising: false
+      flagSupervising: false,
+      clickCount: 0,
+      singleClickTimer: null,
     };
   },
 
@@ -288,6 +293,42 @@ export default {
     this.requestOpenSummary();
   },
   methods: {
+    /**
+     * On row click event handler
+     * @param {object} event
+     */
+    onRowClick(event) {
+      let self = this;
+      self.clickCount += 1;
+      if (self.clickCount === 1) {
+        self.singleClickTimer = setTimeout(function () {
+          self.clickCount = 0;
+        }, 400);
+      } else if (self.clickCount === 2) {
+        clearTimeout(self.singleClickTimer);
+        self.clickCount = 0;
+        if (event.row.STATUS === 'OPEN' && (!self.supervisor || !self.flagSupervising)) {
+          self.onClick(event);
+        }
+        if (event.row.STATUS === 'PAUSED') {
+          self.showModalUnpauseCase(event.row);
+        }
+        if (event.row.USR_UID === '' && event.row.STATUS !== 'CLOSED' && self.supervisor && self.flagSupervising) {
+          self.onClickAssign(event.row);
+        }
+        if (event.row.USR_UID !== '' && event.row.STATUS !== 'CLOSED' && self.supervisor && self.flagSupervising) {
+          self.onClickReassign(event.row);
+        }
+      }
+    },
+    /**
+     * Shows the modal to unpause a case.
+     * @param {Object} item - The data to be used by the modal to unpause
+     */
+    showModalUnpauseCase(item) {
+      this.$refs["modal-unpause-case"].data = item;
+      this.$refs["modal-unpause-case"].show();
+    },
     postComment(comment, send, files) {
       let that = this;
       Api.caseNotes
