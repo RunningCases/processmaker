@@ -44,6 +44,7 @@ CREATE TABLE `APPLICATION`
 	KEY `indexAppStatus`(`APP_STATUS`),
 	KEY `indexAppCreateDate`(`APP_CREATE_DATE`),
 	KEY `indexAppStatusId`(`APP_STATUS_ID`),
+	KEY `indexAppInitUserId`(`APP_INIT_USER_ID`),
 	FULLTEXT `indexAppTitle`(`APP_TITLE`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='The application';
 #-----------------------------------------------------------------------------
@@ -536,6 +537,8 @@ CREATE TABLE `PROCESS`
 	`CATEGORY_ID` INTEGER default 0,
 	PRIMARY KEY (`PRO_UID`),
 	UNIQUE KEY `INDEX_PRO_ID` (`PRO_ID`),
+	KEY `indexProId`(`PRO_ID`),
+	KEY `indexProUid`(`PRO_UID`),
 	KEY `indexProStatus`(`PRO_STATUS`),
 	KEY `indexProStatusId`(`PRO_STATUS_ID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Store process Information';
