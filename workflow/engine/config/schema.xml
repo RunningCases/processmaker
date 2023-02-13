@@ -105,6 +105,15 @@
                 <parameter name="Seq_in_index" value="1"/>
             </vendor>
         </index>
+        <index name="indexAppInitUserId">
+            <index-column name="APP_INIT_USER_ID"/>
+            <vendor type="mysql">
+                <parameter name="Table" value="APPLICATION"/>
+                <parameter name="Non_unique" value="1"/>
+                <parameter name="Key_name" value="indexAppInitUserId"/>
+                <parameter name="Seq_in_index" value="1"/>
+            </vendor>
+        </index>
         <fulltext name="indexAppTitle">
             <index-column name="APP_TITLE"/>
             <vendor type="mysql">
@@ -1090,6 +1099,24 @@
         <unique name="INDEX_PRO_ID">
             <unique-column name="PRO_ID"/>
         </unique>
+        <index name="indexProId">
+            <index-column name="PRO_ID"/>
+            <vendor type="mysql">
+                <parameter name="Table" value="PROCESS"/>
+                <parameter name="Non_unique" value="1"/>
+                <parameter name="Key_name" value="indexProId"/>
+                <parameter name="Seq_in_index" value="1"/>
+            </vendor>
+        </index>
+        <index name="indexProUid">
+            <index-column name="PRO_UID"/>
+            <vendor type="mysql">
+                <parameter name="Table" value="PROCESS"/>
+                <parameter name="Non_unique" value="1"/>
+                <parameter name="Key_name" value="indexProUid"/>
+                <parameter name="Seq_in_index" value="1"/>
+            </vendor>
+        </index>
         <index name="indexProStatus">
             <index-column name="PRO_STATUS"/>
             <vendor type="mysql">
