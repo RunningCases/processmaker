@@ -3975,13 +3975,19 @@ class Cases
                             $info = pathinfo($arrayFileName['name']);
                             $extension = (isset($info['extension'])) ? $info['extension'] : '';
                             $pathCase = G::getPathFromUID($appUid);
-                            $pathFile = PATH_DOCUMENT . $pathCase . PATH_SEP . $objCreated->getAppDocUid() . '_1.' . $extension;
+                            $pathFile = PATH_DOCUMENT . $pathCase . PATH_SEP . $objCreated->getAppDocUid() . '_' . $objCreated->getDocVersion() . '.' . $extension;
 
                             // Instance object used by the hook
-                            $documentData = new uploadDocumentData($appUid, $userUid, $pathFile, $objCreated->getAppDocFilename(), $objCreated->getAppDocUid(), 1);
+                            $documentData = new uploadDocumentData($appUid, $userUid, $pathFile, $objCreated->getAppDocFilename(), $objCreated->getAppDocUid(), $objCreated->getDocVersion());
 
                             // Execute hook
-                            $uploadReturn = $pluginRegistry->executeTriggers(PM_UPLOAD_DOCUMENT, $documentData);
+                            try {
+                                $uploadReturn = $pluginRegistry->executeTriggers(PM_UPLOAD_DOCUMENT, $documentData);
+                            } catch (Exception $error) {
+                                // Is expected an exception when the user tries to upload a versioned input document, the file is removed and the error bubbled
+                                 Documents::where('APP_DOC_UID', $objCreated->getAppDocUid())->where('DOC_VERSION', $objCreated->getDocVersion())->delete();
+                                throw $error;
+                            }
 
                             // If the executions is correct, update the record related to the document
                             if ($uploadReturn) {
