@@ -1147,7 +1147,7 @@ class WsBase
 
                 try {
                     $uFields = $oTask->load($aAppDel['TAS_UID']);
-                    $taskName = $uFields['TAS_TITLE'];
+                    $taskName = $uFields['TAS_TITLE'] ?? '';
                 } catch (Exception $e) {
                     $taskName = '';
                 }
