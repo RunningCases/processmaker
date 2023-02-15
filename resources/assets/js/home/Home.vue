@@ -192,6 +192,7 @@ export default {
 
             eventer(messageEvent, function(e) {
                 if ( e.data === "redirect=todo" || e.message === "redirect=todo"){
+                    that.$router.push('casesListExtJs?action=todo');
                     that.OnClickSidebarItem(that.getItemMenuByValue("page","inbox"));
                 }
                 if ( e.data === "redirect=MyCases" || e.message === "redirect=MyCases"){
