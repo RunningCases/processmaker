@@ -1,9 +1,17 @@
 <?php
 
-use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Role;
+use ProcessMaker\Exception\RBACException;
 use ProcessMaker\Model\User;
 use ProcessMaker\Model\UserExtendedAttributes;
+
+// Include global object RBAC
+global $RBAC;
+
+// Check if the current user have the correct permissions to access to this resource, if not throws a RBAC Exception with code 403
+if ($RBAC->userCanAccess('PM_USERS') !== 1) {
+    throw new RBACException('ID_ACCESS_DENIED', 403);
+}
 
 global $G_PUBLISH;
 $G_PUBLISH = new Publisher();

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Log;
 use ProcessMaker\BusinessModel\DynaForm;
 use ProcessMaker\Core\System;
+use ProcessMaker\Exception\RBACException;
 use ProcessMaker\Model\AdditionalTables as AdditionalTablesModel;
 use ProcessMaker\Model\Dynaform as DynaformModel;
 use ProcessMaker\Model\ProcessVariables;
@@ -26,6 +27,14 @@ class pmTablesProxy extends HttpProxyController
      */
     public function getList($httpData)
     {
+        // Include global object RBAC
+        global $RBAC;
+
+        // Check if the current user have the correct permissions to access to this resource, if not throws a RBAC Exception with code 403
+        if ($RBAC->userCanAccess('PM_FACTORY') !== 1 && ($RBAC->userCanAccess('PM_SETUP') !== 1 || $RBAC->userCanAccess('PM_SETUP_PM_TABLES') !== 1)) {
+            throw new RBACException('ID_ACCESS_DENIED', 403);
+        }
+
         $configurations = new Configurations();
         $processMap = new ProcessMap();
 

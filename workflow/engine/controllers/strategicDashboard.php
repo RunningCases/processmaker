@@ -1,6 +1,7 @@
 <?php
 
 use ProcessMaker\Core\System;
+use ProcessMaker\Exception\RBACException;
 
 /**
  * StrategicDashboard controller
@@ -125,6 +126,14 @@ class StrategicDashboard extends Controller
 
     public function dashboardList()
     {
+        // Include global object RBAC
+        global $RBAC;
+
+        // Check if the current user have the correct permissions to access to this resource, if not throws a RBAC Exception with code 403
+        if ($RBAC->userCanAccess('PM_SETUP') !== 1 || $RBAC->userCanAccess('PM_SETUP_DASHBOARDS') !== 1) {
+            throw new RBACException('ID_ACCESS_DENIED', 403);
+        }
+
         try {
             $this->includeExtJS('strategicDashboard/dashboardList');
             if (isset($_SESSION['__StrategicDashboard_ERROR__'])) {
@@ -183,6 +192,14 @@ class StrategicDashboard extends Controller
 
     public function viewDashboard()
     {
+        // Include global object RBAC
+        global $RBAC;
+
+        // Check if the current user have the correct permissions to access to this resource, if not throws a RBAC Exception with code 403
+        if ($RBAC->userCanAccess('PM_DASHBOARD') !== 1) {
+            throw new RBACException('ID_ACCESS_DENIED', 403);
+        }
+
         try {
             if (isset($_SESSION['__StrategicDashboard_ERROR__'])) {
                 $this->setJSVar('__StrategicDashboard_ERROR__', $_SESSION['__StrategicDashboard_ERROR__']);
