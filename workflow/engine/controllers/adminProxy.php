@@ -3,32 +3,9 @@
 use Illuminate\Support\Facades\Cache;
 use PHPMailer\PHPMailer\SMTP;
 use ProcessMaker\Core\System;
+use ProcessMaker\Exception\RBACException;
 use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Validation\ValidationUploadedFiles;
-
-/**
- * adminProxy.php
- *
- * ProcessMaker Open Source Edition
- * Copyright (C) 2004 - 2008 Colosa Inc.23
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
- * Coral Gables, FL, 33134, USA, or email info@colosa.com.
- *
- */
 
 class adminProxy extends HttpProxyController
 {
@@ -787,6 +764,14 @@ class adminProxy extends HttpProxyController
      */
     public function getListImage($httpData)
     {
+        // Include global object RBAC
+        global $RBAC;
+
+        // Check if the current user have the correct permissions to access to this resource, if not throws a RBAC Exception with code 403
+        if ($RBAC->userCanAccess('PM_SETUP') !== 1 || $RBAC->userCanAccess('PM_SETUP_LOGO') !== 1) {
+            throw new RBACException('ID_ACCESS_DENIED', 403);
+        }
+
         $uplogo       = PATH_TPL . 'setup' . PATH_SEP . 'uplogo.html';
         $width        = "100%";
         $upload       = new ReplacementLogo();

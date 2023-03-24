@@ -8,8 +8,17 @@
  * @link https://wiki.processmaker.com/3.2/Processes
  */
 
+use ProcessMaker\Exception\RBACException;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Util\DateTime;
+
+// Include global object RBAC
+global $RBAC;
+
+// Check if the current user have the correct permissions to access to this resource, if not throws a RBAC Exception with code 403
+if ($RBAC->userCanAccess('PM_FACTORY') !== 1) {
+    throw new RBACException('ID_ACCESS_DENIED', 403);
+}
 
 require_once 'classes/model/Process.php';
 
