@@ -1021,7 +1021,8 @@ class Cases
             //We will to validate when the case is TO_DO and the user does not have a index OPEN
             //The scenarios with COMPLETED, CANCELLED and DRAFT is considered in the WsBase::cancelCase
             if ($fields['APP_STATUS'] === 'TO_DO' && $delIndex === 0) {
-                throw (new Exception(G::LoadTranslation("ID_CASE_USER_INVALID_CANCEL_CASE", [$usrUid])));
+                $invalidText = $_SERVER['HTTP_AUTHORIZATION'] ?? $usrUid;
+                throw (new Exception(G::LoadTranslation("ID_CASE_USER_INVALID_CANCEL_CASE", [$invalidText])));
             }
         }
         Validator::isInteger($delIndex, '$del_index');
@@ -1083,7 +1084,8 @@ class Cases
         // Review if the user has participation or is supervisor
         $permission = $this->participation($usrUid, $caseNumber, $index);
         if (!$permission) {
-            throw new Exception(G::LoadTranslation("ID_CASE_USER_INVALID_PAUSED_CASE", [$usrUid]));
+            $invalidText = $_SERVER['HTTP_AUTHORIZATION'] ?? $usrUid;
+            throw new Exception(G::LoadTranslation("ID_CASE_USER_INVALID_PAUSED_CASE", [$invalidText]));
         }
 
         if ($date != null) {
@@ -1140,7 +1142,8 @@ class Cases
         $caseNumber = ModelApplication::getCaseNumber($appUid);
         $permission = $this->participation($usrUid, $caseNumber, $index);
         if (!$permission) {
-            throw new Exception(G::LoadTranslation("ID_CASE_USER_INVALID_UNPAUSE_CASE", [$usrUid]));
+            $invalidText = $_SERVER['HTTP_AUTHORIZATION'] ?? $usrUid;
+            throw new Exception(G::LoadTranslation("ID_CASE_USER_INVALID_UNPAUSE_CASE", [$invalidText]));
         }
 
         /** Unpause case */
@@ -1187,7 +1190,8 @@ class Cases
             }
             $classesCase->setCatchUser($appUid, $index, $userUid);
         } else {
-            throw new Exception(G::LoadTranslation("ID_CASE_USER_INVALID_CLAIM_CASE", [$userUid]));
+            $invalidText = $_SERVER['HTTP_AUTHORIZATION'] ?? $userUid;
+            throw new Exception(G::LoadTranslation("ID_CASE_USER_INVALID_CLAIM_CASE", [$invalidText]));
         }
 
         $usrUidSupervisor = (Server::getUserId() === $userUid) ? '' : Server::getUserId();
