@@ -144,6 +144,7 @@ CREATE TABLE `APP_DOCUMENT`
 	KEY `indexAppDocument`(`FOLDER_UID`, `APP_DOC_UID`),
 	KEY `indexAppUid`(`APP_UID`),
 	KEY `indexAppUidDocUidDocVersionDocType`(`APP_UID`, `DOC_UID`, `DOC_VERSION`, `APP_DOC_TYPE`),
+	KEY `indexDocId`(`DOC_ID`),
 	KEY `indexFolderUidDocStatus`(`FOLDER_UID`, `APP_DOC_STATUS`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Documents in an Application';
 #-----------------------------------------------------------------------------
