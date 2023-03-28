@@ -346,6 +346,9 @@
         <index name="indexAppUid">
             <index-column name="APP_UID"/>
         </index>
+        <index name="indexDocId">
+            <index-column name="DOC_ID"/>
+        </index>
         <index name="indexAppUidDocUidDocVersionDocType">
             <index-column name="APP_UID"/>
             <index-column name="DOC_UID"/>
