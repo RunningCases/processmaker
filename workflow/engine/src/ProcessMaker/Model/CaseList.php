@@ -354,6 +354,10 @@ class CaseList extends Model
         }
         $content = file_get_contents($_FILES['file_content']['tmp_name']);
         try {
+            // Check if the content is a binary string and convert to a string
+            if (preg_match('~[^\x20-\x7E\t\r\n]~', $content) > 0) {
+                $content = mb_convert_encoding($content, 'UTF-8', mb_detect_encoding($content, 'UTF-8, ISO-8859-1', true));
+            }
             $array = json_decode($content, true);
 
             $tableName = $array['tableName'];
