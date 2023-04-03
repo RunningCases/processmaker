@@ -69,7 +69,6 @@ class LdapAdvanced
     public $allListOfUsers = [];
     private $arrayDepartmentUserSynchronizedChecked = [];
     private $arrayUserUpdateChecked = [];
-    const DELETE_USER = 'unknown';
 
     /**
      * default constructor method
@@ -696,7 +695,7 @@ class LdapAdvanced
                                         break;
                                 }
                             } else {
-                                $this->log($ldapcnn, "User is repeated: Username \"" . $arrayUserData["sUsername"] . "\", DN \"" . $arrayUserData["sDN"] . "\"");
+                                $this->log($ldapcnn, "User have repeated: Username \"" . $arrayUserData["sUsername"] . "\", DN \"" . $arrayUserData["sDN"] . "\"");
                             }
                         }
 

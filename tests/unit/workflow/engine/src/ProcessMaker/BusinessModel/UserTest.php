@@ -133,8 +133,8 @@ class UserTest extends TestCase
         // Set the important fields with an specific value
         $this->assertEquals($table->USR_STATUS, 'CLOSED');
         $this->assertEquals($table->USR_STATUS_ID, 0);
-        $this->assertEquals($table->USR_FIRSTNAME, $usr::DELETE_USER);
-        $this->assertEquals($table->USR_LASTNAME, $usr::DELETE_USER);
+        $this->assertEquals($table->USR_FIRSTNAME, $usr::DELETED_USER);
+        $this->assertEquals($table->USR_LASTNAME, $usr::DELETED_USER);
         // Clean the string fields
         $this->assertEmpty($table->USR_USERNAME);
         $this->assertEmpty($table->USR_EMAIL);
@@ -147,12 +147,9 @@ class UserTest extends TestCase
         $this->assertEmpty($table->USR_CELLULAR);
         $this->assertEmpty($table->USR_ZIP_CODE);
         $this->assertEmpty($table->USR_TIME_ZONE);
-        $this->assertEmpty($table->USR_EXTENDED_ATTRIBUTES_DATA);
+        $this->assertEquals('{}', $table->USR_EXTENDED_ATTRIBUTES_DATA);
         // Clean the date fields
         $this->assertEquals($table->USR_BIRTHDAY, '0000-00-00');
         $this->assertEquals($table->USR_DUE_DATE, '0000-00-00');
-        // Clean the datetime fields
-        $this->assertEquals($table->USR_DUE_DATE, '0000-00-00 00:00:00');
-        $this->assertEquals($table->USR_DUE_DATE, '0000-00-00 00:00:00');
     }
 }

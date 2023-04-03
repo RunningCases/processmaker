@@ -53,7 +53,7 @@ use UsersRolesPeer;
 
 class User
 {
-    const DELETE_USER = 'unknown';
+    const DELETED_USER = 'unknown';
     private $arrayFieldDefinition = array(
         "USR_UID" => array(
             "type" => "string",
@@ -1361,12 +1361,8 @@ class User
         try {
             // Verify data
             $this->throwExceptionIfNotExistsUser($usrUid, $this->arrayFieldNameForException["usrUid"]);
-            // Check user admin
-            if (RBAC::isAdminUserUid($usrUid)) {
-                throw new Exception(G::LoadTranslation("ID_MSG_CANNOT_DELETE_USER", [$usrUid]));
-            }
-            // Check user guest
-            if (RBAC::isGuestUserUid($usrUid)) {
+            // Check user admin or guest
+            if (RBAC::isAdminUserUid($usrUid) || RBAC::isGuestUserUid($usrUid)) {
                 throw new Exception(G::LoadTranslation("ID_MSG_CANNOT_DELETE_USER", [$usrUid]));
             }
             // Remove the user from groups
@@ -1384,12 +1380,12 @@ class User
             $fields = [
                 'USR_STATUS' => 'CLOSED',
                 'USR_USERNAME' => '',
-                'USR_FIRSTNAME' => self::DELETE_USER,
-                'USR_LASTNAME' => self::DELETE_USER,
+                'USR_FIRSTNAME' => self::DELETED_USER,
+                'USR_LASTNAME' => self::DELETED_USER,
                 'USR_EMAIL' => '',
                 'USR_DUE_DATE' => '0000-00-00',
-                'USR_CREATE_DATE' => '0000-00-00 00:00:00',
-                'USR_UPDATE_DATE' => '0000-00-00 00:00:00',
+                'USR_CREATE_DATE' => '0000-00-00',
+                'USR_UPDATE_DATE' => '0000-00-00',
             ];
             ModelRbacUsers::where('USR_UID', $usrUid)->update($fields);
             $fields = array_merge(
