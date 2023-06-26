@@ -2023,9 +2023,15 @@ class Processes
                 $criteria->add(InputDocumentPeer::INP_DOC_VERSIONING, $row['INP_DOC_VERSIONING']);
                 $criteria->add(InputDocumentPeer::INP_DOC_DESTINATION_PATH, $row['INP_DOC_DESTINATION_PATH']);
                 $criteria->add(InputDocumentPeer::INP_DOC_TAGS, $row['INP_DOC_TAGS']);
-                $criteria->add(InputDocumentPeer::INP_DOC_TYPE_FILE, $row['INP_DOC_TYPE_FILE']);
-                $criteria->add(InputDocumentPeer::INP_DOC_MAX_FILESIZE, $row['INP_DOC_MAX_FILESIZE']);
-                $criteria->add(InputDocumentPeer::INP_DOC_MAX_FILESIZE_UNIT, $row['INP_DOC_MAX_FILESIZE_UNIT']);
+                if (isset($row['INP_DOC_TYPE_FILE'])) {
+                    $criteria->add(InputDocumentPeer::INP_DOC_TYPE_FILE, $row['INP_DOC_TYPE_FILE']);
+                }
+                if (isset($row['INP_DOC_MAX_FILESIZE'])) {
+                    $criteria->add(InputDocumentPeer::INP_DOC_MAX_FILESIZE, $row['INP_DOC_MAX_FILESIZE']);
+                }
+                if (isset($row['INP_DOC_MAX_FILESIZE_UNIT'])) {
+                    $criteria->add(InputDocumentPeer::INP_DOC_MAX_FILESIZE_UNIT, $row['INP_DOC_MAX_FILESIZE_UNIT']);
+                }
                 BasePeer::doInsert($criteria, $con);
 
                 //Insert in CONTENT
@@ -2231,7 +2237,9 @@ class Processes
                 $criteria->add(OutputDocumentPeer::OUT_DOC_PDF_SECURITY_OPEN_PASSWORD, $row['OUT_DOC_PDF_SECURITY_OPEN_PASSWORD']);
                 $criteria->add(OutputDocumentPeer::OUT_DOC_PDF_SECURITY_OWNER_PASSWORD, $row['OUT_DOC_PDF_SECURITY_OWNER_PASSWORD']);
                 $criteria->add(OutputDocumentPeer::OUT_DOC_PDF_SECURITY_PERMISSIONS, $row['OUT_DOC_PDF_SECURITY_PERMISSIONS']);
-                $criteria->add(OutputDocumentPeer::OUT_DOC_OPEN_TYPE, $row['OUT_DOC_OPEN_TYPE']);
+                if (isset($row['OUT_DOC_OPEN_TYPE'])) {
+                    $criteria->add(OutputDocumentPeer::OUT_DOC_OPEN_TYPE, $row['OUT_DOC_OPEN_TYPE']);
+                }
                 BasePeer::doInsert($criteria, $con);
 
                 //Insert in CONTENT
@@ -3176,10 +3184,18 @@ class Processes
                 $criteria->add(DynaformPeer::PRO_UID, $row['PRO_UID']);
                 $criteria->add(DynaformPeer::DYN_TYPE, $row['DYN_TYPE']);
                 $criteria->add(DynaformPeer::DYN_FILENAME, $row['DYN_FILENAME']);
-                $criteria->add(DynaformPeer::DYN_CONTENT, $row['DYN_CONTENT']);
-                $criteria->add(DynaformPeer::DYN_LABEL, $row['DYN_LABEL']);
-                $criteria->add(DynaformPeer::DYN_VERSION, $row['DYN_VERSION']);
-                $criteria->add(DynaformPeer::DYN_UPDATE_DATE, $row['DYN_UPDATE_DATE']);
+                if (isset($row['DYN_CONTENT'])) {
+                    $criteria->add(DynaformPeer::DYN_CONTENT, $row['DYN_CONTENT']);
+                }
+                if (isset($row['DYN_LABEL'])) {
+                    $criteria->add(DynaformPeer::DYN_LABEL, $row['DYN_LABEL']);
+                }
+                if (isset($row['DYN_VERSION'])) {
+                    $criteria->add(DynaformPeer::DYN_VERSION, $row['DYN_VERSION']);
+                }
+                if (isset($row['DYN_UPDATE_DATE'])) {
+                    $criteria->add(DynaformPeer::DYN_UPDATE_DATE, $row['DYN_UPDATE_DATE']);
+                }
                 BasePeer::doInsert($criteria, $con);
 
                 //Insert in CONTENT
