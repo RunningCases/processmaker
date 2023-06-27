@@ -30,9 +30,10 @@ class XmlFormFieldToolButton extends XmlFormField
      * Prints the components of the toolBar
      *
      * @param string $value
+     * @param string $paramDummy2
      * @return string
      */
-    public function render($value)
+    public function render($value = null, $paramDummy2 = null)
     {
         $url = $this->file;
         if ($this->home === "methods") {

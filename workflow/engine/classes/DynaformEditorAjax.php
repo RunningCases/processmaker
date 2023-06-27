@@ -1,13 +1,5 @@
 <?php
 
-/**
- * Created on 21/12/2007
- * Dynaform - Dynaform 
-/**
- * DynaformEditorAjax - DynaformEditorAjax class
- *
- * @package workflow.engine.classes
- */
 class DynaformEditorAjax extends DynaformEditor implements IDynaformEditorAjax
 {
 
@@ -361,6 +353,7 @@ class DynaformEditorAjax extends DynaformEditor implements IDynaformEditorAjax
     {
         $file = G::decrypt($fileA, URL_KEY);
         $tmp = self::_getTmpData();
+        $Properties = [];
         if (!(isset($tmp['Properties']) && isset($tmp['useTmpCopy']))) {
             $dynaform = new Dynaform();
             $dynaform->load($dynUid);

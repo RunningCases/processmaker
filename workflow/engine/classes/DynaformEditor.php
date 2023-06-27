@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Created on 21/12/2007
- * Dynaform - Dynaform
-/**
- *
- * @package workflow.engine.classes
- */
 class DynaformEditor extends WebResource
 {
     private $isOldCopy = false;
@@ -112,11 +105,11 @@ class DynaformEditor extends WebResource
             $sName = 'dynaformEditor';
             $G_PUBLISH->publisherId = $sName;
             $oHeadPublisher = headPublisher::getSingleton();
-            $oHeadPublisher->setTitle(G::LoadTranslation('ID_DYNAFORM_EDITOR') . ' - ' . $Properties['DYN_TITLE']);
+            $oHeadPublisher->setTitle(G::LoadTranslation('ID_DYNAFORM_EDITOR') . ' - ' . ($Properties['DYN_TITLE'] ?? ''));
             $G_PUBLISH->AddContent('blank');
             $this->panelConf['title'] = '';
             $G_PUBLISH->AddContent('panel-init', 'mainPanel', $this->panelConf);
-            if ($Properties['DYN_TYPE'] == 'xmlform') {
+            if (isset($Properties['DYN_TYPE']) && $Properties['DYN_TYPE'] == 'xmlform') {
                 $G_PUBLISH->AddContent('xmlform', 'toolbar', 'dynaforms/fields_Toolbar', 'display:none', $Parameters, '', '');
             } else {
                 $G_PUBLISH->AddContent('xmlform', 'toolbar', 'dynaforms/fields_ToolbarGrid', 'display:none', $Parameters, '', '');
@@ -155,17 +148,17 @@ class DynaformEditor extends WebResource
         $G_PUBLISH->AddContent('blank');
         $G_PUBLISH->AddContent('panel-tab', G::LoadTranslation("ID_PREVIEW"), $sName . '[3]', 'dynaformEditor.changeToPreview', 'dynaformEditor.saveCurrentView');
         $G_PUBLISH->AddContent('panel-tab', G::LoadTranslation("ID_XML"), $sName . '[4]', 'dynaformEditor.changeToXmlCode', 'dynaformEditor.saveCurrentView');
-        if ($Properties['DYN_TYPE'] != 'grid') {
+        if (isset($Properties['DYN_TYPE']) && $Properties['DYN_TYPE'] != 'grid') {
             $G_PUBLISH->AddContent('panel-tab', G::LoadTranslation("ID_HTML"), $sName . '[5]', 'dynaformEditor.changeToHtmlCode', 'dynaformEditor.saveCurrentView');
         }
         $G_PUBLISH->AddContent('panel-tab', G::LoadTranslation("ID_FIELDS_LIST"), $sName . '[6]', 'dynaformEditor.changeToFieldsList', 'dynaformEditor.saveCurrentView');
-        if ($Properties["DYN_TYPE"] != "grid") {
+        if (isset($Properties['DYN_TYPE']) && $Properties["DYN_TYPE"] != "grid") {
             $G_PUBLISH->AddContent('panel-tab', G::LoadTranslation("ID_JAVASCRIPTS"), $sName . '[7]', 'dynaformEditor.changeToJavascripts', 'dynaformEditor.saveCurrentView');
         }
         $G_PUBLISH->AddContent('panel-tab', G::LoadTranslation("ID_PROPERTIES"), $sName . '[8]', 'dynaformEditor.changeToProperties', 'dynaformEditor.saveCurrentView');
 
         //for showHide tab option @Neyek
-        if ($Properties["DYN_TYPE"] != "grid") {
+        if (isset($Properties['DYN_TYPE']) && $Properties["DYN_TYPE"] != "grid") {
             $G_PUBLISH->AddContent("panel-tab", G::LoadTranslation("ID_CONDITIONS_EDITOR"), $sName . "[9]", "dynaformEditor.changeToShowHide", "dynaformEditor.saveShowHide");
         }
 
@@ -234,7 +227,7 @@ class DynaformEditor extends WebResource
      * @param $data
      * @return void
      */
-    public function _setTmpData($data)
+    public static function _setTmpData($data)
     {
         G::verifyPath(PATH_C . 'dynEditor/', true);
         $fp = fopen(PATH_C . 'dynEditor/' . session_id() . '.php', 'w');
@@ -248,7 +241,7 @@ class DynaformEditor extends WebResource
      * @param string $filename
      * @return array
      */
-    public function _getTmpData()
+    public static function _getTmpData()
     {
         $tmpData = array();
         $file = PATH_C . 'dynEditor/' . session_id() . '.php';
