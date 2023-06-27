@@ -6375,7 +6375,7 @@ class Cases
      * @param string sApplicationUID
      * @return object
      */
-    public function getHistoryMessagesTracker($sApplicationUID)
+    public static function getHistoryMessagesTracker($sApplicationUID)
     {
         $oAppDocument = new AppDocument();
         $oCriteria = new Criteria('workflow');
@@ -6440,7 +6440,7 @@ class Cases
      * @param string Msg_UID
      * @return array
      */
-    public function getHistoryMessagesTrackerView($sApplicationUID, $Msg_UID)
+    public static function getHistoryMessagesTrackerView($sApplicationUID, $Msg_UID)
     {
         $oAppDocument = new AppDocument();
         $oCriteria = new Criteria('workflow');
