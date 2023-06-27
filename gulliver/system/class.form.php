@@ -251,7 +251,7 @@ class Form extends XmlForm
                     if ((sizeof( $this->values[$k] ) === 1) && ($v->type !== 'grid') && isset( $this->values[$k][0] )) {
                         $this->values[$k] = $this->values[$k][0];
                     }
-                    if (sizeof( $this->values[$k] ) === 0) {
+                    if (is_countable($this->values[$k]) && sizeof( $this->values[$k] ) === 0) {
                         $this->values[$k] = '';
                     }
                 } else {

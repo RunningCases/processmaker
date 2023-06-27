@@ -79,6 +79,8 @@ class xmlformTemplate extends Smarty
         }
         $hasRequiredFields = false;
 
+        $ft->fields = [];
+
         foreach ($form->fields as $k => $v) {
             $ft->fields[$k] = $v->cloneObject();
             $ft->fields[$k]->label = '{' . $varPrefix . $k . '}';

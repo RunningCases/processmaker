@@ -13,7 +13,7 @@ class XMLDB
      * @param string $dsn
      * @return array $options
      */
-    public function &connect ($dsn, $options = array())
+    public static function &connect ($dsn, $options = array())
     {
         //Needed for $mysql_real_escape_string
         $mresdbc = new DBConnection();

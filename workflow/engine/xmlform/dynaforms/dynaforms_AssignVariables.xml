@@ -15,9 +15,6 @@
   <SAVE_AND_OPEN_FROM_PMTABLE type="button" onclick="validatePKFields (this.form,'saveAndOpen');">
     <en><![CDATA[Save & Open]]></en>
   </SAVE_AND_OPEN_FROM_PMTABLE>
-  <!-- BTN_CANCEL type="button" onclick="cancel();">
-  <en>Cancel</en>
-</BTN_CANCEL //-->
   <JSCRIPT type="javascript"><![CDATA[
 // function that validates the primary keys in a grid for the Elements 
 function validatePKFields (formElement, value){
