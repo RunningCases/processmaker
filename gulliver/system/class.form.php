@@ -364,7 +364,7 @@ class Form extends XmlForm
                                     }
 
                                     //We do the query to the external connection and we've got the label
-                                    $con = Propel::getConnection(($this->fields[$k]->sqlConnection != "") ? $this->fields[$k]->sqlConnection : "workflow");
+                                    $con = Propel::getConnection(!empty($this->fields[$k]->sqlConnection) ? $this->fields[$k]->sqlConnection : "workflow");
                                     $stmt = $con->prepareStatement($query);
                                     $rs = $stmt->executeQuery(ResultSet::FETCHMODE_NUM);
 
@@ -402,7 +402,7 @@ class Form extends XmlForm
                                             if ($query != '') {
                                                 // execute just if a query was set, it should be not empty
                                                 //we do the query to the external connection and we've got the label
-                                                $con = Propel::getConnection( $this->fields[$k]->sqlConnection != "" ? $this->fields[$k]->sqlConnection : "workflow" ); //use default connection workflow if connection is not defined. Same as Dynaforms
+                                                $con = Propel::getConnection( !empty($this->fields[$k]->sqlConnection) ? $this->fields[$k]->sqlConnection : "workflow" ); //use default connection workflow if connection is not defined. Same as Dynaforms
 
 
                                                 $stmt = $con->prepareStatement( $query );
@@ -442,7 +442,7 @@ class Form extends XmlForm
                                     }
 
                                     //we do the query to the external connection and we've got the label
-                                    $con = Propel::getConnection( $this->fields[$k]->sqlConnection != "" ? $this->fields[$k]->sqlConnection : "workflow" );
+                                    $con = Propel::getConnection( !empty($this->fields[$k]->sqlConnection) ? $this->fields[$k]->sqlConnection : "workflow" );
                                     $stmt = $con->prepareStatement( $query );
                                     $rs = $stmt->executeQuery( ResultSet::FETCHMODE_NUM );
                                     while ($rs->next()) {
