@@ -432,9 +432,11 @@ Ext.onReady(function () {
                     Ext.getCmp("sizeEdit").setValue('');
                 }
 
-                Ext.getCmp("field_incre").enable();
-                if (defaultValue) {
-                    Ext.getCmp("field_incre").setValue(false);
+                if (Ext.getCmp("field_incre")) {
+                    Ext.getCmp("field_incre").enable();
+                    if (defaultValue) {
+                        Ext.getCmp("field_incre").setValue(false);
+                    }
                 }
             }
 
@@ -446,16 +448,20 @@ Ext.onReady(function () {
                     Ext.getCmp("sizeEdit").setValue('');
                 }
 
-                Ext.getCmp("field_incre").disable();
-                Ext.getCmp("field_incre").setValue(false);
+                if (Ext.getCmp("field_incre")) {
+                    Ext.getCmp("field_incre").disable();
+                    Ext.getCmp("field_incre").setValue(false);
+                }
             }
 
             if (valueType === 'BOOLEAN' || valueType === 'DATE' || valueType === 'DATETIME' || valueType === 'TIME' || valueType === 'DECIMAL' || valueType === 'DOUBLE' || valueType === 'FLOAT' || valueType === 'REAL') {
                 Ext.getCmp("sizeEdit").disable();
                 Ext.getCmp("sizeEdit").setValue('');
 
-                Ext.getCmp("field_incre").disable();
-                Ext.getCmp("field_incre").setValue(false);
+                if (Ext.getCmp("field_incre")) {
+                    Ext.getCmp("field_incre").disable();
+                    Ext.getCmp("field_incre").setValue(false);
+                }
             }
         }
     }
@@ -1342,11 +1348,13 @@ function editorFieldsEnableDisable(fieldTypeValue, fieldIndex, fieldInc, sizeEdi
         fieldIndex.setValue(false);
     }
     /*----------------------------------********---------------------------------*/
-    if (swAI == 1) {
-        fieldInc.enable();
-    } else {
-        fieldInc.disable();
-        fieldInc.setValue(false);
+    if (typeof fieldInc !== 'undefined') {
+        if (swAI == 1) {
+            fieldInc.enable();
+        } else {
+            fieldInc.disable();
+            fieldInc.setValue(false);
+        }
     }
 
     if (swSize == 1) {
