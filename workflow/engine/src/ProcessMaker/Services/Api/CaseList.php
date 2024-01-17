@@ -6,6 +6,7 @@ use Exception;
 use G;
 use Luracast\Restler\RestException;
 use ProcessMaker\Model\CaseList as CaseListBusinessModel;
+USE ProcessMaker\Model\User;
 USE ProcessMaker\Model\UserConfig;
 use ProcessMaker\Services\Api;
 use RBAC;
@@ -39,7 +40,12 @@ class CaseList extends Api
      */
     public function doPost(array $request_data)
     {
-        $ownerId = $this->getUserId();
+        // Get user numeric identifier
+        $userUid = $this->getUserId();
+        $user = User::select(['USR_ID'])->where('USR_UID', '=', $userUid)->first();
+        $ownerId = $user->USR_ID;
+
+        // Get cases list
         $caseList = CaseListBusinessModel::createSetting($request_data, $ownerId);
         $caseList = CaseListBusinessModel::getAliasFromColumnName($caseList->toArray());
         return $caseList;
@@ -57,7 +63,12 @@ class CaseList extends Api
      */
     public function doPut(int $id, array $request_data)
     {
-        $ownerId = $this->getUserId();
+        // Get user numeric identifier
+        $userUid = $this->getUserId();
+        $user = User::select(['USR_ID'])->where('USR_UID', '=', $userUid)->first();
+        $ownerId = $user->USR_ID;
+
+        // Get cases list
         $caseList = CaseListBusinessModel::updateSetting($id, $request_data, $ownerId);
         if (is_null($caseList)) {
             throw new RestException(Api::STAT_APP_EXCEPTION, G::LoadTranslation('ID_DOES_NOT_EXIST'));

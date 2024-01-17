@@ -207,6 +207,10 @@ class CaseList extends Model
                 continue;
             }
             $uscSetting = json_decode($userConfig->USC_SETTING);
+            if (!is_object($uscSetting)) {
+                $uscSetting = (object) $uscSetting;
+            }
+
             if (!property_exists($uscSetting, $type)) {
                 continue;
             }
