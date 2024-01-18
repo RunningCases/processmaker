@@ -60,7 +60,6 @@ Ext.onReady(function () {
                             menuDisabled: true,
                             renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                                 return "<b>"+value+"</b>";
-
                             }
                         },
                         {
