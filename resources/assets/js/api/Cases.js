@@ -207,7 +207,7 @@ export let cases = {
                 unpaused_time: data.unpausedTime,
                 index: data.DEL_INDEX,
                 reason: data.reasonPause,
-                sendMail: data.notifyUser
+                sendMail: data.notifyUser || false
             },
             keys: {
                 app_uid: data.APP_UID
