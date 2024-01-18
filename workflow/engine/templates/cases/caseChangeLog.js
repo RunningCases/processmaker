@@ -60,6 +60,7 @@ Ext.onReady(function () {
                             menuDisabled: true,
                             renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                                 return "<b>"+value+"</b>";
+
                             }
                         },
                         {
@@ -69,7 +70,7 @@ Ext.onReady(function () {
                             dataIndex: 'previousValue',
                             menuDisabled: true,
                             renderer: function (value, p, record) {
-                                return value;
+                                return Ext.util.Format.htmlEncode(value);
                             }
                         },
                         {
@@ -79,7 +80,7 @@ Ext.onReady(function () {
                             dataIndex: 'currentValue',
                             menuDisabled: true,
                             renderer: function (value, p, record) {
-                                return value;
+                                return Ext.util.Format.htmlEncode(value);
                             }
                         },
                         {
