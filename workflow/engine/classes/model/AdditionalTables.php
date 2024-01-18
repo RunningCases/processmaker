@@ -409,7 +409,7 @@ class AdditionalTables extends BaseAdditionalTables
      *
      * @return array
      */
-    public static function getAllData($uid, $start = null, $limit = null, $keyOrderUppercase = true, $filter = '', $appUid = false, $search = '')
+    public function getAllData($uid, $start = null, $limit = null, $keyOrderUppercase = true, $filter = '', $appUid = false, $search = '')
     {
         $conf = Bootstrap::getSystemConfiguration();
         $addTab = new AdditionalTables();
