@@ -78,7 +78,7 @@
             <label for="notifyUser">{{ $t('ID_NOTIFY_USERS_CASE') }}</label>
           </b-col>
           <b-col sm="8">
-            <b-form-checkbox v-model="pauseData.notifyUser" id="notifyUser" name="notifyUser" switch>
+            <b-form-checkbox v-model="pauseData.nofitfyUser" id="notifyUser" name="notifyUser" switch>
             </b-form-checkbox>
           </b-col>
         </b-row>
@@ -119,7 +119,7 @@ export default {
         unpauseDate: '',
         unpauseTime: '',
         reasonPause: '',
-        notifyUser: false,
+        nofitfyUser: '',
         pauseDate: '',
         pauseTime: ''
       },
@@ -162,7 +162,7 @@ export default {
       let that = this;
       this.data.unpausedDate = this.pauseData.unpauseDate;
       this.data.unpausedTime = this.pauseData.unpauseTime;
-      this.data.notifyUser = this.pauseData.notifyUser;
+      this.data.nofitfyUser = this.pauseData.nofitfyUser;
       this.data.reasonPause = this.pauseData.reasonPause;
       api.cases.pauseCase(this.data)
         .then((response) => {
