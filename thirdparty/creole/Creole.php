@@ -316,12 +316,12 @@ class Creole {
         }
 
         // some values can be copied directly
-        $parsed['phptype'] = @$info['scheme'];
-        $parsed['username'] = @$info['user'];
-        $parsed['password'] = @$info['pass'];
-        $parsed['port'] = @$info['port'];
+        $parsed['phptype'] = $info['scheme'] ?? '';
+        $parsed['username'] = $info['user'] ?? '';
+        $parsed['password'] = $info['pass'] ?? '';
+        $parsed['port'] = $info['port'] ?? '';
 
-        $host = @$info['host'];
+        $host = $info['host'] ?? '';
         if (false !== ($pluspos = strpos($host, '+'))) {
             $parsed['protocol'] = substr($host,0,$pluspos);
             if ($parsed['protocol'] === 'unix') {
