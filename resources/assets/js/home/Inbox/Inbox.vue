@@ -469,6 +469,7 @@ export default {
         title: this.$i18n.t("ID_NEW_CASE"),
         class: "btn-success",
         onClick: () => {
+          this.$root.$emit('bv::hide::popover');
           this.$refs["newRequest"].show();
         },
       },
