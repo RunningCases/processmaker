@@ -66,7 +66,6 @@ export default {
     const previousSelectedTabHash = expiringStorage.get(this.storageKey);
     if (this.findTab(previousSelectedTabHash)) {
       this.selectTab(previousSelectedTabHash);
-      return;
     }
     if (
       this.options.defaultTabHash !== null &&

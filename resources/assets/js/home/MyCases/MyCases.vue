@@ -27,6 +27,7 @@
             :key="random + 1"
             :selected="formatColumnSelected(columns)"
         />
+        <b-overlay :show="showOverlay" rounded="sm">
         <v-server-table
             :data="tableData"
             :columns="columns"
@@ -76,6 +77,7 @@
                 </div>
             </div>
         </v-server-table>
+        </b-overlay>
         <ModalComments
             ref="modal-comments"
             @postNotes="onPostNotes"
@@ -206,7 +208,7 @@ export default {
                         ? this.settings.orderBy
                         : {},
                 requestFunction(data) {
-                    return this.$parent.$parent.getCasesForVueTable(data);
+                    return this.$parent.$parent.$parent.getCasesForVueTable(data);
                 },
                 settings: {
                     actions: {
@@ -235,6 +237,7 @@ export default {
                 UNASSIGNED: this.$i18n.t("ID_UNASSIGNED"),
             },
             clearSortState: this.settings && this.settings.orderBy && this.settings.orderBy.column,
+            showOverlay: false,
         };
     },
     mounted() {
@@ -323,6 +326,7 @@ export default {
                 }, 400);
             } else if (self.clickCount === 2) {
                 clearTimeout(self.singleClickTimer);
+                self.showOverlay = true;
                 self.clickCount = 0;
                 self.openCaseDetail(event.row);
             }

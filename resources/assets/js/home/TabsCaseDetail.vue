@@ -15,7 +15,7 @@
         </ProcessMap>
       </tab>
       <tab :name="$t('ID_CASE_HISTORY')">
-        <CaseHistory :data="dataCase"> </CaseHistory>
+        <CaseHistory :historyData="dataCase"> </CaseHistory>
       </tab>
       <tab :name="$t('ID_DYNAFORM_HISTORY')">
         <ChangeLog :caseData="dataCase"> </ChangeLog>

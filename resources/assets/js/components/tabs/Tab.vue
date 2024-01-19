@@ -1,6 +1,6 @@
 <template>
   <section
-    v-show="isActive"
+    v-if="isActive"
     :aria-hidden="!isActive"
     class="tabs-component-panel"
     :id="computedId"
